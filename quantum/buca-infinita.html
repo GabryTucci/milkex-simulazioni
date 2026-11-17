@@ -35,6 +35,7 @@ input[type=range]{width:100%;accent-color:var(--ac)}
 .hint{color:var(--mut);font-size:.85rem}
 details{margin-top:1rem}summary{cursor:pointer;font-weight:600}
 ol li{margin:.35rem 0}
+.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em}.katex-display>.katex{white-space:nowrap}
 footer{color:var(--mut);font-size:.8rem;text-align:center;margin:1.5rem 0 .5rem}
 .good{color:var(--ok)}
 </style>
@@ -42,7 +43,7 @@ footer{color:var(--mut);font-size:.8rem;text-align:center;margin:1.5rem 0 .5rem}
 <body>
 <main>
 <h1>Particella in una buca di potenziale infinita</h1>
-<p class="sub">Buca $|x|&lt;a$, pareti infinite. Componi lo stato $\psi(x,t)=\sum_j c_j\,e^{-iE_jt/\hbar}\,\psi_j(x)$ e guardalo evolvere. Clicca o trascina nel grafico per lanciare un pacchetto d'onda.</p>
+<p class="sub"><b>Inizia da qui:</b> premi “Pacchetto d'onda” oppure clicca nel grafico, e guarda il pacchetto rimbalzare. Buca $|x|&lt;a$, pareti infinite. Componi lo stato $\psi(x,t)=\sum_j c_j\,e^{-iE_jt/\hbar}\,\psi_j(x)$ e guardalo evolvere. Clicca o trascina nel grafico per lanciare un pacchetto d'onda.</p>
 <div class="grid">
   <div>
     <div class="card">
@@ -68,7 +69,7 @@ footer{color:var(--mut);font-size:.8rem;text-align:center;margin:1.5rem 0 .5rem}
     <div class="card">
       <b>Livelli di energia e pesi $|c_j|^2$</b>
       <canvas id="levels" aria-label="Livelli di energia"></canvas>
-      <div class="hint">$E_j=\dfrac{\hbar^2\pi^2 j^2}{8ma^2}=j^2E_1$</div>
+      <div class="hint">$E_j=\frac{\hbar^2\pi^2 j^2}{8ma^2}=j^2E_1$</div>
     </div>
     <div class="card" style="margin-top:1rem">
       <b>Valori medi (unità $a=\hbar=m=1$)</b>
@@ -87,8 +88,8 @@ footer{color:var(--mut);font-size:.8rem;text-align:center;margin:1.5rem 0 .5rem}
 <ol>
 <li><b>Stato stazionario.</b> Scegli “Solo $\psi_1$”: la parte reale e quella immaginaria ruotano con la fase $e^{-iE_1t/\hbar}$, ma $|\psi|^2$ resta ferma. Gli autostati dell'energia sono <i>stazionari</i>. Prova anche $\psi_2$, $\psi_3$: contano i nodi ($j-1$ nodi interni).</li>
 <li><b>Parità.</b> In un autostato $\langle x\rangle=\langle p\rangle=0$, come previsto da $[\hat P,\hat H]=0$: i coseni ($j$ dispari) sono pari, i seni ($j$ pari) sono dispari.</li>
-<li><b>Sovrapposizione.</b> “$\psi_1+\psi_2$”: ora $|\psi|^2$ oscilla da una parete all'altra con periodo $T=\dfrac{2\pi\hbar}{E_2-E_1}$, e $\langle x\rangle$ oscilla come una particella classica che rimbalza.</li>
-<li><b>Pacchetto d'onda.</b> Clicca nel grafico: il pacchetto rimbalza sulle pareti, si allarga e si sfalda, poi alla <b>rinascita</b> $t=T_{\rm riv}=\dfrac{2\pi\hbar}{E_1}=\dfrac{16ma^2}{\pi\hbar}$ torna esattamente com'era (perché $E_j=j^2E_1$ e tutte le fasi tornano multipli di $2\pi$). A $T_{\rm riv}/2$ ricompare riflesso.</li>
+<li><b>Sovrapposizione.</b> “$\psi_1+\psi_2$”: ora $|\psi|^2$ oscilla da una parete all'altra con periodo $T=\frac{2\pi\hbar}{E_2-E_1}$, e $\langle x\rangle$ oscilla come una particella classica che rimbalza.</li>
+<li><b>Pacchetto d'onda.</b> Clicca nel grafico: il pacchetto rimbalza sulle pareti, si allarga e si sfalda, poi alla <b>rinascita</b> $t=T_{\rm riv}=\frac{2\pi\hbar}{E_1}=\frac{16ma^2}{\pi\hbar}$ torna esattamente com'era (perché $E_j=j^2E_1$ e tutte le fasi tornano multipli di $2\pi$). A $T_{\rm riv}/2$ ricompare riflesso.</li>
 <li><b>Indeterminazione.</b> Controlla che sempre $\Delta x\,\Delta p\ge\hbar/2$, e che anche nello stato fondamentale $\Delta p\neq0$: è l'energia di punto zero $E_1>0$.</li>
 </ol>
 </details>

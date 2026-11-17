@@ -5,5 +5,12 @@
   "project": "Quantum",
   "section": "Buca di potenziale infinita",
   "time": 1794956448.724092
+ },
+ {
+  "path": "quantum/misura-qbit.html",
+  "title": "Misura di un q-bit: probabilità, collasso e indeterminazione",
+  "project": "Quantum",
+  "section": "Stati, operatori e misure",
+  "time": 1794957216.1204696
  }
 ]

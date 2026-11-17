@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sfera di Bloch: stati puri, miscele, precessione e tomografia</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--fg:#1c2030;--mut:#667085;--bd:#dfe3ec;--acc:#3b5bdb;--acc2:#e8590c;--ok:#2b8a3e;--grid:#c9cfdc;--x:#d6336c;--y:#2b8a3e;--z:#1971c2}
+@media (prefers-color-scheme:dark){:root{--bg:#12141b;--card:#1b1e28;--fg:#e6e8ef;--mut:#9aa3b5;--bd:#2c3142;--acc:#7c9bff;--acc2:#ff922b;--ok:#69db7c;--grid:#3a4156;--x:#f783ac;--y:#8ce99a;--z:#74c0fc}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:14px}
+h1{font-size:1.3rem;margin:.2em 0 .6em}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5em}
+canvas{display:block;width:100%;touch-action:none}
+#sph{aspect-ratio:1/1;cursor:grab}
+#tr{height:170px}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.row label{min-width:120px;color:var(--mut);font-size:.9rem}
+.row input[type=range]{flex:1;min-width:120px;accent-color:var(--acc)}
+.row output{min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
+button{background:transparent;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font:inherit;font-size:.88rem;cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+button.on{border-color:var(--acc);color:var(--acc);font-weight:600}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;font-variant-numeric:tabular-nums}
+.vals div{background:var(--bg);border-radius:8px;padding:6px 8px;font-size:.88rem}
+.vals b{display:block;color:var(--mut);font-weight:500;font-size:.78rem}
+.mat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;background:var(--bg);border-radius:8px;padding:8px;overflow-x:auto;white-space:pre}
+.small{color:var(--mut);font-size:.82rem}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.8rem;font-weight:600}
+ol li{margin:.35em 0}
+footer{text-align:center;color:var(--mut);font-size:.78rem;margin:18px 0 6px}
+</style>
+</head>
+<body>
+<main>
+<h1>Sfera di Bloch del qubit</h1>
+<div class="grid">
+ <section class="card">
+  <canvas id="sph"></canvas>
+  <div class="row">
+   <button id="mView" class="on">Trascina: ruota vista</button>
+   <button id="mState">Trascina: sposta stato</button>
+   <button id="clr">Cancella traccia</button>
+  </div>
+  <p class="small">Il polo nord è $\ket{+}$ ($p_3=+1$) e il polo sud è $\ket{-}$. Sull'asse $x$ c'è $\ket{\psi_1}=\tfrac1{\sqrt2}(\ket{+}+\ket{-})$. Punto pieno: stato attuale. Croce: stima della tomografia.</p>
+  <canvas id="tr"></canvas>
+  <p class="small">Andamento nel tempo di $\ave{\sigma_1},\ave{\sigma_2},\ave{\sigma_3}$ e di $\Tr\rho^2$ (linea tratteggiata).</p>
+ </section>
+ <section style="display:flex;flex-direction:column;gap:14px;min-width:0">
+  <div class="card">
+   <h2>Stato $\rho=\tfrac12(\Id+\vec p\cdot\vec\sigma)$</h2>
+   <div class="row"><label>$\theta$ (polare)</label><input id="th" type="range" min="0" max="180" step="0.5"><output id="thO"></output></div>
+   <div class="row"><label>$\varphi$ (fase relativa)</label><input id="ph" type="range" min="0" max="360" step="0.5"><output id="phO"></output></div>
+   <div class="row"><label>$|\vec p|$ (purezza)</label><input id="r" type="range" min="0" max="1" step="0.005"><output id="rO"></output></div>
+   <div class="row">
+    <button data-p="plus">$\ket{+}$</button><button data-p="minus">$\ket{-}$</button>
+    <button data-p="psi1">$\ket{\psi_1}$</button><button data-p="mix">miscela $\Id/2$</button>
+    <button data-p="eser">Esercizio 75–25</button><button data-p="term">termico $\beta\Delta=1$</button>
+   </div>
+   <div class="vals" id="vals"></div>
+   <div class="mat" id="mat"></div>
+  </div>
+  <div class="card">
+   <h2>Evoluzione: $H=\tfrac{\hbar\omega}{2}\,\hat n\cdot\vec\sigma$ e decoerenza</h2>
+   <div class="row"><button id="play" class="pri">▶ Avvia</button><button id="rst">Reimposta</button>
+    <span class="small">asse $\hat n$:</span><button data-n="x">$x$</button><button data-n="y">$y$</button><button data-n="z" class="on">$z$</button><button data-n="d">diag.</button></div>
+   <div class="row"><label>$\omega$ (rad/s)</label><input id="om" type="range" min="-6" max="6" step="0.05" value="1.5"><output id="omO"></output></div>
+   <div class="row"><label>defasamento $\gamma$ (1/s)</label><input id="ga" type="range" min="0" max="1.5" step="0.01" value="0"><output id="gaO"></output></div>
+   <div class="row small">t = <span id="tO">0.00</span> s</div>
+  </div>
+  <div class="card">
+   <h2>Tomografia: misure su $N$ copie</h2>
+   <div class="row"><label>$N$ copie per asse</label><input id="N" type="range" min="1" max="4" step="0.01" value="2"><output id="NO"></output></div>
+   <div class="row"><button id="meas" class="pri">Misura $\sigma_1,\sigma_2,\sigma_3$</button><button id="meas3">Solo $\sigma_3$</button></div>
+   <div id="tomo" class="small">Nessuna misura ancora.</div>
+  </div>
+ </section>
+</div>
+<section class="card" style="margin-top:14px">
+ <h2>Cosa osservare</h2>
+ <ol>
+  <li><b>La fase globale non conta.</b> Per uno stato puro $\ket{\psi}=\rho\ket{+}+\sqrt{1-\rho^2}\,e^{i\varphi}\ket{-}$ si ha $\rho=\cos\tfrac\theta2$ e
+  $$\vec p=\big(2\rho\sqrt{1-\rho^2}\cos\varphi,\;2\rho\sqrt{1-\rho^2}\sin\varphi,\;2\rho^2-1\big).$$ Fai variare $\varphi$: il punto gira attorno all'asse $z$ e $P_+=\rho^2$ resta fisso.</li>
+  <li><b>Puro e miscela.</b> Premi $\ket{\psi_1}$ e poi «miscela $\Id/2$». Hanno le stesse $P_\pm=\tfrac12$, ma $\ave{\sigma_1}$ vale $1$ nel primo caso e $0$ nel secondo. Abbassa $|\vec p|$ e osserva $\Tr\rho^2=\tfrac12(1+|\vec p|^2)$ e $\det\rho=\tfrac14(1-|\vec p|^2)$.</li>
+  <li><b>La decomposizione non è unica.</b> Il preset «Esercizio» mostra $\ket{\psi_1}$ e $\ket{\psi_2}$ (punti vuoti). La miscela 50–50 sta a metà della corda che li unisce, in $\vec p=(0,0,\tfrac12)$, che è lo stesso punto della miscela 75%–25% di $\ket{\pm}$.</li>
+  <li><b>Precessione.</b> Con asse $z$ e $\ave{H}$ fissato, il vettore ruota a velocità angolare $\omega$, $\varphi(t)=\varphi_0+\omega t$, mentre $P_\pm$ non cambiano. Con asse $x$ cambiano anche le popolazioni. Accendi $\gamma$: le coerenze decadono come $e^{-\gamma t}$ e lo stato va verso l'interno della sfera, cioè diventa misto.</li>
+  <li><b>Ricostruire lo stato (domanda aperta).</b> «Solo $\sigma_3$» fornisce $\rho^2$ ma non $\varphi$. Le tre misure, che non commutano tra loro, danno $\hat p_i=(n_+-n_-)/N$ e quindi $\rho$ completa. L'errore decresce come $\sim1/\sqrt N$.</li>
+ </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let p=[1,0,0], view={a:-0.65,b:0.38}, axis=[0,0,1], running=false, t=0, trail=[], hist=[], ghosts=[], est=null, est3=false, dragMode='view';
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const norm=v=>Math.hypot(v[0],v[1],v[2]);
+function setPolar(th,ph,r){p=[r*Math.sin(th)*Math.cos(ph),r*Math.sin(th)*Math.sin(ph),r*Math.cos(th)];}
+function syncSliders(){const r=norm(p);let th=r>1e-9?Math.acos(Math.max(-1,Math.min(1,p[2]/r))):0;let ph=Math.atan2(p[1],p[0]);if(ph<0)ph+=2*Math.PI;
+ if(r>1e-6&&Math.hypot(p[0],p[1])>1e-6*r)$('ph').value=(ph*180/Math.PI).toFixed(1);
+ $('th').value=(th*180/Math.PI).toFixed(1);$('r').value=r.toFixed(3);}
+function fromSliders(){setPolar($('th').value*Math.PI/180,$('ph').value*Math.PI/180,+$('r').value);}
+['th','ph','r'].forEach(id=>$(id).addEventListener('input',()=>{fromSliders();ghosts=[];est=null;trail=[];update();}));
+const presets={plus:[0,0,1],minus:[0,0,-1],psi1:[1,0,0],mix:[0,0,0],eser:[0,0,.5],term:[0,0,-Math.tanh(.5)]};
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{p=presets[b.dataset.p].slice();ghosts=b.dataset.p==='eser'?[[0,Math.sqrt(3)/2,.5],[0,-Math.sqrt(3)/2,.5]]:[];est=null;trail=[];syncSliders();update();});
+const axes={x:[1,0,0],y:[0,1,0],z:[0,0,1],d:[1/Math.sqrt(3),1/Math.sqrt(3),1/Math.sqrt(3)]};
+document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{axis=axes[b.dataset.n];document.querySelectorAll('[data-n]').forEach(c=>c.classList.toggle('on',c===b));});
+$('play').onclick=()=>{running=!running;$('play').textContent=running?'❚❚ Pausa':'▶ Avvia';};
+let p0=null;
+$('rst').onclick=()=>{if(p0)p=p0.slice();t=0;trail=[];hist=[];syncSliders();update();};
+$('clr').onclick=()=>{trail=[];};
+$('mView').onclick=()=>{dragMode='view';$('mView').classList.add('on');$('mState').classList.remove('on');};
+$('mState').onclick=()=>{dragMode='state';$('mState').classList.add('on');$('mView').classList.remove('on');};
+// ---- evoluzione esatta: rotazione di Rodrigues + defasamento rispetto a n
+function step(dt){const w=+$('om').value,g=+$('ga').value,n=axis,a=w*dt,c=Math.cos(a),s=Math.sin(a);
+ const d=n[0]*p[0]+n[1]*p[1]+n[2]*p[2];const cr=[n[1]*p[2]-n[2]*p[1],n[2]*p[0]-n[0]*p[2],n[0]*p[1]-n[1]*p[0]];
+ let q=[0,1,2].map(i=>p[i]*c+cr[i]*s+n[i]*d*(1-c));
+ const f=Math.exp(-g*dt);p=[0,1,2].map(i=>n[i]*d+(q[i]-n[i]*d)*f);}
+// ---- tomografia
+function binom(N,pr){let k=0;for(let i=0;i<N;i++)if(Math.random()<pr)k++;return k;}
+function measure(all){const N=Math.round(10**+$('N').value);const r=[];for(let i=0;i<3;i++){if(!all&&i<2){r.push(null);continue;}const np=binom(N,(1+p[i])/2);r.push((2*np-N)/N);}
+ est=r;est3=!all;let h='';const nm=['σ₁','σ₂','σ₃'];
+ r.forEach((v,i)=>{if(v===null)return;const sd=Math.sqrt(Math.max(0,1-p[i]*p[i])/N);h+=`⟨${nm[i]}⟩ stimato = <b>${v.toFixed(3)}</b> (vero ${p[i].toFixed(3)}, ±${sd.toFixed(3)})<br>`;});
+ if(all){const rr=norm(r);let ph=Math.atan2(r[1],r[0])*180/Math.PI;if(ph<0)ph+=360;h+=`⇒ φ̂ = <b>${ph.toFixed(1)}°</b>, |p̂| = ${rr.toFixed(3)}${rr>1?' (>1 per rumore statistico)':''}`;}
+ else{const r2=(1+r[2])/2;h+=`⇒ ρ̂² = P̂₊ = <b>${r2.toFixed(3)}</b>. La fase φ resta indeterminata.`;}
+ $('tomo').innerHTML=h;}
+$('meas').onclick=()=>measure(true);$('meas3').onclick=()=>measure(false);
+// ---- canvas
+const cv=$('sph'),cx=cv.getContext('2d'),tv=$('tr'),tx=tv.getContext('2d');
+function fit(c,ctx){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);return[r.width,r.height];}
+let SW,SH,TW,TH;function resize(){[SW,SH]=fit(cv,cx);[TW,TH]=fit(tv,tx);}
+addEventListener('resize',resize);
+function proj(v){const ca=Math.cos(view.a),sa=Math.sin(view.a),cb=Math.cos(view.b),sb=Math.sin(view.b);
+ const x1=v[0]*ca-v[1]*sa,y1=v[0]*sa+v[1]*ca;const y2=y1*cb-v[2]*sb,z2=y1*sb+v[2]*cb;const R=Math.min(SW,SH)*.36;
+ return{x:SW/2+R*x1,y:SH/2-R*z2,d:y2};}
+function unproj(sx,sy){const R=Math.min(SW,SH)*.36;let X=(sx-SW/2)/R,Z=-(sy-SH/2)/R;let q=X*X+Z*Z;if(q>1){const k=1/Math.sqrt(q);X*=k;Z*=k;q=1;}
+ const Y=-Math.sqrt(1-q);const cb=Math.cos(view.b),sb=Math.sin(view.b),ca=Math.cos(view.a),sa=Math.sin(view.a);
+ const y1=Y*cb+Z*sb,z=-Y*sb+Z*cb;return[X*ca+y1*sa,-X*sa+y1*ca,z];}
+function curve(fn,col,w){const N=96;cx.lineWidth=w;for(let i=0;i<N;i++){const a=proj(fn(i/N*2*Math.PI)),b=proj(fn((i+1)/N*2*Math.PI));
+ cx.strokeStyle=col;cx.globalAlpha=(a.d+b.d)/2<0?0.9:0.28;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();}cx.globalAlpha=1;}
+function line(a,b,col,w,dash){const A=proj(a),B=proj(b);cx.strokeStyle=col;cx.lineWidth=w;cx.setLineDash(dash||[]);cx.beginPath();cx.moveTo(A.x,A.y);cx.lineTo(B.x,B.y);cx.stroke();cx.setLineDash([]);}
+function label(v,t,col){const P=proj(v);cx.fillStyle=col;cx.font='14px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(t,P.x,P.y);}
+function drawSphere(){cx.clearRect(0,0,SW,SH);const R=Math.min(SW,SH)*.36,grid=css('--grid'),fg=css('--fg');
+ cx.strokeStyle=grid;cx.lineWidth=1.3;cx.beginPath();cx.arc(SW/2,SH/2,R,0,7);cx.stroke();
+ curve(a=>[Math.cos(a),Math.sin(a),0],grid,1.2);curve(a=>[Math.cos(a),0,Math.sin(a)],grid,1);curve(a=>[0,Math.cos(a),Math.sin(a)],grid,1);
+ line([-1.25,0,0],[1.25,0,0],css('--x'),1.2);line([0,-1.25,0],[0,1.25,0],css('--y'),1.2);line([0,0,-1.25],[0,0,1.25],css('--z'),1.2);
+ label([1.4,0,0],'p₁ · |ψ₁⟩',css('--x'));label([0,1.38,0],'p₂',css('--y'));label([0,0,1.36],'|+⟩',css('--z'));label([0,0,-1.36],'|−⟩',css('--z'));
+ if(running||+$('om').value)line(axis.map(v=>-1.1*v),axis.map(v=>1.1*v),css('--acc2'),1.5,[5,4]);
+ // traccia
+ cx.strokeStyle=css('--acc');cx.lineWidth=1.6;cx.globalAlpha=.55;cx.beginPath();trail.forEach((v,i)=>{const P=proj(v);i?cx.lineTo(P.x,P.y):cx.moveTo(P.x,P.y);});cx.stroke();cx.globalAlpha=1;
+ // ghosts
+ if(ghosts.length){line(ghosts[0],ghosts[1],css('--mut'),1.2,[3,3]);ghosts.forEach((g,i)=>{const P=proj(g);cx.strokeStyle=css('--mut');cx.lineWidth=2;cx.beginPath();cx.arc(P.x,P.y,6,0,7);cx.stroke();label([g[0],g[1]*1.15,g[2]+.15],i?'|ψ₂⟩':'|ψ₁⟩',css('--mut'));});}
+ // proiezione su z e vettore
+ const pz=[0,0,p[2]];line([p[0],p[1],p[2]],pz,grid,1,[2,3]);line([p[0],p[1],0],[p[0],p[1],p[2]],grid,1,[2,3]);
+ line([0,0,0],p,css('--acc'),3);const P=proj(p);cx.fillStyle=css('--acc');cx.beginPath();cx.arc(P.x,P.y,7,0,7);cx.fill();cx.strokeStyle=css('--card');cx.lineWidth=2;cx.stroke();
+ if(est&&!est3){const E=proj(est);cx.strokeStyle=css('--acc2');cx.lineWidth=2.5;cx.beginPath();cx.moveTo(E.x-6,E.y-6);cx.lineTo(E.x+6,E.y+6);cx.moveTo(E.x+6,E.y-6);cx.lineTo(E.x-6,E.y+6);cx.stroke();}
+ if(est&&est3){/* solo σ3: cerchio di latitudine compatibile */const z=Math.max(-1,Math.min(1,est[2])),s=Math.sqrt(1-z*z)*norm(p)/Math.max(1e-9,norm(p));curve(a=>[s*Math.cos(a),s*Math.sin(a),z],css('--acc2'),2);}
+ const cO=proj([0,0,0]);cx.fillStyle=fg;cx.beginPath();cx.arc(cO.x,cO.y,2.5,0,7);cx.fill();}
+function drawTrace(){tx.clearRect(0,0,TW,TH);const L=36,Rr=8,T=8,B=20,w=TW-L-Rr,h=TH-T-B;tx.strokeStyle=css('--grid');tx.fillStyle=css('--mut');tx.font='11px system-ui';tx.lineWidth=1;
+ tx.textAlign='right';tx.textBaseline='middle';[-1,-.5,0,.5,1].forEach(v=>{const y=T+h*(1-v)/2;tx.globalAlpha=v===0?.9:.4;tx.beginPath();tx.moveTo(L,y);tx.lineTo(L+w,y);tx.stroke();tx.globalAlpha=1;tx.fillText(v,L-4,y);});
+ tx.textAlign='center';tx.fillText('t (ultimi 10 s)',L+w/2,TH-6);
+ if(hist.length<2)return;const t1=hist[hist.length-1][0],t0=t1-10;const X=tt=>L+w*(tt-t0)/10,Y=v=>T+h*(1-v)/2;
+ [[1,'--x'],[2,'--y'],[3,'--z'],[4,'--fg']].forEach(([k,c])=>{tx.strokeStyle=css(c);tx.lineWidth=k===4?1.3:1.8;tx.setLineDash(k===4?[4,3]:[]);tx.beginPath();let st=false;hist.forEach(e=>{if(e[0]<t0)return;const x=X(e[0]),y=Y(e[k]);st?tx.lineTo(x,y):(tx.moveTo(x,y),st=true);});tx.stroke();});tx.setLineDash([]);
+ tx.textAlign='left';[['⟨σ₁⟩','--x'],['⟨σ₂⟩','--y'],['⟨σ₃⟩','--z'],['Trρ²','--fg']].forEach(([s,c],i)=>{tx.fillStyle=css(c);tx.fillText(s,L+6+i*48,T+8);});}
+const f=(v,d=3)=>(Math.abs(v)<5e-4?0:v).toFixed(d);
+function cplx(re,im){return `${f(re)} ${im<0?'−':'+'} ${f(Math.abs(im))}i`;}
+function update(){const r=norm(p),pur=.5*(1+r*r),det=.25*(1-r*r),Pp=(1+p[2])/2;
+ $('thO').textContent=(+$('th').value).toFixed(1)+'°';$('phO').textContent=(+$('ph').value).toFixed(1)+'°';$('rO').textContent=r.toFixed(3);
+ $('omO').textContent=(+$('om').value).toFixed(2);$('gaO').textContent=(+$('ga').value).toFixed(2);$('NO').textContent=Math.round(10**+$('N').value);
+ const pure=r>0.9995;const badge=pure?`<span class="badge" style="background:var(--ok);color:var(--card)">PURO</span>`:`<span class="badge" style="background:var(--acc2);color:var(--card)">MISTO</span>`;
+ let extra=pure?`<div><b>ρ = a₊ = cos(θ/2)</b>${f(Math.sqrt(Pp))}</div>`:`<div><b>autovalori P₁, P₂</b>${f((1+r)/2)}, ${f((1-r)/2)}</div>`;
+ $('vals').innerHTML=`<div><b>tipo</b>${badge}</div><div><b>⟨σ₁⟩ = p₁</b>${f(p[0])}</div><div><b>⟨σ₂⟩ = p₂</b>${f(p[1])}</div><div><b>⟨σ₃⟩ = p₃</b>${f(p[2])}</div>
+ <div><b>|p|</b>${f(r)}</div><div><b>Tr ρ²</b>${f(pur)}</div><div><b>det ρ</b>${f(det,4)}</div><div><b>P₊ , P₋</b>${f(Pp)} , ${f(1-Pp)}</div>${extra}<div><b>Tr ρ</b>1.000</div>`;
+ $('mat').textContent=`ρ = ⎛ ${f((1+p[2])/2)}            ${cplx(p[0]/2,-p[1]/2)} ⎞\n    ⎝ ${cplx(p[0]/2,p[1]/2)}   ${f((1-p[2])/2)}           ⎠`;}
+// ---- trascinamento
+let drag=null;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);const b=cv.getBoundingClientRect();drag={x:e.clientX,y:e.clientY};
+ if(dragMode==='state')moveState(e.clientX-b.left,e.clientY-b.top);cv.style.cursor='grabbing';});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const b=cv.getBoundingClientRect();
+ if(dragMode==='view'){view.a+=(e.clientX-drag.x)*.01;view.b=Math.max(-1.5,Math.min(1.5,view.b+(e.clientY-drag.y)*.01));}else moveState(e.clientX-b.left,e.clientY-b.top);
+ drag={x:e.clientX,y:e.clientY};});
+const end=()=>{drag=null;cv.style.cursor='grab';};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+function moveState(sx,sy){const r=Math.max(norm(p),0.05);const u=unproj(sx,sy);p=u.map(v=>v*r);ghosts=[];est=null;syncSliders();update();}
+// ---- ciclo
+let last=performance.now(),acc=0;
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+ if(running){if(t===0)p0=p.slice();const n=8;for(let i=0;i<n;i++)step(dt/n);t+=dt;syncSliders();update();
+  trail.push(p.slice());if(trail.length>900)trail.shift();}
+ acc+=dt;if(acc>.03){acc=0;const r=norm(p);hist.push([t+(running?0:0),p[0],p[1],p[2],.5*(1+r*r)]);if(!running)hist[hist.length-1][0]=hist.length>1?hist[hist.length-2][0]+(running?0:.03):0;if(hist.length>600)hist.shift();}
+ $('tO').textContent=t.toFixed(2);drawSphere();drawTrace();requestAnimationFrame(loop);}
+setPolar(Math.PI/3,Math.PI/2,1);syncSliders();update();resize();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

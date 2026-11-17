@@ -12,5 +12,12 @@
   "project": "Quantum",
   "section": "Stati, operatori e misure",
   "time": 1794957216.1204696
+ },
+ {
+  "path": "quantum/sfera-di-bloch.html",
+  "title": "Sfera di Bloch: stati puri, miscele, precessione e tomografia del qubit",
+  "project": "Quantum",
+  "section": "Informazione quantistica",
+  "time": 1794957495.227513
  }
 ]

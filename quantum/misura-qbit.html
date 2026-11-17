@@ -3,193 +3,300 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Misura di un q-bit: probabilità, collasso e indeterminazione</title>
+<title>Misurare un qubit: probabilità, collasso e indeterminazione</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--fg:#1c2030;--mut:#646b80;--line:#d9dce6;--acc:#3b5bdb;--plus:#e8590c;--minus:#0c8599;--ok:#2b8a3e;--bad:#c92a2a}
-@media (prefers-color-scheme:dark){:root{--bg:#12141c;--card:#1b1e29;--fg:#e6e8f0;--mut:#9aa1b5;--line:#2e3344;--acc:#7c95ff;--plus:#ff922b;--minus:#3bc9db;--ok:#69db7c;--bad:#ff6b6b}}
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg);line-height:1.45}
-main{max-width:1150px;margin:0 auto;padding:14px}
-h1{font-size:1.3rem;margin:.2rem 0 .8rem}
-.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:14px}
-@media(max-width:820px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
-h2{font-size:1rem;margin:0 0 .5rem}
-canvas{width:100%;display:block;touch-action:none}
-#bloch{aspect-ratio:1/1;max-height:460px;cursor:grab}
-#hist{height:190px}
-label{display:block;font-size:.9rem;margin-top:.5rem}
-input[type=range]{width:100%}
-.row{display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem}
-button{font:inherit;font-size:.88rem;padding:.4rem .7rem;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
-button:hover{border-color:var(--acc)}
-button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
-.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;font-size:.88rem;margin-top:.5rem}
-.vals div{background:var(--bg);border-radius:8px;padding:.35rem .5rem}
-.vals b{font-variant-numeric:tabular-nums}
-#log{font-size:.85rem;color:var(--mut);min-height:2.6em;margin-top:.4rem}
-.obs li{margin:.35rem 0}
-footer{text-align:center;color:var(--mut);font-size:.75rem;padding:18px 0 8px}
-select{font:inherit;padding:.3rem;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#phas{height:210px}
+#hist{height:220px}
+.state{font-size:1.05rem;margin:.2rem 0 .4rem;min-height:2.4em;overflow-x:auto}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:.3rem 0 .6rem}
+.seg button{text-align:left;line-height:1.3}
+.seg small{display:block;color:inherit;opacity:.8;font-size:.82rem}
+.formula{background:var(--soft);border-radius:10px;padding:.2rem .6rem;margin:.4rem 0;overflow-x:auto}
+#log{min-height:3em;font-size:.92rem;padding:.4rem .6rem;border-left:3px solid var(--ac);background:var(--soft);border-radius:6px;margin:.5rem 0}
+.flash{animation:fl .8s}
+@keyframes fl{0%{background:var(--ac);color:#fff}100%{}}
 </style>
 </head>
 <body>
 <main>
-<h1>Misura di un q-bit: probabilità, collasso e indeterminazione</h1>
+<header class="top">
+  <h1>Misurare un qubit: probabilità, collasso e indeterminazione</h1>
+  <p>Lo stato $\ket{\psi}=a_+\ket{+}+a_-\ket{-}$ è fatto da due ampiezze complesse. Una misura dà un risultato a caso, con probabilità $P_s=|\braket{s}{\psi}|^2$, e fa collassare lo stato sull'autostato trovato.</p>
+  <div class="start"><b>Inizia da qui:</b> guarda l'istogramma che si riempie misurando tante copie dello stato. Poi premi <b>Misura una volta</b> e guarda come cambia lo stato.</div>
+</header>
+
 <div class="grid">
-<section class="card">
-<h2>Stato sulla sfera di Bloch <span style="font-weight:normal;color:var(--mut);font-size:.85rem">(trascina per ruotare la vista)</span></h2>
-<canvas id="bloch"></canvas>
-<label>$\theta$ (peso relativo di $\ket{+}$ e $\ket{-}$): <b id="tv"></b>
-<input type="range" id="th" min="0" max="180" step="0.5" value="53.13"></label>
-<label>$\varphi$ (fase relativa di $a_-$): <b id="pv"></b>
-<input type="range" id="ph" min="0" max="360" step="0.5" value="90"></label>
-<div class="row">
-<button data-p="plus">$\ket{+}$</button><button data-p="minus">$\ket{-}$</button>
-<button data-p="psi1">$\ket{\psi_1}$</button><button data-p="psi2">$\ket{\psi_2}$</button>
-<button data-p="ex">$\tfrac{1}{\sqrt5}(2\ket{+}+i\ket{-})$</button>
-<button id="rot">Rotazione vista: off</button>
+  <div class="stack">
+    <section class="card">
+      <h2>Lo stato del qubit</h2>
+      <div class="state" id="stateTex"></div>
+      <canvas id="phas" role="img" aria-label="Le due ampiezze come frecce nel piano complesso"></canvas>
+      <p class="hint">Ogni ampiezza è una freccia nel piano complesso: la lunghezza è $|a_\pm|$, l'angolo è la fase. Il cerchio ha raggio 1.</p>
+      <div class="ctl" title="Probabilità di trovare + misurando A. Gli appunti scrivono a₊ = ρ, quindi P₊ = ρ²">
+        <div class="lab"><span>Probabilità di $\ket{+}$: $P_+=|a_+|^2=\rho^2$</span><output id="ppO"></output></div>
+        <input type="range" id="pp" min="0" max="1" step="0.005" value="0.8">
+      </div>
+      <div class="ctl" title="Fase relativa tra le due ampiezze: a₋ = √(1−ρ²) e^{iφ}">
+        <div class="lab"><span>Fase relativa $\varphi$</span><output id="phO"></output></div>
+        <input type="range" id="ph" min="0" max="360" step="1" value="90">
+      </div>
+      <div class="row" id="presets"></div>
+    </section>
+
+    <section class="card">
+      <h2>Indeterminazione tra $A$ e $B$</h2>
+      <div class="formula" id="robTex"></div>
+      <div class="vals">
+        <div><span>$\ave{A}$</span><b id="vA"></b></div>
+        <div><span>$\ave{B}$</span><b id="vB"></b></div>
+        <div><span>$\Delta^2A_\psi$</span><b id="vdA"></b></div>
+        <div><span>$\Delta^2B_\psi$</span><b id="vdB"></b></div>
+        <div><span>prodotto</span><b id="vprod"></b></div>
+        <div><span>limite $\frac14|\ave{[A,B]}|^2$</span><b id="vbound"></b></div>
+      </div>
+      <p class="hint" id="robNote"></p>
+    </section>
+  </div>
+
+  <div class="stack">
+    <section class="card">
+      <h2>La misura</h2>
+      <div class="seg" id="seg">
+        <button data-b="A" class="on" title="A = |+⟩⟨+| − |−⟩⟨−|: risultati +1 (stato |+⟩) e −1 (stato |−⟩)">Misura $A$<small>base $\{\ket{+},\ket{-}\}$</small></button>
+        <button data-b="B" title="B = |ψ₁⟩⟨ψ₁| − |ψ₂⟩⟨ψ₂|, con |ψ₁,₂⟩ = (|+⟩ ± |−⟩)/√2: risultati +1 e −1">Misura $B$<small>base $\{\ket{\psi_1},\ket{\psi_2}\}$</small></button>
+      </div>
+      <div class="formula" id="probTex"></div>
+      <div class="row">
+        <button class="pri" id="once" title="Una sola misura sullo stato: il risultato è casuale e lo stato collassa">Misura una volta</button>
+        <button id="run" title="Misura tante copie identiche dello stato, una dopo l'altra (lo stato non cambia)">⏸ Ferma le misure ripetute</button>
+        <button id="clr" title="Azzera l'istogramma">Azzera</button>
+      </div>
+      <div id="log"></div>
+      <canvas id="hist" role="img" aria-label="Istogramma dei risultati"></canvas>
+      <div class="vals" style="margin-top:.4rem">
+        <div><span>misure fatte</span><b id="vN"></b></div>
+        <div><span>media dei risultati</span><b id="vMean"></b></div>
+        <div><span>valore atteso</span><b id="vExp"></b></div>
+      </div>
+    </section>
+  </div>
 </div>
-<div class="vals" id="amp"></div>
-</section>
-<section class="card">
-<h2>Misura</h2>
-<label>Osservabile da misurare:
-<select id="obs"><option value="z">σ_z (base |+⟩, |−⟩)</option><option value="x">σ_x (base |ψ₁⟩, |ψ₂⟩)</option><option value="y">σ_y</option></select></label>
-<div class="row">
-<button class="pri" id="m1">Misura una volta (collasso)</button>
-<button id="run">▶ Avvia misure ripetute</button>
-<button id="rst">Reimposta conteggi</button>
-</div>
-<div id="log">Lo stato non è ancora stato misurato.</div>
-<canvas id="hist"></canvas>
-<div class="vals" id="meas"></div>
-<h2 style="margin-top:.8rem">Indeterminazione per $\sigma_z$ e $\sigma_x$</h2>
-<div class="vals" id="unc"></div>
-</section>
-</div>
-<section class="card" style="margin-top:14px">
-<h2>Cosa osservare</h2>
-<p>Lo stato è $\ket{\psi}=a_+\ket{+}+a_-\ket{-}$ con $a_+=\cos\tfrac\theta2$ e $a_-=e^{i\varphi}\sin\tfrac\theta2$. Una misura di $\sigma_z$ dà $\pm1$ con $P_\pm=|a_\pm|^2=|\braket{\pm}{\psi}|^2$. Per un asse $\hat n$ la probabilità è $P(+1)=\bra{\psi}\Pi_{+}\ket{\psi}=\tfrac12(1+\hat n\cdot\vec r)$.</p>
-<ol class="obs">
-<li><b>Il collasso.</b> Premi il preset $\ket{\psi_1}=\tfrac1{\sqrt2}(\ket{+}+\ket{-})$ e misura $\sigma_x$: ottieni sempre $+1$, perché $P_{\psi_2\psi_1}=0$. Ora misura $\sigma_z$ una volta e poi di nuovo $\sigma_x$. Il risultato $-1$ è diventato possibile, con $P_{\psi_2+}=\tfrac12$: la misura ha distrutto lo stato precedente.</li>
-<li><b>Frequenze e probabilità.</b> Con $\theta$ qualsiasi avvia le misure ripetute di $\sigma_z$. Le frequenze tendono a $P_\pm$ e la media empirica tende a $\langle\sigma_z\rangle=\sum_i\lambda_iP_i=|a_+|^2-|a_-|^2$.</li>
-<li><b>Il ruolo della fase.</b> Varia $\varphi$ tenendo fisso $\theta$. $P_\pm$ di $\sigma_z$ non cambia, mentre cambiano quelle di $\sigma_x$: la fase relativa conta attraverso l'interferenza, $\langle\sigma_x\rangle=2\,\mathrm{Re}(a_+^*a_-)$.</li>
-<li><b>Varianza nulla solo sugli autostati.</b> Porta $\theta$ a $0$: $\Delta^2\sigma_z=0$, ma $\Delta^2\sigma_x=1$. Vale $$\Delta^2 A_\psi=0\iff A\ket\psi=\lambda\ket\psi.$$</li>
-<li><b>Robertson.</b> Con $[\sigma_z,\sigma_x]=2i\sigma_y$ la disuguaglianza è $$\Delta^2\sigma_z\,\Delta^2\sigma_x\ge\tfrac14|\langle[\sigma_z,\sigma_x]\rangle|^2=\langle\sigma_y\rangle^2.$$ Il preset dell'esercizio la satura ($\tfrac{16}{25}=\tfrac{16}{25}$). Con $\varphi=0$ (coefficienti reali) si ha $\langle\sigma_y\rangle=0$ e il vincolo diventa banale.</li>
-</ol>
+
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Frequenze e probabilità.</b> Con le misure ripetute le barre si avvicinano alle linee tratteggiate $P_\pm$, e la media dei risultati si avvicina a $\ave{A}=\lambda_+P_++\lambda_-P_-=P_+-P_-$. Più misure fai, più l'accordo migliora.</li>
+    <li><b>Il collasso.</b> Premi “Misura una volta”: lo stato salta su $\ket{+}$ o su $\ket{-}$, cioè su $\Pi_s\ket{\psi}$ normalizzato. Rifai subito la stessa misura: ottieni sempre lo stesso risultato, perché ora $P_s=1$.</li>
+    <li><b>Una misura disturba l'altra.</b> Scegli lo stato $\ket{\psi_1}$ e misura $B$: esce sempre $+1$. Ora misura una volta $A$ e torna su $B$: adesso $-1$ esce metà delle volte. La misura di $A$ ha cancellato l'informazione che $B$ leggeva.</li>
+    <li><b>La fase si vede solo in un'altra base.</b> Muovi la fase $\varphi$: le probabilità di $A$ non cambiano, quelle di $B$ sì. In $P_{\psi_1}=\frac12|a_++a_-|^2$ il termine di interferenza $\mathrm{Re}(a_+^*a_-)$ dipende proprio da $\varphi$. Per questo, per conoscere tutto lo stato, servono misure di osservabili che non commutano.</li>
+    <li><b>Indeterminazione.</b> Un autostato di $A$ ha $\Delta^2A_\psi=0$ ma $\Delta^2B_\psi=1$: non si può conoscere bene tutto insieme. Il prodotto $\Delta^2A_\psi\,\Delta^2B_\psi$ non scende mai sotto il limite: con $\varphi=90^\circ$ e $P_+=0{,}8$ lo tocca esattamente.</li>
+  </ol>
 </section>
 <footer>Simulazione creata con MILKeX</footer>
 </main>
+
 <script>
-(function(){
-const $=id=>document.getElementById(id);
-const th=$('th'),ph=$('ph');
-let r=[0,0,1];               // vettore di Bloch dello stato
-let anim=null;               // animazione del collasso
-let yaw=-0.6,pitch=0.35,autoRot=false,drag=null;
-let counts=[0,0],running=false,lastObs='z';
-const AX={z:[0,0,1],x:[1,0,0],y:[0,1,0]};
-const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function setup(c){const d=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight||w;c.width=Math.round(w*d);c.height=Math.round(h*d);const g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);return {g,w,h};}
-function fromSliders(){const t=th.value*Math.PI/180,p=ph.value*Math.PI/180;r=[Math.sin(t)*Math.cos(p),Math.sin(t)*Math.sin(p),Math.cos(t)];}
-function toSliders(){const t=Math.acos(Math.max(-1,Math.min(1,r[2])));let p=Math.atan2(r[1],r[0]);if(p<0)p+=2*Math.PI;if(Math.sin(t)<1e-6)p=ph.value*Math.PI/180;th.value=(t*180/Math.PI).toFixed(2);ph.value=(p*180/Math.PI).toFixed(2);}
-const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-function fmt(x,n=3){return (Math.abs(x)<5e-4?0:x).toFixed(n);}
-function cfmt(re,im){re=Math.abs(re)<5e-4?0:re;im=Math.abs(im)<5e-4?0:im;if(im===0)return re.toFixed(3);return re.toFixed(3)+(im<0?' − ':' + ')+Math.abs(im).toFixed(3)+'i';}
-function stats(){
- const t=Math.acos(Math.max(-1,Math.min(1,r[2]))),p=Math.atan2(r[1],r[0]);
- const ap=Math.cos(t/2),am=Math.sin(t/2);
- const amRe=am*Math.cos(p),amIm=am*Math.sin(p);
- const n=AX[$('obs').value],Pp=(1+dot(n,r))/2;
- $('tv').textContent=(+th.value).toFixed(1)+'°';$('pv').textContent=(+ph.value).toFixed(1)+'°';
- $('amp').innerHTML=`<div>a₊ = <b>${cfmt(ap,0)}</b></div><div>a₋ = <b>${cfmt(amRe,amIm)}</b></div><div>P₊ = |a₊|² = <b>${fmt(ap*ap)}</b></div><div>P₋ = |a₋|² = <b>${fmt(am*am)}</b></div><div>⟨ψ|ψ⟩ = <b>${fmt(ap*ap+am*am,4)}</b></div>`;
- const tot=counts[0]+counts[1],nm={z:'σ_z',x:'σ_x',y:'σ_y'}[$('obs').value];
- $('meas').innerHTML=`<div>P(+1) = <b>${fmt(Pp)}</b></div><div>P(−1) = <b>${fmt(1-Pp)}</b></div><div>⟨${nm}⟩ = <b>${fmt(2*Pp-1)}</b></div><div>N misure = <b>${tot}</b></div><div>freq(+1) = <b>${tot?fmt(counts[0]/tot):'—'}</b></div><div>media empirica = <b>${tot?fmt((counts[0]-counts[1])/tot):'—'}</b></div>`;
- const dz=1-r[2]*r[2],dx=1-r[0]*r[0],b=r[1]*r[1],lhs=dz*dx;
- $('unc').innerHTML=`<div>⟨σ_z⟩ = <b>${fmt(r[2])}</b></div><div>⟨σ_x⟩ = <b>${fmt(r[0])}</b></div><div>⟨σ_y⟩ = <b>${fmt(r[1])}</b></div><div>Δ²σ_z = <b>${fmt(dz)}</b></div><div>Δ²σ_x = <b>${fmt(dx)}</b></div><div>Δ²σ_z·Δ²σ_x = <b>${fmt(lhs,4)}</b></div><div>¼|⟨[σ_z,σ_x]⟩|² = ⟨σ_y⟩² = <b>${fmt(b,4)}</b></div><div style="color:${lhs-b>-1e-9?'var(--ok)':'var(--bad)'}">${Math.abs(lhs-b)<2e-4?'✔ saturata (vale l\'uguale)':'✔ verificata (≥)'}</div>`;
- return Pp;
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const tnum = (x, d = 3) => num(x, d).replace("−", "-").replace(",", "{,}");     // numero dentro una formula LaTeX
+const R2 = Math.SQRT1_2;
+
+// ---- stato: a₊ = ρ ∈ [0,1], a₋ = √(1−ρ²) e^{iφ} (come negli appunti)
+let rho = Math.sqrt(0.8), phi = Math.PI / 2;
+let basis = "A", counts = [0, 0], running = true, acc = 0, flashT = 0;
+function amps() { const m = Math.sqrt(Math.max(0, 1 - rho * rho)); return { ap: rho, amRe: m * Math.cos(phi), amIm: m * Math.sin(phi) }; }
+// probabilità del risultato +1 nella base scelta
+function probPlus() {
+  const a = amps();
+  if (basis === "A") return a.ap * a.ap;
+  return 0.5 * ((a.ap + a.amRe) ** 2 + a.amIm ** 2);          // |⟨ψ₁|ψ⟩|² = ½|a₊ + a₋|²
 }
-function proj(v,w,h){
- const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
- // fisica (x,y,z) -> vista: x verso lo schermo, y a destra, z in alto
- let X=v[0]*cy-v[1]*sy,Y=v[0]*sy+v[1]*cy,Z=v[2];
- let Zs=Z*cp-X*sp,depth=X*cp+Z*sp;
- const R=Math.min(w,h)*0.36;return [w/2+Y*R,h/2-Zs*R,depth];
+function expect() {      // ⟨A⟩ = ⟨σ₃⟩, ⟨B⟩ = ⟨σ₁⟩, ⟨σ₂⟩ (per il commutatore [A,B] = 2iσ₂)
+  const a = amps(), P = a.ap * a.ap;
+  return { A: 2 * P - 1, B: 2 * a.ap * a.amRe, S2: 2 * a.ap * a.amIm };
 }
-function drawBloch(){
- const c=$('bloch'),{g,w,h}=setup(c);g.clearRect(0,0,w,h);
- const fg=css('--fg'),mut=css('--mut'),line=css('--line'),acc=css('--acc');
- const R=Math.min(w,h)*0.36;
- g.strokeStyle=line;g.lineWidth=1.2;g.beginPath();g.arc(w/2,h/2,R,0,2*Math.PI);g.stroke();
- const circ=(f)=>{for(let pass=0;pass<2;pass++){g.beginPath();let first=true;for(let i=0;i<=120;i++){const a=i/120*2*Math.PI,p=proj(f(a),w,h);const front=p[2]>=0;if((pass===0)!==front){first=true;continue;}first?g.moveTo(p[0],p[1]):g.lineTo(p[0],p[1]);first=false;}g.setLineDash(pass?[]:[4,4]);g.strokeStyle=line;g.stroke();}g.setLineDash([]);};
- circ(a=>[Math.cos(a),Math.sin(a),0]);circ(a=>[Math.cos(a),0,Math.sin(a)]);circ(a=>[0,Math.cos(a),Math.sin(a)]);
- const axes=[[[0,0,1],'|+⟩  (σ_z=+1)'],[[0,0,-1],'|−⟩  (σ_z=−1)'],[[1,0,0],'|ψ₁⟩ (σ_x=+1)'],[[-1,0,0],'|ψ₂⟩'],[[0,1,0],'σ_y=+1'],[[0,-1,0],'']];
- g.font='12px system-ui';
- for(const [v,l] of axes){const o=proj([0,0,0],w,h),p=proj(v.map(x=>x*1.12),w,h);g.strokeStyle=mut;g.beginPath();g.moveTo(o[0],o[1]);g.lineTo(p[0],p[1]);g.stroke();if(l){g.fillStyle=mut;g.fillText(l,p[0]+4,p[1]-4);}}
- // asse di misura
- const n=AX[$('obs').value],pn=proj(n,w,h),mn=proj(n.map(x=>-x),w,h);
- g.lineWidth=2.5;g.strokeStyle=css('--plus');g.beginPath();g.moveTo(w/2,h/2);g.lineTo(pn[0],pn[1]);g.stroke();
- g.strokeStyle=css('--minus');g.beginPath();g.moveTo(w/2,h/2);g.lineTo(mn[0],mn[1]);g.stroke();
- // stato
- const p=proj(r,w,h),zp=proj([r[0],r[1],0],w,h);
- g.setLineDash([3,3]);g.lineWidth=1;g.strokeStyle=mut;g.beginPath();g.moveTo(w/2,h/2);g.lineTo(zp[0],zp[1]);g.lineTo(p[0],p[1]);g.stroke();g.setLineDash([]);
- g.lineWidth=3;g.strokeStyle=acc;g.beginPath();g.moveTo(w/2,h/2);g.lineTo(p[0],p[1]);g.stroke();
- g.fillStyle=acc;g.beginPath();g.arc(p[0],p[1],7,0,2*Math.PI);g.fill();
- g.fillStyle=fg;g.font='bold 14px system-ui';g.fillText('|ψ⟩',p[0]+9,p[1]+4);
+
+// ---- disegno
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
 }
-function drawHist(Pp){
- const c=$('hist'),{g,w,h}=setup(c);g.clearRect(0,0,w,h);
- const mut=css('--mut'),line=css('--line'),fg=css('--fg');
- const L=44,B=h-28,T=12,H=B-T;
- g.strokeStyle=line;g.fillStyle=mut;g.font='11px system-ui';g.textAlign='right';
- for(let k=0;k<=4;k++){const y=B-H*k/4;g.beginPath();g.moveTo(L,y);g.lineTo(w-8,y);g.stroke();g.fillText((k/4).toFixed(2),L-5,y+4);}
- const tot=counts[0]+counts[1],bw=(w-L-20)/2;
- [[0,Pp,css('--plus'),'+1'],[1,1-Pp,css('--minus'),'−1']].forEach(([i,P,col,lab])=>{
-  const x0=L+10+i*bw+bw*0.15,bwid=bw*0.7,f=tot?counts[i]/tot:0;
-  g.globalAlpha=.75;g.fillStyle=col;g.fillRect(x0,B-H*f,bwid,H*f);g.globalAlpha=1;
-  g.strokeStyle=fg;g.lineWidth=2;g.setLineDash([6,4]);g.beginPath();g.moveTo(x0-6,B-H*P);g.lineTo(x0+bwid+6,B-H*P);g.stroke();g.setLineDash([]);
-  g.fillStyle=fg;g.textAlign='center';g.font='12px system-ui';g.fillText('risultato '+lab,x0+bwid/2,B+16);
- });
- g.textAlign='left';g.fillStyle=mut;g.fillText('barre: frequenze   tratteggio: probabilità teorica',L+4,T+2);
+function arrow(g, x0, y0, x1, y1, col, w) {
+  g.strokeStyle = col; g.fillStyle = col; g.lineWidth = w;
+  g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+  const L = Math.hypot(x1 - x0, y1 - y0); if (L < 4) return;
+  const ux = (x1 - x0) / L, uy = (y1 - y0) / L, h = 9;
+  g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - h * ux + h * .5 * uy, y1 - h * uy - h * .5 * ux); g.lineTo(x1 - h * ux - h * .5 * uy, y1 - h * uy + h * .5 * ux); g.closePath(); g.fill();
 }
-function measureOnce(){
- const o=$('obs').value,n=AX[o],Pp=(1+dot(n,r))/2,plus=Math.random()<Pp;
- counts[plus?0:1]++;
- const target=plus?n.slice():n.map(x=>-x);
- const nm={z:'σ_z',x:'σ_x',y:'σ_y'}[o],st={z:plus?'|+⟩':'|−⟩',x:plus?'|ψ₁⟩':'|ψ₂⟩',y:plus?'autostato +1 di σ_y':'autostato −1 di σ_y'}[o];
- $('log').textContent=`Misura di ${nm}: risultato ${plus?'+1':'−1'} (aveva probabilità ${fmt(plus?Pp:1-Pp)}). Lo stato collassa su ${st}, cioè Π|ψ⟩ normalizzato.`;
- anim={from:r.slice(),to:target,t0:performance.now()};
+function drawPhasors() {
+  const { g, W, H } = setup($("phas")); g.clearRect(0, 0, W, H);
+  const a = amps(), R = Math.min(W / 4 - 14, (H - 44) / 2), items = [["a₊", a.ap, 0, "--c1"], ["a₋", a.amRe, a.amIm, "--c2"]];
+  items.forEach(([lab, re, im, col], k) => {
+    const cx = W * (k ? 0.75 : 0.25), cy = 14 + R;
+    g.strokeStyle = css("--bd"); g.lineWidth = 1;
+    g.beginPath(); g.arc(cx, cy, R, 0, 2 * Math.PI); g.stroke();
+    g.beginPath(); g.moveTo(cx - R - 6, cy); g.lineTo(cx + R + 6, cy); g.moveTo(cx, cy - R - 6); g.lineTo(cx, cy + R + 6); g.stroke();
+    g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "left";
+    g.fillText("Re", cx + R - 10, cy - 5); g.fillText("Im", cx + 5, cy - R + 4);
+    arrow(g, cx, cy, cx + re * R, cy - im * R, css(col), 3);
+    g.fillStyle = css(col); g.font = "600 14px system-ui"; g.textAlign = "center";
+    g.fillText(`${lab}   |${lab}|² = ${num(re * re + im * im, 2)}`, cx, H - 8);
+  });
 }
-function slerp(a,b,t){let d=Math.max(-1,Math.min(1,dot(a,b)));if(d>0.9999)return b.slice();let ax;if(d<-0.9999){ax=Math.abs(a[0])<0.9?[1,0,0]:[0,1,0];const k=dot(ax,a);ax=ax.map((v,i)=>v-k*a[i]);const m=Math.hypot(...ax);ax=ax.map(v=>v/m);const ang=Math.PI*t;return a.map((v,i)=>v*Math.cos(ang)+ax[i]*Math.sin(ang));}const om=Math.acos(d),s=Math.sin(om);return a.map((v,i)=>(Math.sin((1-t)*om)*v+Math.sin(t*om)*b[i])/s);}
-function sampleEnsemble(k){const Pp=(1+dot(AX[$('obs').value],r))/2;for(let i=0;i<k;i++)counts[Math.random()<Pp?0:1]++;}
-let acc=0,last=performance.now();
-function frame(now){
- const dt=Math.min(0.05,(now-last)/1000);last=now;
- if(autoRot)yaw+=dt*0.4;
- if(anim){const t=Math.min(1,(now-anim.t0)/550),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;r=slerp(anim.from,anim.to,e);toSliders();if(t>=1){r=anim.to;anim=null;toSliders();}}
- if(running&&!anim){acc+=dt*Math.min(400,20+(counts[0]+counts[1])*0.6);const k=Math.floor(acc);acc-=k;if(k)sampleEnsemble(k);}
- const Pp=stats();drawBloch();drawHist(Pp);
- requestAnimationFrame(frame);
+function drawHist() {
+  const { g, W, H } = setup($("hist")); g.clearRect(0, 0, W, H);
+  const Pp = probPlus(), tot = counts[0] + counts[1];
+  const L = 40, R = 12, T = 14, B = 40, h = H - T - B;
+  g.font = "11px system-ui"; g.textAlign = "right"; g.fillStyle = css("--mut"); g.strokeStyle = css("--bd"); g.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) { const y = T + h * (1 - k / 4); g.beginPath(); g.moveTo(L, y); g.lineTo(W - R, y); g.stroke(); g.fillText(num(k / 4, 2), L - 6, y + 4); }
+  const names = basis === "A" ? ["+1  →  |+⟩", "−1  →  |−⟩"] : ["+1  →  |ψ₁⟩", "−1  →  |ψ₂⟩"];
+  const bw = (W - L - R) / 2;
+  [[Pp, "--c1"], [1 - Pp, "--c2"]].forEach(([P, col], i) => {
+    const x = L + i * bw + bw * .2, w = bw * .6, f = tot ? counts[i] / tot : 0;
+    g.fillStyle = css(col); g.globalAlpha = .8; g.fillRect(x, T + h * (1 - f), w, h * f); g.globalAlpha = 1;
+    g.setLineDash([6, 4]); g.strokeStyle = css("--fg"); g.lineWidth = 2;
+    g.beginPath(); g.moveTo(x - 8, T + h * (1 - P)); g.lineTo(x + w + 8, T + h * (1 - P)); g.stroke(); g.setLineDash([]);
+    g.fillStyle = css("--fg"); g.textAlign = "center"; g.font = "13px system-ui";
+    g.fillText(names[i], x + w / 2, H - 22);
+    g.fillStyle = css("--mut"); g.font = "11px system-ui";
+    g.fillText(`freq. ${tot ? num(f, 3) : "—"}   P = ${num(P, 3)}`, x + w / 2, H - 6);
+  });
 }
-th.oninput=ph.oninput=()=>{anim=null;fromSliders();};
-$('obs').onchange=()=>{if($('obs').value!==lastObs){counts=[0,0];lastObs=$('obs').value;}};
-$('m1').onclick=()=>{if(running)toggleRun();measureOnce();};
-function toggleRun(){running=!running;$('run').textContent=running?'⏸ Pausa misure ripetute':'▶ Avvia misure ripetute';if(running)$('log').textContent='Misure ripetute su copie identiche dello stato |ψ⟩ (ensemble): lo stato non collassa tra una copia e l\'altra.';}
-$('run').onclick=toggleRun;
-$('rst').onclick=()=>{counts=[0,0];};
-$('rot').onclick=()=>{autoRot=!autoRot;$('rot').textContent='Rotazione vista: '+(autoRot?'on':'off');};
-const presets={plus:[0,0],minus:[180,0],psi1:[90,0],psi2:[90,180],ex:[2*Math.acos(2/Math.sqrt(5))*180/Math.PI,90]};
-document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const p=presets[b.dataset.p];anim=null;th.value=p[0];ph.value=p[1];fromSliders();counts=[0,0];$('log').textContent='Stato preparato. Ora misura!';});
-const cv=$('bloch');
-cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw,pitch};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';});
-cv.addEventListener('pointermove',e=>{if(!drag)return;yaw=drag.yaw-(e.clientX-drag.x)*0.01;pitch=Math.max(-1.4,Math.min(1.4,drag.pitch+(e.clientY-drag.y)*0.01));});
-cv.addEventListener('pointerup',()=>{drag=null;cv.style.cursor='grab';});
-fromSliders();requestAnimationFrame(frame);
-})();
+// ---- testi con formule (aggiornati solo quando cambiano)
+let lastState = "", lastProb = "";
+function updateTexts() {
+  const a = amps(), m = Math.sqrt(Math.max(0, 1 - rho * rho)), deg = Math.round(phi * 180 / Math.PI) % 360;
+  let s;
+  if (m < 5e-4) s = String.raw`\ket{\psi}=\ket{+}`;
+  else if (rho < 5e-4) s = String.raw`\ket{\psi}=e^{i\,${deg}^\circ}\ket{-}`;
+  else s = String.raw`\ket{\psi}=${tnum(rho)}\,\ket{+}+${tnum(m)}\,e^{i\,${deg}^\circ}\ket{-}`;
+  if (s !== lastState) { tex($("stateTex"), s, true); lastState = s; }
+  const Pp = probPlus();
+  const p = basis === "A"
+    ? String.raw`\begin{aligned}P_{+}&=|\braket{+}{\psi}|^2=|a_+|^2=${tnum(Pp)}\\ P_{-}&=|\braket{-}{\psi}|^2=|a_-|^2=${tnum(1 - Pp)}\end{aligned}`
+    : String.raw`\begin{aligned}P_{\psi_1}&=|\braket{\psi_1}{\psi}|^2=\tfrac12|a_++a_-|^2\\&=\tfrac12+\underbrace{\mathrm{Re}(a_+^*a_-)}_{\text{interferenza}}=${tnum(Pp)}\\ P_{\psi_2}&=1-P_{\psi_1}=${tnum(1 - Pp)}\end{aligned}`;
+  if (p !== lastProb) { tex($("probTex"), p, true); lastProb = p; }
+  $("ppO").textContent = num(rho * rho, 3) + "  (ρ = " + num(rho, 3) + ")";
+  $("phO").textContent = deg + "°";
+}
+function updateVals() {
+  const e = expect(), dA = 1 - e.A * e.A, dB = 1 - e.B * e.B, prod = dA * dB, bound = e.S2 * e.S2;
+  $("vA").textContent = num(e.A); $("vB").textContent = num(e.B);
+  $("vdA").textContent = num(dA); $("vdB").textContent = num(dB);
+  $("vprod").textContent = num(prod, 4); $("vbound").textContent = num(bound, 4);
+  const sat = Math.abs(prod - bound) < 2e-3;
+  $("robNote").innerHTML = prod >= bound - 1e-9
+    ? `<span class="ok">✓ ${sat ? "Il limite è raggiunto esattamente (disuguaglianza saturata)." : "Il prodotto è sopra il limite, come deve essere."}</span>`
+    : `<span class="bad">✗</span>`;
+  const tot = counts[0] + counts[1], ev = 2 * probPlus() - 1;
+  $("vN").textContent = tot.toLocaleString("it-IT");
+  $("vMean").textContent = tot ? num((counts[0] - counts[1]) / tot) : "—";
+  $("vExp").textContent = num(ev);
+}
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (running) {
+    const tot = counts[0] + counts[1];
+    acc += dt * Math.min(400, 4 + tot * 0.6);           // all'inizio piano, poi sempre più veloce
+    const k = Math.floor(acc); acc -= k;
+    const Pp = probPlus();
+    for (let i = 0; i < k; i++) counts[Math.random() < Pp ? 0 : 1]++;
+  }
+  updateTexts(); updateVals(); drawPhasors(); drawHist();
+  requestAnimationFrame(frame);
+}
+
+// ---- controlli
+function setRun(v) { running = v; $("run").textContent = v ? "⏸ Ferma le misure ripetute" : "▶ Misure ripetute su copie identiche"; }
+function stateChanged() { counts = [0, 0]; acc = 0; }
+$("pp").addEventListener("input", () => { rho = Math.sqrt(+$("pp").value); stateChanged(); });
+$("ph").addEventListener("input", () => { phi = +$("ph").value * Math.PI / 180; stateChanged(); });
+function syncSliders() { $("pp").value = (rho * rho).toFixed(3); $("ph").value = Math.round(phi * 180 / Math.PI) % 360; }
+document.querySelectorAll("#seg button").forEach(b => b.onclick = () => {
+  basis = b.dataset.b; document.querySelectorAll("#seg button").forEach(x => x.classList.toggle("on", x === b)); stateChanged();
+  $("log").textContent = basis === "A" ? "Ora misuri A: i risultati possibili sono +1 (stato |+⟩) e −1 (stato |−⟩)." : "Ora misuri B: i risultati possibili sono +1 (stato |ψ₁⟩) e −1 (stato |ψ₂⟩).";
+});
+$("once").onclick = () => {
+  setRun(false);
+  const Pp = probPlus(), plus = Math.random() < Pp;
+  // collasso: lo stato diventa l'autostato trovato (Π_s|ψ⟩ normalizzato)
+  if (basis === "A") { rho = plus ? 1 : 0; }
+  else { rho = R2; phi = plus ? 0 : Math.PI; }
+  syncSliders(); counts = [0, 0]; counts[plus ? 0 : 1] = 1;
+  const st = basis === "A" ? (plus ? "|+⟩" : "|−⟩") : (plus ? "|ψ₁⟩" : "|ψ₂⟩");
+  $("log").textContent = `Risultato ${plus ? "+1" : "−1"} (aveva probabilità ${num(plus ? Pp : 1 - Pp, 3)}). Lo stato è collassato su ${st}: rifai la stessa misura e uscirà sempre ${plus ? "+1" : "−1"}.`;
+  $("log").classList.remove("flash"); void $("log").offsetWidth; $("log").classList.add("flash");
+};
+$("run").onclick = () => setRun(!running);
+$("clr").onclick = () => stateChanged();
+const presets = [
+  [String.raw`$\ket{+}$`, 1, 0], [String.raw`$\ket{-}$`, 0, 0],
+  [String.raw`$\ket{\psi_1}=\frac{\ket{+}+\ket{-}}{\sqrt2}$`, R2, 0], [String.raw`$\ket{\psi_2}=\frac{\ket{+}-\ket{-}}{\sqrt2}$`, R2, 180],
+  [String.raw`$\frac{\ket{+}+i\ket{-}}{\sqrt2}$`, R2, 90], [String.raw`$\sqrt{\tfrac34}\ket{+}+i\sqrt{\tfrac14}\ket{-}$`, Math.sqrt(0.75), 90]];
+for (const [l, r, d] of presets) {
+  const b = document.createElement("button"); b.innerHTML = l; b.title = "Prepara questo stato";
+  b.onclick = () => { rho = r; phi = d * Math.PI / 180; syncSliders(); stateChanged(); setRun(true); $("log").textContent = "Stato preparato: ora le misure ripetute ne stimano le probabilità."; };
+  $("presets").append(b);
+}
+mathify($("presets"));
+tex($("robTex"), String.raw`\begin{gathered}\Delta^2A_\psi\,\Delta^2B_\psi\ \ge\ \tfrac14\,|\bra{\psi}[A,B]\ket{\psi}|^2\\ \text{con }[A,B]=2i\sigma_2\end{gathered}`, true);
+$("log").textContent = "Misure ripetute in corso su tante copie identiche dello stato: ogni copia dà +1 o −1 a caso.";
+syncSliders();
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>

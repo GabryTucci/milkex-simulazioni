@@ -6,105 +6,160 @@
 <title>Particella in una buca di potenziale infinita</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
 <style>
-:root{color-scheme:light dark;--bg:#f7f5fc;--fg:#1d1830;--mut:#6b6480;--card:#fff;--bd:#e2dcf2;--ac:#7b4fd6;--re:#3b82f6;--im:#f0884a;--pr:#7b4fd6;--wall:#c9c1de;--ok:#16a34a}
-@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a59fb8;--card:#1f1a2b;--bd:#342b48;--ac:#b18cff;--re:#60a5fa;--im:#fdba74;--pr:#c4a8ff;--wall:#4a3f63}}
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:1100px;margin:0 auto;padding:1rem}
-h1{font-size:1.35rem;margin:.2rem 0 .1rem}
-p.sub{color:var(--mut);margin:0 0 1rem}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:1rem}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
 @media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:.8rem;padding:.8rem}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
 canvas{display:block;width:100%;touch-action:none}
-#plot{height:340px;cursor:crosshair}
-#levels{height:230px}
-.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0}
-button{font:inherit;border:1px solid var(--bd);background:var(--bg);color:var(--fg);border-radius:.5rem;padding:.35rem .7rem;cursor:pointer}
-button:hover{border-color:var(--ac)}button.on{background:var(--ac);border-color:var(--ac);color:#fff}
-label{font-size:.9rem}
-input[type=range]{width:100%;accent-color:var(--ac)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:.2rem .8rem;font-variant-numeric:tabular-nums;font-size:.92rem}
-.stats b{font-weight:600}
-.leg span{display:inline-flex;align-items:center;gap:.3rem;margin-right:.8rem;font-size:.88rem;cursor:pointer;user-select:none}
-.leg i{width:14px;height:3px;border-radius:2px;display:inline-block}
-.leg .off{opacity:.35}
-.coef{display:grid;grid-template-columns:2.2rem minmax(0,1fr) 3.2rem;gap:.3rem;align-items:center;font-size:.88rem}
-.hint{color:var(--mut);font-size:.85rem}
-details{margin-top:1rem}summary{cursor:pointer;font-weight:600}
-ol li{margin:.35rem 0}
-.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em}.katex-display>.katex{white-space:nowrap}
-footer{color:var(--mut);font-size:.8rem;text-align:center;margin:1.5rem 0 .5rem}
-.good{color:var(--ok)}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#plot{height:360px;cursor:crosshair}
+#bars{height:170px}
+@media (max-width:600px){#plot{height:280px}}
 </style>
 </head>
 <body>
 <main>
-<h1>Particella in una buca di potenziale infinita</h1>
-<p class="sub"><b>Inizia da qui:</b> premi “Pacchetto d'onda” oppure clicca nel grafico, e guarda il pacchetto rimbalzare. Buca $|x|&lt;a$, pareti infinite. Componi lo stato $\psi(x,t)=\sum_j c_j\,e^{-iE_jt/\hbar}\,\psi_j(x)$ e guardalo evolvere. Clicca o trascina nel grafico per lanciare un pacchetto d'onda.</p>
+<header class="top">
+  <h1>Particella in una buca di potenziale infinita</h1>
+  <p>Una particella è libera di muoversi in $|x|&lt;a$ ed è chiusa da pareti di potenziale infinito. Il suo stato è una sovrapposizione degli autostati $\psi_j$, e ognuno evolve con la propria fase $e^{-iE_jt/\hbar}$.</p>
+  <div class="start"><b>Inizia da qui:</b> clicca in un punto della buca per lanciare un pacchetto d'onda, poi guarda come rimbalza, si sparpaglia e… si ricompone.</div>
+</header>
+
 <div class="grid">
-  <div>
-    <div class="card">
-      <div class="leg" id="leg"></div>
-      <canvas id="plot" aria-label="Grafico della funzione d'onda"></canvas>
+  <div class="stack">
+    <section class="card">
+      <h2>Funzione d'onda $\psi(x,t)$</h2>
+      <div class="legend" id="legend"></div>
+      <canvas id="plot" role="img" aria-label="Grafico della funzione d'onda nella buca"></canvas>
+      <p class="hint">👆 Clicca o trascina dentro la buca per lanciare un pacchetto d'onda da quel punto.</p>
       <div class="row">
-        <button id="play" class="on">⏸ Pausa</button>
-        <button id="reset">↺ t = 0</button>
-        <span class="hint" id="tlab"></span>
+        <button class="pri" id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <button id="t0" title="Riporta il tempo all'istante iniziale">↺ Torna a t = 0</button>
+        <button id="half" title="Salta a metà del tempo di rinascita: il pacchetto ricompare riflesso">Salta a T_riv / 2</button>
+        <button id="full" title="Salta al tempo di rinascita: lo stato torna identico a quello iniziale">Salta a T_riv</button>
       </div>
-      <label>Velocità del tempo <input type="range" id="speed" min="-3" max="1" step="0.01" value="-1.3"></label>
-    </div>
-    <div class="card" style="margin-top:1rem">
-      <b>Stati preimpostati</b>
-      <div class="row" id="presets"></div>
-      <div class="row" style="gap:1rem">
-        <label style="flex:1;min-width:180px">Impulso iniziale del pacchetto $p_0$ <span id="p0v"></span><input type="range" id="p0" min="-40" max="40" step="0.5" value="12"></label>
-        <label style="flex:1;min-width:180px">Larghezza del pacchetto $\sigma$ <span id="sgv"></span><input type="range" id="sg" min="0.04" max="0.4" step="0.005" value="0.1"></label>
+      <div class="ctl" title="Quanto velocemente scorre il tempo della simulazione">
+        <div class="lab"><span>Velocità del tempo</span><output id="speedO"></output></div>
+        <input type="range" id="speed" min="-3" max="0.3" step="0.01" value="-1.9">
       </div>
-    </div>
+      <p class="hint" id="tlab"></p>
+    </section>
+
+    <section class="card">
+      <h2>Il pacchetto d'onda che lanci</h2>
+      <div class="ctl" title="Impulso medio del pacchetto: più è grande, più il pacchetto è veloce (velocità v = p₀/m)">
+        <div class="lab"><span>Impulso iniziale $p_0$</span><output id="p0O"></output></div>
+        <input type="range" id="p0" min="-40" max="40" step="0.5" value="12">
+      </div>
+      <div class="ctl" title="Larghezza iniziale del pacchetto: più è stretto, più è incerto il suo impulso">
+        <div class="lab"><span>Larghezza iniziale $\sigma$</span><output id="sgO"></output></div>
+        <input type="range" id="sg" min="0.04" max="0.4" step="0.005" value="0.1">
+      </div>
+    </section>
   </div>
-  <div>
-    <div class="card">
-      <b>Livelli di energia e pesi $|c_j|^2$</b>
-      <canvas id="levels" aria-label="Livelli di energia"></canvas>
-      <div class="hint">$E_j=\frac{\hbar^2\pi^2 j^2}{8ma^2}=j^2E_1$</div>
-    </div>
-    <div class="card" style="margin-top:1rem">
-      <b>Valori medi (unità $a=\hbar=m=1$)</b>
-      <div class="stats" id="stats"></div>
-    </div>
-    <div class="card" style="margin-top:1rem">
-      <b>Coefficienti $|c_j|$ (primi 6 stati)</b>
-      <div id="coefs"></div>
-      <div class="hint">Lo stato viene normalizzato da solo.</div>
-    </div>
+
+  <div class="stack">
+    <section class="card">
+      <h2>Valori medi</h2>
+      <div class="vals">
+        <div><span>$\ave{x}$</span><b id="vx"></b></div>
+        <div><span>$\ave{p}$</span><b id="vp"></b></div>
+        <div><span>$\Delta x$</span><b id="vdx"></b></div>
+        <div><span>$\Delta p$</span><b id="vdp"></b></div>
+        <div><span>$\Delta x\,\Delta p$</span><b id="vdd"></b></div>
+        <div><span>$\ave{E}$</span><b id="ve"></b></div>
+        <div><span>$\int|\psi|^2dx$</span><b id="vn"></b></div>
+      </div>
+      <p class="hint">Unità: $a=\hbar=m=1$. Il controllo ✓ verifica $\Delta x\,\Delta p\ge\hbar/2$.</p>
+    </section>
+
+    <section class="card">
+      <h2>Quanto pesa ogni autostato: $|c_j|^2$</h2>
+      <canvas id="bars" role="img" aria-label="Pesi degli autostati"></canvas>
+      <p class="hint"><span style="color:var(--c4)">■</span> $j$ dispari: coseni (stati pari) &nbsp; <span style="color:var(--c3)">■</span> $j$ pari: seni (stati dispari). Energie $E_j=j^2E_1$, con $E_1=\frac{\hbar^2\pi^2}{8ma^2}$.</p>
+    </section>
+
+    <section class="card">
+      <h2>Stati di partenza</h2>
+      <div class="row" id="presets"></div>
+      <details class="adv">
+        <summary>Opzioni avanzate: scegli tu i coefficienti</summary>
+        <p class="hint">Lo stato è $\sum_j c_j\psi_j$ con i $c_j$ reali scelti qui (poi viene normalizzato).</p>
+        <div id="coefs"></div>
+      </details>
+    </section>
   </div>
 </div>
 
-<details open>
-<summary>Cosa osservare</summary>
-<ol>
-<li><b>Stato stazionario.</b> Scegli “Solo $\psi_1$”: la parte reale e quella immaginaria ruotano con la fase $e^{-iE_1t/\hbar}$, ma $|\psi|^2$ resta ferma. Gli autostati dell'energia sono <i>stazionari</i>. Prova anche $\psi_2$, $\psi_3$: contano i nodi ($j-1$ nodi interni).</li>
-<li><b>Parità.</b> In un autostato $\langle x\rangle=\langle p\rangle=0$, come previsto da $[\hat P,\hat H]=0$: i coseni ($j$ dispari) sono pari, i seni ($j$ pari) sono dispari.</li>
-<li><b>Sovrapposizione.</b> “$\psi_1+\psi_2$”: ora $|\psi|^2$ oscilla da una parete all'altra con periodo $T=\frac{2\pi\hbar}{E_2-E_1}$, e $\langle x\rangle$ oscilla come una particella classica che rimbalza.</li>
-<li><b>Pacchetto d'onda.</b> Clicca nel grafico: il pacchetto rimbalza sulle pareti, si allarga e si sfalda, poi alla <b>rinascita</b> $t=T_{\rm riv}=\frac{2\pi\hbar}{E_1}=\frac{16ma^2}{\pi\hbar}$ torna esattamente com'era (perché $E_j=j^2E_1$ e tutte le fasi tornano multipli di $2\pi$). A $T_{\rm riv}/2$ ricompare riflesso.</li>
-<li><b>Indeterminazione.</b> Controlla che sempre $\Delta x\,\Delta p\ge\hbar/2$, e che anche nello stato fondamentale $\Delta p\neq0$: è l'energia di punto zero $E_1>0$.</li>
-</ol>
-</details>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Il rimbalzo.</b> Lancia un pacchetto: il valor medio $\ave{x}$ (linea tratteggiata) va avanti e indietro come la particella classica, che torna al punto di partenza dopo $T=\frac{4a}{v}$ con $v=\frac{p_0}{m}$. Prova a raddoppiare $p_0$: il periodo si dimezza.</li>
+    <li><b>Si sparpaglia e si ricompone.</b> Dopo qualche rimbalzo il pacchetto si allarga e diventa un groviglio di onde. Premi “Salta a T_riv”: al tempo di rinascita $$T_{\rm riv}=\frac{2\pi\hbar}{E_1}=\frac{16\,ma^2}{\pi\hbar}$$ tutte le fasi $e^{-ij^2E_1t/\hbar}$ tornano uguali e lo stato è di nuovo identico a quello iniziale. A $T_{\rm riv}/2$ ricompare riflesso dall'altra parte.</li>
+    <li><b>Gli autostati sono stazionari.</b> Scegli “Solo $\psi_1$”, poi accendi anche $\mathrm{Im}\,\psi$ nella legenda: parte reale e immaginaria oscillano, ma $|\psi|^2$ resta ferma. Con $\psi_j$ ci sono $j-1$ nodi.</li>
+    <li><b>Due stati insieme si muovono.</b> Con “$\psi_1+\psi_2$” la densità oscilla da una parete all'altra con periodo $\frac{2\pi\hbar}{E_2-E_1}=\frac{T_{\rm riv}}{3}$: è l'interferenza tra i due termini.</li>
+    <li><b>Indeterminazione e punto zero.</b> In ogni autostato $\ave{x}=\ave{p}=0$ (parità), ma $\Delta p\neq0$: anche nello stato fondamentale la particella non sta mai ferma, e $E_1&gt;0$. Controlla che sempre $\Delta x\,\Delta p\ge\frac{\hbar}{2}$; un pacchetto gaussiano appena lanciato lo soddisfa con l'uguale.</li>
+  </ol>
+</section>
 <footer>Simulazione creata con MILKeX</footer>
 </main>
+
 <script>
 "use strict";
-// Unità: a = ħ = m = 1. Buca su [-a, a]. Autostati: ψ_j = cos(jπx/2a)/√a (j dispari), sin(jπx/2a)/√a (j pari).
+const $ = id => document.getElementById(id);
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// ---- fisica (unità a = ħ = m = 1): buca |x| < a, autostati ψ_j = cos(jπx/2a)/√a (j dispari), sin(jπx/2a)/√a (j pari)
 const A = 1, NX = 601, JMAX = 60;
-const E1 = Math.PI * Math.PI / 8;           // ħ²π²/(8 m a²)
-const Trev = 2 * Math.PI / E1;              // tempo di rinascita
+const E1 = Math.PI * Math.PI / 8;              // ħ²π²/(8 m a²)
+const TRIV = 2 * Math.PI / E1;                 // tempo di rinascita 2πħ/E₁
 const xs = Float64Array.from({ length: NX }, (_, i) => -A + 2 * A * i / (NX - 1));
 const dx = xs[1] - xs[0];
-const K = j => j * Math.PI / (2 * A);
-const E = j => E1 * j * j;
+const K = j => j * Math.PI / (2 * A), E = j => E1 * j * j;
 const phi = [], dphi = [];
 for (let j = 1; j <= JMAX; j++) {
   const f = new Float64Array(NX), d = new Float64Array(NX), k = K(j), n = 1 / Math.sqrt(A);
@@ -114,29 +169,14 @@ for (let j = 1; j <= JMAX; j++) {
   }
   phi.push(f); dphi.push(d);
 }
-// coefficienti complessi c_j (indice 0 = stato j=1)
-let cre = new Float64Array(JMAX), cim = new Float64Array(JMAX);
-let t = 0, playing = true, last = performance.now();
-const show = { re: true, im: true, prob: true, V: true };
+const cre = new Float64Array(JMAX), cim = new Float64Array(JMAX);
+let t = 0, playing = true, yMax = 1.5;
+const show = { prob: true, re: true, im: false, mean: true };
 
 function normalize() {
   let s = 0; for (let j = 0; j < JMAX; j++) s += cre[j] ** 2 + cim[j] ** 2;
   if (s < 1e-12) { cre.fill(0); cim.fill(0); cre[0] = 1; return; }
   s = Math.sqrt(s); for (let j = 0; j < JMAX; j++) { cre[j] /= s; cim[j] /= s; }
-}
-function setStates(list) { cre.fill(0); cim.fill(0); for (const [j, c] of list) cre[j - 1] = c; normalize(); t = 0; syncCoefs(); }
-function packet(x0, p0, sg) {   // proiezione di un pacchetto gaussiano sugli autostati
-  const gr = new Float64Array(NX), gi = new Float64Array(NX);
-  for (let i = 0; i < NX; i++) {
-    const x = xs[i], env = Math.exp(-((x - x0) ** 2) / (4 * sg * sg));
-    gr[i] = env * Math.cos(p0 * x); gi[i] = env * Math.sin(p0 * x);
-  }
-  for (let j = 0; j < JMAX; j++) {
-    let r = 0, m = 0; const f = phi[j];
-    for (let i = 0; i < NX; i++) { r += f[i] * gr[i]; m += f[i] * gi[i]; }
-    cre[j] = r * dx; cim[j] = m * dx;
-  }
-  normalize(); t = 0; syncCoefs();
 }
 function psiAt(tt) {
   const re = new Float64Array(NX), im = new Float64Array(NX), dre = new Float64Array(NX), dim = new Float64Array(NX);
@@ -153,128 +193,158 @@ function stats(p) {
   for (let i = 0; i < NX; i++) {
     const w = (i === 0 || i === NX - 1) ? 0.5 : 1, pr = p.re[i] ** 2 + p.im[i] ** 2;
     n += w * pr; mx += w * pr * xs[i]; mx2 += w * pr * xs[i] ** 2;
-    mp += w * (p.re[i] * p.dim[i] - p.im[i] * p.dre[i]);     // ⟨p⟩ = -iħ∫ψ*ψ' (parte reale)
+    mp += w * (p.re[i] * p.dim[i] - p.im[i] * p.dre[i]);         // ⟨p⟩ = −iħ ∫ ψ* ψ' dx
   }
   n *= dx; mx *= dx; mx2 *= dx; mp *= dx;
-  for (let j = 0; j < JMAX; j++) { const w = cre[j] ** 2 + cim[j] ** 2; H += w * E(j + 1); p2 += w * K(j + 1) ** 2; }
-  const Dx = Math.sqrt(Math.max(0, mx2 - mx * mx)), Dp = Math.sqrt(Math.max(0, p2 - mp * mp));
-  return { n, mx, mp, Dx, Dp, H };
+  for (let j = 0; j < JMAX; j++) { const w = cre[j] ** 2 + cim[j] ** 2; H += w * E(j + 1); p2 += w * K(j + 1) ** 2; }   // ⟨p²⟩ = Σ|c_j|²ħ²K_j²
+  return { n, mx, mp, Dx: Math.sqrt(Math.max(0, mx2 - mx * mx)), Dp: Math.sqrt(Math.max(0, p2 - mp * mp)), H };
+}
+function newState(keepSliders) {
+  t = 0; const p = psiAt(0); let peak = 0;
+  for (let i = 0; i < NX; i++) peak = Math.max(peak, p.re[i] ** 2 + p.im[i] ** 2, Math.abs(p.re[i]), Math.abs(p.im[i]));
+  yMax = Math.max(1.3, peak * 1.12); syncCoefs(keepSliders);
+}
+function setStates(list) { cre.fill(0); cim.fill(0); for (const [j, c] of list) cre[j - 1] = c; normalize(); newState(); }
+function packet(x0, p0, sg) {      // pacchetto gaussiano proiettato sugli autostati: c_j = ∫ ψ_j(x) g(x) dx
+  for (let j = 0; j < JMAX; j++) {
+    let r = 0, m = 0; const f = phi[j];
+    for (let i = 0; i < NX; i++) { const x = xs[i], env = Math.exp(-((x - x0) ** 2) / (4 * sg * sg)); r += f[i] * env * Math.cos(p0 * x); m += f[i] * env * Math.sin(p0 * x); }
+    cre[j] = r * dx; cim[j] = m * dx;
+  }
+  normalize(); newState();
 }
 
-// ---------- disegno
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+// ---- disegno
 function setup(cv) {
   const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
-  cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
   const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
 }
-const plot = document.getElementById("plot"), lev = document.getElementById("levels");
-const PAD = { l: 40, r: 14, t: 14, b: 28 };
-const toX = (x, W) => PAD.l + (x + 1.25 * A) / (2.5 * A) * (W - PAD.l - PAD.r);
-const fromX = (px, W) => (px - PAD.l) / (W - PAD.l - PAD.r) * 2.5 * A - 1.25 * A;
-let yMax = 1.6;
-function drawPlot(p) {
+const plot = $("plot"), bars = $("bars");
+const XL = -1.2 * A, XR = 1.2 * A, PAD = { l: 12, r: 12, t: 16, b: 30 };
+const toX = (x, W) => PAD.l + (x - XL) / (XR - XL) * (W - PAD.l - PAD.r);
+const fromX = (px, W) => XL + (px - PAD.l) / (W - PAD.l - PAD.r) * (XR - XL);
+function drawPlot(p, s) {
   const { g, W, H } = setup(plot);
-  const y0 = (H - PAD.b + PAD.t) / 2, sy = (H - PAD.t - PAD.b) / 2 / yMax;
+  const y0 = PAD.t + (H - PAD.t - PAD.b) / 2, sy = (H - PAD.t - PAD.b) / 2 / yMax;
   g.clearRect(0, 0, W, H);
-  // pareti
+  // pareti (V = ∞)
   g.fillStyle = css("--wall");
-  g.fillRect(PAD.l, PAD.t, toX(-A, W) - PAD.l, H - PAD.t - PAD.b);
-  g.fillRect(toX(A, W), PAD.t, W - PAD.r - toX(A, W), H - PAD.t - PAD.b);
-  // assi
-  g.strokeStyle = css("--mut"); g.lineWidth = 1; g.globalAlpha = .6;
+  const wl = toX(-A, W), wr = toX(A, W);
+  g.fillRect(PAD.l, PAD.t, wl - PAD.l, H - PAD.t - PAD.b); g.fillRect(wr, PAD.t, W - PAD.r - wr, H - PAD.t - PAD.b);
+  g.fillStyle = css("--mut"); g.font = "600 15px system-ui"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText("∞", (PAD.l + wl) / 2, PAD.t + 14); g.fillText("∞", (wr + W - PAD.r) / 2, PAD.t + 14);
+  // asse x
+  g.strokeStyle = css("--mut"); g.globalAlpha = .5; g.lineWidth = 1;
   g.beginPath(); g.moveTo(PAD.l, y0); g.lineTo(W - PAD.r, y0); g.stroke(); g.globalAlpha = 1;
-  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
-  for (const [x, l] of [[-A, "−a"], [-A / 2, "−a/2"], [0, "0"], [A / 2, "a/2"], [A, "a"]]) g.fillText(l, toX(x, W), H - 8);
-  g.textAlign = "left"; g.fillText("x", W - PAD.r - 8, y0 - 6);
+  g.font = "13px system-ui"; g.textBaseline = "alphabetic";
+  for (const [x, l] of [[-A, "−a"], [-A / 2, "−a/2"], [0, "0"], [A / 2, "a/2"], [A, "a"]]) g.fillText(l, toX(x, W), H - 9);
   const line = (arr, col, w, fill) => {
     g.beginPath(); g.moveTo(toX(xs[0], W), y0);
-    for (let i = 0; i < NX; i++) g.lineTo(toX(xs[i], W), y0 - arr[i] * sy);
-    if (fill) { g.lineTo(toX(xs[NX - 1], W), y0); g.closePath(); g.fillStyle = col; g.globalAlpha = .18; g.fill(); g.globalAlpha = 1; }
+    for (let i = 0; i < NX; i++) g.lineTo(toX(xs[i], W), y0 - Math.max(-yMax, Math.min(yMax, arr[i])) * sy);
+    if (fill) { g.lineTo(toX(xs[NX - 1], W), y0); g.closePath(); g.fillStyle = col; g.globalAlpha = .16; g.fill(); g.globalAlpha = 1; }
     g.strokeStyle = col; g.lineWidth = w; g.stroke();
   };
-  if (show.prob) { const pr = p.re.map((r, i) => r * r + p.im[i] ** 2); line(pr, css("--pr"), 2.2, true); }
-  if (show.re) line(p.re, css("--re"), 1.6);
-  if (show.im) line(p.im, css("--im"), 1.6);
-}
-function drawLevels(s) {
-  const { g, W, H } = setup(lev);
-  g.clearRect(0, 0, W, H);
-  const NJ = 8, top = E(NJ) * 1.05, py = e => H - 18 - e / top * (H - 30);
-  g.font = "11px system-ui";
-  for (let j = 1; j <= NJ; j++) {
-    const y = py(E(j)), w = cre[j - 1] ** 2 + cim[j - 1] ** 2;
-    g.strokeStyle = j % 2 ? "#22a5c9" : css("--ac"); g.lineWidth = 2;
-    g.beginPath(); g.moveTo(40, y); g.lineTo(110, y); g.stroke();
-    g.fillStyle = css("--mut"); g.fillText(`j=${j}`, 6, y + 4);
-    g.fillStyle = css("--pr"); g.globalAlpha = .75; g.fillRect(118, y - 5, (W - 170) * w, 10); g.globalAlpha = 1;
-    if (w > 0.005) { g.fillStyle = css("--fg"); g.fillText(w.toFixed(2), 122 + (W - 170) * w, y + 4); }
+  if (show.prob) line(p.re.map((r, i) => r * r + p.im[i] ** 2), css("--c3"), 2.4, true);
+  if (show.re) line(p.re, css("--c1"), 1.6);
+  if (show.im) line(p.im, css("--c2"), 1.6);
+  if (show.mean) {           // ⟨x⟩
+    const X = toX(s.mx, W);
+    g.setLineDash([5, 4]); g.strokeStyle = css("--fg"); g.globalAlpha = .7; g.lineWidth = 1.3;
+    g.beginPath(); g.moveTo(X, PAD.t); g.lineTo(X, H - PAD.b); g.stroke(); g.setLineDash([]); g.globalAlpha = 1;
+    g.fillStyle = css("--fg"); g.font = "13px system-ui"; g.textBaseline = "middle";
+    const lab = "⟨x⟩", w = g.measureText(lab).width;
+    g.textAlign = "left"; g.fillText(lab, Math.min(W - PAD.r - w - 2, Math.max(PAD.l + 2, X + 5)), PAD.t + 34);
   }
-  g.setLineDash([5, 4]); g.strokeStyle = css("--im"); g.lineWidth = 1.2;
-  const yh = py(Math.min(s.H, top)); g.beginPath(); g.moveTo(36, yh); g.lineTo(W - 6, yh); g.stroke(); g.setLineDash([]);
-  g.fillStyle = css("--im"); g.fillText("⟨E⟩", W - 30, yh - 4);
-  g.fillStyle = css("--mut"); g.fillText("blu: coseni (pari) · viola: seni (dispari)", 6, H - 4);
+}
+function drawBars() {
+  const { g, W, H } = setup(bars);
+  g.clearRect(0, 0, W, H);
+  let last = 8; for (let j = 0; j < JMAX; j++) if (cre[j] ** 2 + cim[j] ** 2 > 0.003) last = Math.max(last, j + 1);
+  const NJ = Math.min(30, last), L = 10, R = 10, T = 18, B = 22, bw = (W - L - R) / NJ;
+  let mx = 0; for (let j = 0; j < NJ; j++) mx = Math.max(mx, cre[j] ** 2 + cim[j] ** 2);
+  mx = Math.max(mx, 0.05);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L, H - B); g.lineTo(W - R, H - B); g.stroke();
+  g.font = "11px system-ui"; g.textAlign = "center";
+  const step = Math.ceil(NJ / Math.max(1, Math.floor((W - L - R) / 22)));
+  for (let j = 1; j <= NJ; j++) {
+    const w = cre[j - 1] ** 2 + cim[j - 1] ** 2, h = w / mx * (H - T - B), x = L + (j - 1) * bw;
+    g.fillStyle = css(j % 2 ? "--c4" : "--c3"); g.fillRect(x + bw * .15, H - B - h, bw * .7, h);
+    g.fillStyle = css("--mut");
+    if (j % step === 0 || j === 1) g.fillText(String(j), x + bw / 2, H - 7);
+    if (w > 0.02 && bw > 24) { g.fillStyle = css("--fg"); g.fillText(num(w, 2), x + bw / 2, H - B - h - 5); }
+  }
+  g.textAlign = "left"; g.fillStyle = css("--mut"); g.fillText("j →", W - R - 22, T - 6);
 }
 function drawStats(s) {
-  const ok = s.Dx * s.Dp >= 0.5 - 1e-3;
-  document.getElementById("stats").innerHTML =
-    `<span>⟨x⟩</span><b>${s.mx.toFixed(3)} a</b><span>⟨p⟩</span><b>${s.mp.toFixed(3)} ħ/a</b>` +
-    `<span>Δx</span><b>${s.Dx.toFixed(3)} a</b><span>Δp</span><b>${s.Dp.toFixed(3)} ħ/a</b>` +
-    `<span>Δx·Δp</span><b class="${ok ? "good" : ""}">${(s.Dx * s.Dp).toFixed(3)} ħ ${ok ? "≥ ħ/2 ✓" : ""}</b>` +
-    `<span>⟨E⟩</span><b>${(s.H / E1).toFixed(3)} E₁</b><span>∫|ψ|²dx</span><b>${s.n.toFixed(4)}</b>`;
-  document.getElementById("tlab").textContent = `t = ${(t / Trev).toFixed(4)} T_riv   (T_riv = 2πħ/E₁)`;
+  $("vx").textContent = num(s.mx) + " a"; $("vp").textContent = num(s.mp, 2) + " ħ/a";
+  $("vdx").textContent = num(s.Dx) + " a"; $("vdp").textContent = num(s.Dp, 2) + " ħ/a";
+  const pr = s.Dx * s.Dp, ok = pr >= 0.5 - 1e-3;
+  $("vdd").textContent = num(pr) + " ħ " + (ok ? "✓" : "");
+  $("vdd").className = ok ? "ok" : "bad";
+  $("ve").textContent = num(s.H / E1, 2) + " E₁"; $("vn").textContent = num(s.n, 4);
+  $("tlab").textContent = `Tempo trascorso: t = ${num(t / TRIV, 4)} · T_riv`;
 }
+let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  if (playing) t += dt * Trev * Math.pow(10, +document.getElementById("speed").value) * 0.1;
+  if (playing) t += dt * TRIV * 10 ** +$("speed").value;
   const p = psiAt(t), s = stats(p);
-  drawPlot(p); drawLevels(s); drawStats(s);
+  drawPlot(p, s); drawBars(); drawStats(s);
   requestAnimationFrame(frame);
 }
 
-// ---------- controlli
-const leg = document.getElementById("leg");
-for (const [k, l, c] of [["prob", "|ψ|²", "--pr"], ["re", "Re ψ", "--re"], ["im", "Im ψ", "--im"]]) {
-  const s = document.createElement("span"); s.innerHTML = `<i style="background:var(${c})"></i>${l}`;
-  s.onclick = () => { show[k] = !show[k]; s.classList.toggle("off", !show[k]); }; leg.append(s);
+// ---- controlli
+for (const [k, l, c] of [["prob", "|ψ|² densità di probabilità", "--c3"], ["re", "Re ψ", "--c1"], ["im", "Im ψ", "--c2"], ["mean", "⟨x⟩ valor medio", "--fg"]]) {
+  const sp = document.createElement("span"); sp.title = "Mostra o nascondi"; sp.innerHTML = `<i style="background:var(${c})"></i>${l}`;
+  sp.classList.toggle("off", !show[k]);
+  sp.onclick = () => { show[k] = !show[k]; sp.classList.toggle("off", !show[k]); }; $("legend").append(sp);
 }
-document.getElementById("play").onclick = e => { playing = !playing; e.target.textContent = playing ? "⏸ Pausa" : "▶ Avvia"; e.target.classList.toggle("on", playing); };
-document.getElementById("reset").onclick = () => { t = 0; };
+const setPlay = v => { playing = v; $("play").textContent = v ? "⏸ Pausa" : "▶ Avvia"; };
+$("play").onclick = () => setPlay(!playing);
+$("t0").onclick = () => { t = 0; };
+$("half").onclick = () => { t = TRIV / 2; };
+$("full").onclick = () => { t = TRIV; };
+function updLabels() {
+  $("p0O").textContent = num(+$("p0").value, 1) + " ħ/a";
+  $("sgO").textContent = num(+$("sg").value, 3) + " a";
+  $("speedO").textContent = "1 s = " + num(10 ** +$("speed").value, 4) + " T_riv";
+}
+["p0", "sg", "speed"].forEach(id => $(id).addEventListener("input", updLabels)); updLabels();
+const launchAt = x => packet(x, +$("p0").value, +$("sg").value);
+$("p0").addEventListener("change", () => launchAt(lastX)); $("sg").addEventListener("change", () => launchAt(lastX));
+let lastX = -0.5, dragging = false;
+function pointerX(e) { const r = plot.getBoundingClientRect(); return fromX(e.clientX - r.left, r.width); }
+plot.addEventListener("pointerdown", e => {
+  const x = pointerX(e); if (Math.abs(x) >= 0.95 * A) return;
+  dragging = true; plot.setPointerCapture(e.pointerId); lastX = x; launchAt(x); setPlay(false);
+});
+plot.addEventListener("pointermove", e => { if (!dragging) return; const x = pointerX(e); if (Math.abs(x) < 0.95 * A) { lastX = x; launchAt(x); } });
+const endDrag = () => { if (dragging) { dragging = false; setPlay(true); } };
+plot.addEventListener("pointerup", endDrag); plot.addEventListener("pointercancel", endDrag);
+
 const presets = [
-  ["Solo ψ₁", () => setStates([[1, 1]])], ["Solo ψ₂", () => setStates([[2, 1]])], ["Solo ψ₃", () => setStates([[3, 1]])],
-  ["ψ₁ + ψ₂", () => setStates([[1, 1], [2, 1]])], ["ψ₁ + ψ₃", () => setStates([[1, 1], [3, 1]])],
-  ["Pacchetto d'onda", () => packet(-0.5, +document.getElementById("p0").value, +document.getElementById("sg").value)]];
-const pb = document.getElementById("presets");
-for (const [l, f] of presets) { const b = document.createElement("button"); b.textContent = l; b.onclick = f; pb.append(b); }
-const coefs = document.getElementById("coefs"), sl = [];
+  ["Pacchetto d'onda", () => launchAt(-0.5)],
+  ["Solo $\\psi_1$", () => setStates([[1, 1]])], ["Solo $\\psi_2$", () => setStates([[2, 1]])], ["Solo $\\psi_3$", () => setStates([[3, 1]])],
+  ["$\\psi_1+\\psi_2$", () => setStates([[1, 1], [2, 1]])], ["$\\psi_1+\\psi_3$", () => setStates([[1, 1], [3, 1]])]];
+for (const [l, f] of presets) {
+  const b = document.createElement("button"); b.innerHTML = l; b.onclick = () => { f(); setPlay(true); }; $("presets").append(b);
+}
+mathify($("presets"));
+const sl = [];
 for (let j = 1; j <= 6; j++) {
-  const row = document.createElement("div"); row.className = "coef";
-  const r = document.createElement("input"); r.type = "range"; r.min = 0; r.max = 1; r.step = 0.01;
-  const v = document.createElement("span");
-  row.append(Object.assign(document.createElement("span"), { textContent: "c" + "₁₂₃₄₅₆"[j - 1] }), r, v);
-  r.oninput = () => {
-    const mags = sl.map(x => +x.r.value);
-    cre.fill(0); cim.fill(0); mags.forEach((m, i) => cre[i] = m); normalize(); t = 0; syncCoefs(true);
-  };
-  coefs.append(row); sl.push({ r, v });
+  const d = document.createElement("div"); d.className = "ctl";
+  d.innerHTML = `<div class="lab"><span>$c_${j}$ (peso di $\\psi_${j}$)</span><output></output></div><input type="range" min="0" max="1" step="0.01">`;
+  const r = d.querySelector("input"), o = d.querySelector("output");
+  r.addEventListener("input", () => {
+    cre.fill(0); cim.fill(0); sl.forEach((x, i) => cre[i] = +x.r.value); normalize(); newState(true); setPlay(true);
+  });
+  $("coefs").append(d); sl.push({ r, o });
 }
-function syncCoefs(keepSliders) {
-  sl.forEach((x, i) => { const m = Math.hypot(cre[i], cim[i]); if (!keepSliders) x.r.value = m.toFixed(2); x.v.textContent = m.toFixed(2); });
-  let peak = 0; const p = psiAt(0); for (let i = 0; i < NX; i++) peak = Math.max(peak, p.re[i] ** 2 + p.im[i] ** 2, Math.abs(p.re[i]), Math.abs(p.im[i]));
-  yMax = Math.max(1.3, peak * 1.15);
-}
-const upd = () => { document.getElementById("p0v").textContent = "= " + (+document.getElementById("p0").value).toFixed(1) + " ħ/a"; document.getElementById("sgv").textContent = "= " + (+document.getElementById("sg").value).toFixed(3) + " a"; };
-document.getElementById("p0").oninput = upd; document.getElementById("sg").oninput = upd; upd();
-let dragging = false;
-const launch = e => {
-  const r = plot.getBoundingClientRect(), x = fromX(e.clientX - r.left, r.width);
-  if (x <= -A * 0.97 || x >= A * 0.97) return;
-  packet(x, +document.getElementById("p0").value, +document.getElementById("sg").value);
-};
-plot.addEventListener("pointerdown", e => { dragging = true; plot.setPointerCapture(e.pointerId); launch(e); });
-plot.addEventListener("pointermove", e => { if (dragging) launch(e); });
-plot.addEventListener("pointerup", () => dragging = false);
-setStates([[1, 1], [2, 1]]);
+mathify($("coefs"));
+function syncCoefs(keepSliders) { sl.forEach((x, i) => { const m = Math.hypot(cre[i], cim[i]); if (!keepSliders) x.r.value = m.toFixed(2); x.o.textContent = num(m, 2); }); }
+
+launchAt(-0.5);
 requestAnimationFrame(frame);
 </script>
 </body>

@@ -3,201 +3,396 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sfera di Bloch: stati puri, miscele, precessione e tomografia</title>
+<title>Sfera di Bloch: stati puri, miscele e porte quantistiche</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--fg:#1c2030;--mut:#667085;--bd:#dfe3ec;--acc:#3b5bdb;--acc2:#e8590c;--ok:#2b8a3e;--grid:#c9cfdc;--x:#d6336c;--y:#2b8a3e;--z:#1971c2}
-@media (prefers-color-scheme:dark){:root{--bg:#12141b;--card:#1b1e28;--fg:#e6e8ef;--mut:#9aa3b5;--bd:#2c3142;--acc:#7c9bff;--acc2:#ff922b;--ok:#69db7c;--grid:#3a4156;--x:#f783ac;--y:#8ce99a;--z:#74c0fc}}
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:1180px;margin:0 auto;padding:14px}
-h1{font-size:1.3rem;margin:.2em 0 .6em}
-.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
 @media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;min-width:0}
-.card h2{font-size:1rem;margin:0 0 .5em}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
 canvas{display:block;width:100%;touch-action:none}
-#sph{aspect-ratio:1/1;cursor:grab}
-#tr{height:170px}
-.row{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
-.row label{min-width:120px;color:var(--mut);font-size:.9rem}
-.row input[type=range]{flex:1;min-width:120px;accent-color:var(--acc)}
-.row output{min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
-button{background:transparent;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;font:inherit;font-size:.88rem;cursor:pointer}
-button:hover{border-color:var(--acc)}
-button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
-button.on{border-color:var(--acc);color:var(--acc);font-weight:600}
-.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;font-variant-numeric:tabular-nums}
-.vals div{background:var(--bg);border-radius:8px;padding:6px 8px;font-size:.88rem}
-.vals b{display:block;color:var(--mut);font-weight:500;font-size:.78rem}
-.mat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;background:var(--bg);border-radius:8px;padding:8px;overflow-x:auto;white-space:pre}
-.small{color:var(--mut);font-size:.82rem}
-.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.8rem;font-weight:600}
-ol li{margin:.35em 0}
-footer{text-align:center;color:var(--mut);font-size:.78rem;margin:18px 0 6px}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#sphere{aspect-ratio:1/1;max-height:520px;cursor:grab}
+#sphere:active{cursor:grabbing}
+.formula{background:var(--soft);border-radius:10px;padding:.2rem .6rem;margin:.4rem 0;overflow-x:auto}
+.badge{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-weight:600;font-size:.88rem}
+.badge.pure{background:color-mix(in srgb,var(--c4) 22%,transparent);color:var(--c4)}
+.badge.mix{background:color-mix(in srgb,var(--c2) 22%,transparent);color:var(--c2)}
+.gates button{min-width:56px;font-weight:600}
+select{font:inherit;padding:.3rem .5rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);min-height:36px}
+#tomoOut{font-size:.92rem;margin-top:.4rem}
 </style>
 </head>
 <body>
 <main>
-<h1>Sfera di Bloch del qubit</h1>
+<header class="top">
+  <h1>Sfera di Bloch: stati puri, miscele e porte quantistiche</h1>
+  <p>Ogni stato di un qubit è una matrice densità $\rho=\frac12(\Id+\vec p\cdot\vec\sigma)$, cioè un punto $\vec p$ nella sfera: sulla superficie gli stati puri ($|\vec p|=1$), dentro le miscele ($|\vec p|&lt;1$).</p>
+  <div class="start"><b>Inizia da qui:</b> lo stato sta già ruotando attorno a $\sigma_3$. Premi la porta <b>H</b> o <b>X</b> e guarda dove va, poi trascina la sfera per girarla.</div>
+</header>
+
 <div class="grid">
- <section class="card">
-  <canvas id="sph"></canvas>
-  <div class="row">
-   <button id="mView" class="on">Trascina: ruota vista</button>
-   <button id="mState">Trascina: sposta stato</button>
-   <button id="clr">Cancella traccia</button>
+  <div class="stack">
+    <section class="card">
+      <h2>La sfera</h2>
+      <canvas id="sphere" role="img" aria-label="Sfera di Bloch con il vettore dello stato"></canvas>
+      <p class="hint">👆 Trascina la sfera per guardarla da un altro punto di vista. La scia mostra il percorso dello stato.</p>
+      <div class="row">
+        <button class="pri" id="spin" title="Accende o spegne la rotazione continua dello stato">⏸ Ferma la rotazione</button>
+        <label title="Asse attorno a cui ruota lo stato (evoluzione con H ∝ n·σ)">attorno a
+          <select id="axis"><option value="3">σ₃ (asse verticale)</option><option value="1">σ₁</option><option value="2">σ₂</option></select></label>
+        <button id="view" title="Riporta la sfera alla vista iniziale">↺ Vista iniziale</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Scegli lo stato</h2>
+      <div class="ctl" title="Angolo dal polo nord |+⟩: 0° = |+⟩, 180° = |−⟩">
+        <div class="lab"><span>Angolo polare $\theta$</span><output id="thO"></output></div>
+        <input type="range" id="th" min="0" max="180" step="0.5">
+      </div>
+      <div class="ctl" title="Angolo attorno all'asse σ₃: è la fase relativa φ tra a₋ e a₊">
+        <div class="lab"><span>Fase relativa $\varphi$</span><output id="phO"></output></div>
+        <input type="range" id="ph" min="0" max="360" step="0.5">
+      </div>
+      <div class="ctl" title="Lunghezza del vettore p: 1 = stato puro, meno di 1 = miscela, 0 = miscela completamente casuale">
+        <div class="lab"><span>Purezza: lunghezza $|\vec p|$</span><output id="rO"></output></div>
+        <input type="range" id="r" min="0" max="1" step="0.005">
+      </div>
+      <div class="row" id="presets"></div>
+    </section>
   </div>
-  <p class="small">Il polo nord è $\ket{+}$ ($p_3=+1$) e il polo sud è $\ket{-}$. Sull'asse $x$ c'è $\ket{\psi_1}=\tfrac1{\sqrt2}(\ket{+}+\ket{-})$. Punto pieno: stato attuale. Croce: stima della tomografia.</p>
-  <canvas id="tr"></canvas>
-  <p class="small">Andamento nel tempo di $\ave{\sigma_1},\ave{\sigma_2},\ave{\sigma_3}$ e di $\Tr\rho^2$ (linea tratteggiata).</p>
- </section>
- <section style="display:flex;flex-direction:column;gap:14px;min-width:0">
-  <div class="card">
-   <h2>Stato $\rho=\tfrac12(\Id+\vec p\cdot\vec\sigma)$</h2>
-   <div class="row"><label>$\theta$ (polare)</label><input id="th" type="range" min="0" max="180" step="0.5"><output id="thO"></output></div>
-   <div class="row"><label>$\varphi$ (fase relativa)</label><input id="ph" type="range" min="0" max="360" step="0.5"><output id="phO"></output></div>
-   <div class="row"><label>$|\vec p|$ (purezza)</label><input id="r" type="range" min="0" max="1" step="0.005"><output id="rO"></output></div>
-   <div class="row">
-    <button data-p="plus">$\ket{+}$</button><button data-p="minus">$\ket{-}$</button>
-    <button data-p="psi1">$\ket{\psi_1}$</button><button data-p="mix">miscela $\Id/2$</button>
-    <button data-p="eser">Esercizio 75–25</button><button data-p="term">termico $\beta\Delta=1$</button>
-   </div>
-   <div class="vals" id="vals"></div>
-   <div class="mat" id="mat"></div>
+
+  <div class="stack">
+    <section class="card">
+      <h2>La matrice densità</h2>
+      <p class="hint" style="margin-top:0">$\rho=\frac12\begin{pmatrix}1+p_3 & p_1-ip_2\\ p_1+ip_2 & 1-p_3\end{pmatrix}$, che per lo stato attuale vale:</p>
+      <div class="formula" id="rhoTex"></div>
+      <p class="hint" id="ketHint"></p>
+      <div class="formula" id="ketTex"></div>
+      <div class="vals">
+        <div><span>$p_1=\ave{\sigma_1}$</span><b id="v1"></b></div>
+        <div><span>$p_2=\ave{\sigma_2}$</span><b id="v2"></b></div>
+        <div><span>$p_3=\ave{\sigma_3}$</span><b id="v3"></b></div>
+        <div><span>$\Tr\rho^2$</span><b id="vtr"></b></div>
+        <div><span>$\det\rho$</span><b id="vdet"></b></div>
+        <div><span>$P_+=\frac{1+p_3}{2}$</span><b id="vP"></b></div>
+      </div>
+      <p style="margin:.5rem 0 0">Lo stato è <span id="badge" class="badge"></span></p>
+    </section>
+
+    <section class="card">
+      <h2>Porte quantistiche</h2>
+      <p class="hint">Ogni porta è una rotazione di $180^\circ$ della sfera: $X=\sigma_1$, $Y=\sigma_2$, $Z=\sigma_3$ attorno ai loro assi, $H$ attorno alla bisettrice tra $\sigma_1$ e $\sigma_3$.</p>
+      <div class="row gates">
+        <button data-g="X" title="Porta X = σ₁: scambia |+⟩ e |−⟩">X</button>
+        <button data-g="Y" title="Porta Y = σ₂">Y</button>
+        <button data-g="Z" title="Porta Z = σ₃: cambia il segno di a₋ (fase φ + 180°)">Z</button>
+        <button data-g="H" title="Porta di Hadamard: porta |+⟩ in |ψ₁⟩ = (|+⟩+|−⟩)/√2">H</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Ricostruire lo stato dalle misure</h2>
+      <p class="hint">Hai tante copie dello stato ma non sai come è stato preparato. Misurando $\sigma_1,\sigma_2,\sigma_3$ su $N$ copie ciascuna si stimano $p_i=\ave{\sigma_i}$.</p>
+      <div class="row">
+        <label title="Numero di copie misurate per ogni osservabile">copie $N$
+          <select id="N"><option>10</option><option selected>100</option><option>1000</option><option>10000</option></select></label>
+        <button class="pri" id="tomo" title="Misura σ₁, σ₂ e σ₃ e ricostruisce p">Misura $\sigma_1,\sigma_2,\sigma_3$</button>
+        <button id="tomo3" title="Misura solo σ₃: la fase resta sconosciuta">Solo $\sigma_3$</button>
+      </div>
+      <div id="tomoOut"></div>
+    </section>
   </div>
-  <div class="card">
-   <h2>Evoluzione: $H=\tfrac{\hbar\omega}{2}\,\hat n\cdot\vec\sigma$ e decoerenza</h2>
-   <div class="row"><button id="play" class="pri">▶ Avvia</button><button id="rst">Reimposta</button>
-    <span class="small">asse $\hat n$:</span><button data-n="x">$x$</button><button data-n="y">$y$</button><button data-n="z" class="on">$z$</button><button data-n="d">diag.</button></div>
-   <div class="row"><label>$\omega$ (rad/s)</label><input id="om" type="range" min="-6" max="6" step="0.05" value="1.5"><output id="omO"></output></div>
-   <div class="row"><label>defasamento $\gamma$ (1/s)</label><input id="ga" type="range" min="0" max="1.5" step="0.01" value="0"><output id="gaO"></output></div>
-   <div class="row small">t = <span id="tO">0.00</span> s</div>
-  </div>
-  <div class="card">
-   <h2>Tomografia: misure su $N$ copie</h2>
-   <div class="row"><label>$N$ copie per asse</label><input id="N" type="range" min="1" max="4" step="0.01" value="2"><output id="NO"></output></div>
-   <div class="row"><button id="meas" class="pri">Misura $\sigma_1,\sigma_2,\sigma_3$</button><button id="meas3">Solo $\sigma_3$</button></div>
-   <div id="tomo" class="small">Nessuna misura ancora.</div>
-  </div>
- </section>
 </div>
-<section class="card" style="margin-top:14px">
- <h2>Cosa osservare</h2>
- <ol>
-  <li><b>La fase globale non conta.</b> Per uno stato puro $\ket{\psi}=\rho\ket{+}+\sqrt{1-\rho^2}\,e^{i\varphi}\ket{-}$ si ha $\rho=\cos\tfrac\theta2$ e
-  $$\vec p=\big(2\rho\sqrt{1-\rho^2}\cos\varphi,\;2\rho\sqrt{1-\rho^2}\sin\varphi,\;2\rho^2-1\big).$$ Fai variare $\varphi$: il punto gira attorno all'asse $z$ e $P_+=\rho^2$ resta fisso.</li>
-  <li><b>Puro e miscela.</b> Premi $\ket{\psi_1}$ e poi «miscela $\Id/2$». Hanno le stesse $P_\pm=\tfrac12$, ma $\ave{\sigma_1}$ vale $1$ nel primo caso e $0$ nel secondo. Abbassa $|\vec p|$ e osserva $\Tr\rho^2=\tfrac12(1+|\vec p|^2)$ e $\det\rho=\tfrac14(1-|\vec p|^2)$.</li>
-  <li><b>La decomposizione non è unica.</b> Il preset «Esercizio» mostra $\ket{\psi_1}$ e $\ket{\psi_2}$ (punti vuoti). La miscela 50–50 sta a metà della corda che li unisce, in $\vec p=(0,0,\tfrac12)$, che è lo stesso punto della miscela 75%–25% di $\ket{\pm}$.</li>
-  <li><b>Precessione.</b> Con asse $z$ e $\ave{H}$ fissato, il vettore ruota a velocità angolare $\omega$, $\varphi(t)=\varphi_0+\omega t$, mentre $P_\pm$ non cambiano. Con asse $x$ cambiano anche le popolazioni. Accendi $\gamma$: le coerenze decadono come $e^{-\gamma t}$ e lo stato va verso l'interno della sfera, cioè diventa misto.</li>
-  <li><b>Ricostruire lo stato (domanda aperta).</b> «Solo $\sigma_3$» fornisce $\rho^2$ ma non $\varphi$. Le tre misure, che non commutano tra loro, danno $\hat p_i=(n_+-n_-)/N$ e quindi $\rho$ completa. L'errore decresce come $\sim1/\sqrt N$.</li>
- </ol>
+
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Puri e miscele.</b> Riduci la purezza $|\vec p|$: il punto entra nella sfera, $\Tr\rho^2=\frac12(1+|\vec p|^2)$ scende sotto 1 e $\det\rho=\frac14(1-|\vec p|^2)$ diventa positivo. Al centro c'è $\rho=\frac12\Id$, la miscela 50% $\ket{+}$ e 50% $\ket{-}$.</li>
+    <li><b>La fase relativa è un angolo.</b> Uno stato puro $\ket{\psi}=\cos\frac\theta2\ket{+}+e^{i\varphi}\sin\frac\theta2\ket{-}$ ha $\vec p=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta)$. La rotazione attorno a $\sigma_3$ cambia solo $\varphi$: $P_+$ resta fisso mentre $p_1$ e $p_2$ oscillano.</li>
+    <li><b>Una sola osservabile non basta.</b> Premi “Solo $\sigma_3$”: si stima $p_3$, ma tutti gli stati sul cerchio disegnato hanno le stesse statistiche. È la domanda lasciata aperta negli appunti: per trovare $\varphi$ servono misure di osservabili che non commutano con $\sigma_3$, come $\sigma_1$ e $\sigma_2$.</li>
+    <li><b>Più copie, stima migliore.</b> Ripeti la ricostruzione con $N=10$ e con $N=10000$: l'errore su ogni $p_i$ è circa $\sqrt{(1-p_i^2)/N}$. Con poche copie lo stato stimato può perfino uscire dalla sfera, cosa impossibile per uno stato vero.</li>
+    <li><b>Porte come rotazioni.</b> Da $\ket{+}$, la porta $H$ porta in $\ket{\psi_1}=\frac{\ket{+}+\ket{-}}{\sqrt2}$ sull'equatore; $X$ scambia i poli; $Z$ aggiunge $180^\circ$ alla fase. Le rotazioni non cambiano $|\vec p|$: una porta non trasforma mai uno stato puro in una miscela.</li>
+  </ol>
 </section>
 <footer>Simulazione creata con MILKeX</footer>
 </main>
+
 <script>
-(()=>{
-const $=id=>document.getElementById(id);
-let p=[1,0,0], view={a:-0.65,b:0.38}, axis=[0,0,1], running=false, t=0, trail=[], hist=[], ghosts=[], est=null, est3=false, dragMode='view';
-const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const norm=v=>Math.hypot(v[0],v[1],v[2]);
-function setPolar(th,ph,r){p=[r*Math.sin(th)*Math.cos(ph),r*Math.sin(th)*Math.sin(ph),r*Math.cos(th)];}
-function syncSliders(){const r=norm(p);let th=r>1e-9?Math.acos(Math.max(-1,Math.min(1,p[2]/r))):0;let ph=Math.atan2(p[1],p[0]);if(ph<0)ph+=2*Math.PI;
- if(r>1e-6&&Math.hypot(p[0],p[1])>1e-6*r)$('ph').value=(ph*180/Math.PI).toFixed(1);
- $('th').value=(th*180/Math.PI).toFixed(1);$('r').value=r.toFixed(3);}
-function fromSliders(){setPolar($('th').value*Math.PI/180,$('ph').value*Math.PI/180,+$('r').value);}
-['th','ph','r'].forEach(id=>$(id).addEventListener('input',()=>{fromSliders();ghosts=[];est=null;trail=[];update();}));
-const presets={plus:[0,0,1],minus:[0,0,-1],psi1:[1,0,0],mix:[0,0,0],eser:[0,0,.5],term:[0,0,-Math.tanh(.5)]};
-document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{p=presets[b.dataset.p].slice();ghosts=b.dataset.p==='eser'?[[0,Math.sqrt(3)/2,.5],[0,-Math.sqrt(3)/2,.5]]:[];est=null;trail=[];syncSliders();update();});
-const axes={x:[1,0,0],y:[0,1,0],z:[0,0,1],d:[1/Math.sqrt(3),1/Math.sqrt(3),1/Math.sqrt(3)]};
-document.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{axis=axes[b.dataset.n];document.querySelectorAll('[data-n]').forEach(c=>c.classList.toggle('on',c===b));});
-$('play').onclick=()=>{running=!running;$('play').textContent=running?'❚❚ Pausa':'▶ Avvia';};
-let p0=null;
-$('rst').onclick=()=>{if(p0)p=p0.slice();t=0;trail=[];hist=[];syncSliders();update();};
-$('clr').onclick=()=>{trail=[];};
-$('mView').onclick=()=>{dragMode='view';$('mView').classList.add('on');$('mState').classList.remove('on');};
-$('mState').onclick=()=>{dragMode='state';$('mState').classList.add('on');$('mView').classList.remove('on');};
-// ---- evoluzione esatta: rotazione di Rodrigues + defasamento rispetto a n
-function step(dt){const w=+$('om').value,g=+$('ga').value,n=axis,a=w*dt,c=Math.cos(a),s=Math.sin(a);
- const d=n[0]*p[0]+n[1]*p[1]+n[2]*p[2];const cr=[n[1]*p[2]-n[2]*p[1],n[2]*p[0]-n[0]*p[2],n[0]*p[1]-n[1]*p[0]];
- let q=[0,1,2].map(i=>p[i]*c+cr[i]*s+n[i]*d*(1-c));
- const f=Math.exp(-g*dt);p=[0,1,2].map(i=>n[i]*d+(q[i]-n[i]*d)*f);}
-// ---- tomografia
-function binom(N,pr){let k=0;for(let i=0;i<N;i++)if(Math.random()<pr)k++;return k;}
-function measure(all){const N=Math.round(10**+$('N').value);const r=[];for(let i=0;i<3;i++){if(!all&&i<2){r.push(null);continue;}const np=binom(N,(1+p[i])/2);r.push((2*np-N)/N);}
- est=r;est3=!all;let h='';const nm=['σ₁','σ₂','σ₃'];
- r.forEach((v,i)=>{if(v===null)return;const sd=Math.sqrt(Math.max(0,1-p[i]*p[i])/N);h+=`⟨${nm[i]}⟩ stimato = <b>${v.toFixed(3)}</b> (vero ${p[i].toFixed(3)}, ±${sd.toFixed(3)})<br>`;});
- if(all){const rr=norm(r);let ph=Math.atan2(r[1],r[0])*180/Math.PI;if(ph<0)ph+=360;h+=`⇒ φ̂ = <b>${ph.toFixed(1)}°</b>, |p̂| = ${rr.toFixed(3)}${rr>1?' (>1 per rumore statistico)':''}`;}
- else{const r2=(1+r[2])/2;h+=`⇒ ρ̂² = P̂₊ = <b>${r2.toFixed(3)}</b>. La fase φ resta indeterminata.`;}
- $('tomo').innerHTML=h;}
-$('meas').onclick=()=>measure(true);$('meas3').onclick=()=>measure(false);
-// ---- canvas
-const cv=$('sph'),cx=cv.getContext('2d'),tv=$('tr'),tx=tv.getContext('2d');
-function fit(c,ctx){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);return[r.width,r.height];}
-let SW,SH,TW,TH;function resize(){[SW,SH]=fit(cv,cx);[TW,TH]=fit(tv,tx);}
-addEventListener('resize',resize);
-function proj(v){const ca=Math.cos(view.a),sa=Math.sin(view.a),cb=Math.cos(view.b),sb=Math.sin(view.b);
- const x1=v[0]*ca-v[1]*sa,y1=v[0]*sa+v[1]*ca;const y2=y1*cb-v[2]*sb,z2=y1*sb+v[2]*cb;const R=Math.min(SW,SH)*.36;
- return{x:SW/2+R*x1,y:SH/2-R*z2,d:y2};}
-function unproj(sx,sy){const R=Math.min(SW,SH)*.36;let X=(sx-SW/2)/R,Z=-(sy-SH/2)/R;let q=X*X+Z*Z;if(q>1){const k=1/Math.sqrt(q);X*=k;Z*=k;q=1;}
- const Y=-Math.sqrt(1-q);const cb=Math.cos(view.b),sb=Math.sin(view.b),ca=Math.cos(view.a),sa=Math.sin(view.a);
- const y1=Y*cb+Z*sb,z=-Y*sb+Z*cb;return[X*ca+y1*sa,-X*sa+y1*ca,z];}
-function curve(fn,col,w){const N=96;cx.lineWidth=w;for(let i=0;i<N;i++){const a=proj(fn(i/N*2*Math.PI)),b=proj(fn((i+1)/N*2*Math.PI));
- cx.strokeStyle=col;cx.globalAlpha=(a.d+b.d)/2<0?0.9:0.28;cx.beginPath();cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y);cx.stroke();}cx.globalAlpha=1;}
-function line(a,b,col,w,dash){const A=proj(a),B=proj(b);cx.strokeStyle=col;cx.lineWidth=w;cx.setLineDash(dash||[]);cx.beginPath();cx.moveTo(A.x,A.y);cx.lineTo(B.x,B.y);cx.stroke();cx.setLineDash([]);}
-function label(v,t,col){const P=proj(v);cx.fillStyle=col;cx.font='14px system-ui';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(t,P.x,P.y);}
-function drawSphere(){cx.clearRect(0,0,SW,SH);const R=Math.min(SW,SH)*.36,grid=css('--grid'),fg=css('--fg');
- cx.strokeStyle=grid;cx.lineWidth=1.3;cx.beginPath();cx.arc(SW/2,SH/2,R,0,7);cx.stroke();
- curve(a=>[Math.cos(a),Math.sin(a),0],grid,1.2);curve(a=>[Math.cos(a),0,Math.sin(a)],grid,1);curve(a=>[0,Math.cos(a),Math.sin(a)],grid,1);
- line([-1.25,0,0],[1.25,0,0],css('--x'),1.2);line([0,-1.25,0],[0,1.25,0],css('--y'),1.2);line([0,0,-1.25],[0,0,1.25],css('--z'),1.2);
- label([1.4,0,0],'p₁ · |ψ₁⟩',css('--x'));label([0,1.38,0],'p₂',css('--y'));label([0,0,1.36],'|+⟩',css('--z'));label([0,0,-1.36],'|−⟩',css('--z'));
- if(running||+$('om').value)line(axis.map(v=>-1.1*v),axis.map(v=>1.1*v),css('--acc2'),1.5,[5,4]);
- // traccia
- cx.strokeStyle=css('--acc');cx.lineWidth=1.6;cx.globalAlpha=.55;cx.beginPath();trail.forEach((v,i)=>{const P=proj(v);i?cx.lineTo(P.x,P.y):cx.moveTo(P.x,P.y);});cx.stroke();cx.globalAlpha=1;
- // ghosts
- if(ghosts.length){line(ghosts[0],ghosts[1],css('--mut'),1.2,[3,3]);ghosts.forEach((g,i)=>{const P=proj(g);cx.strokeStyle=css('--mut');cx.lineWidth=2;cx.beginPath();cx.arc(P.x,P.y,6,0,7);cx.stroke();label([g[0],g[1]*1.15,g[2]+.15],i?'|ψ₂⟩':'|ψ₁⟩',css('--mut'));});}
- // proiezione su z e vettore
- const pz=[0,0,p[2]];line([p[0],p[1],p[2]],pz,grid,1,[2,3]);line([p[0],p[1],0],[p[0],p[1],p[2]],grid,1,[2,3]);
- line([0,0,0],p,css('--acc'),3);const P=proj(p);cx.fillStyle=css('--acc');cx.beginPath();cx.arc(P.x,P.y,7,0,7);cx.fill();cx.strokeStyle=css('--card');cx.lineWidth=2;cx.stroke();
- if(est&&!est3){const E=proj(est);cx.strokeStyle=css('--acc2');cx.lineWidth=2.5;cx.beginPath();cx.moveTo(E.x-6,E.y-6);cx.lineTo(E.x+6,E.y+6);cx.moveTo(E.x+6,E.y-6);cx.lineTo(E.x-6,E.y+6);cx.stroke();}
- if(est&&est3){/* solo σ3: cerchio di latitudine compatibile */const z=Math.max(-1,Math.min(1,est[2])),s=Math.sqrt(1-z*z)*norm(p)/Math.max(1e-9,norm(p));curve(a=>[s*Math.cos(a),s*Math.sin(a),z],css('--acc2'),2);}
- const cO=proj([0,0,0]);cx.fillStyle=fg;cx.beginPath();cx.arc(cO.x,cO.y,2.5,0,7);cx.fill();}
-function drawTrace(){tx.clearRect(0,0,TW,TH);const L=36,Rr=8,T=8,B=20,w=TW-L-Rr,h=TH-T-B;tx.strokeStyle=css('--grid');tx.fillStyle=css('--mut');tx.font='11px system-ui';tx.lineWidth=1;
- tx.textAlign='right';tx.textBaseline='middle';[-1,-.5,0,.5,1].forEach(v=>{const y=T+h*(1-v)/2;tx.globalAlpha=v===0?.9:.4;tx.beginPath();tx.moveTo(L,y);tx.lineTo(L+w,y);tx.stroke();tx.globalAlpha=1;tx.fillText(v,L-4,y);});
- tx.textAlign='center';tx.fillText('t (ultimi 10 s)',L+w/2,TH-6);
- if(hist.length<2)return;const t1=hist[hist.length-1][0],t0=t1-10;const X=tt=>L+w*(tt-t0)/10,Y=v=>T+h*(1-v)/2;
- [[1,'--x'],[2,'--y'],[3,'--z'],[4,'--fg']].forEach(([k,c])=>{tx.strokeStyle=css(c);tx.lineWidth=k===4?1.3:1.8;tx.setLineDash(k===4?[4,3]:[]);tx.beginPath();let st=false;hist.forEach(e=>{if(e[0]<t0)return;const x=X(e[0]),y=Y(e[k]);st?tx.lineTo(x,y):(tx.moveTo(x,y),st=true);});tx.stroke();});tx.setLineDash([]);
- tx.textAlign='left';[['⟨σ₁⟩','--x'],['⟨σ₂⟩','--y'],['⟨σ₃⟩','--z'],['Trρ²','--fg']].forEach(([s,c],i)=>{tx.fillStyle=css(c);tx.fillText(s,L+6+i*48,T+8);});}
-const f=(v,d=3)=>(Math.abs(v)<5e-4?0:v).toFixed(d);
-function cplx(re,im){return `${f(re)} ${im<0?'−':'+'} ${f(Math.abs(im))}i`;}
-function update(){const r=norm(p),pur=.5*(1+r*r),det=.25*(1-r*r),Pp=(1+p[2])/2;
- $('thO').textContent=(+$('th').value).toFixed(1)+'°';$('phO').textContent=(+$('ph').value).toFixed(1)+'°';$('rO').textContent=r.toFixed(3);
- $('omO').textContent=(+$('om').value).toFixed(2);$('gaO').textContent=(+$('ga').value).toFixed(2);$('NO').textContent=Math.round(10**+$('N').value);
- const pure=r>0.9995;const badge=pure?`<span class="badge" style="background:var(--ok);color:var(--card)">PURO</span>`:`<span class="badge" style="background:var(--acc2);color:var(--card)">MISTO</span>`;
- let extra=pure?`<div><b>ρ = a₊ = cos(θ/2)</b>${f(Math.sqrt(Pp))}</div>`:`<div><b>autovalori P₁, P₂</b>${f((1+r)/2)}, ${f((1-r)/2)}</div>`;
- $('vals').innerHTML=`<div><b>tipo</b>${badge}</div><div><b>⟨σ₁⟩ = p₁</b>${f(p[0])}</div><div><b>⟨σ₂⟩ = p₂</b>${f(p[1])}</div><div><b>⟨σ₃⟩ = p₃</b>${f(p[2])}</div>
- <div><b>|p|</b>${f(r)}</div><div><b>Tr ρ²</b>${f(pur)}</div><div><b>det ρ</b>${f(det,4)}</div><div><b>P₊ , P₋</b>${f(Pp)} , ${f(1-Pp)}</div>${extra}<div><b>Tr ρ</b>1.000</div>`;
- $('mat').textContent=`ρ = ⎛ ${f((1+p[2])/2)}            ${cplx(p[0]/2,-p[1]/2)} ⎞\n    ⎝ ${cplx(p[0]/2,p[1]/2)}   ${f((1-p[2])/2)}           ⎠`;}
-// ---- trascinamento
-let drag=null;
-cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);const b=cv.getBoundingClientRect();drag={x:e.clientX,y:e.clientY};
- if(dragMode==='state')moveState(e.clientX-b.left,e.clientY-b.top);cv.style.cursor='grabbing';});
-cv.addEventListener('pointermove',e=>{if(!drag)return;const b=cv.getBoundingClientRect();
- if(dragMode==='view'){view.a+=(e.clientX-drag.x)*.01;view.b=Math.max(-1.5,Math.min(1.5,view.b+(e.clientY-drag.y)*.01));}else moveState(e.clientX-b.left,e.clientY-b.top);
- drag={x:e.clientX,y:e.clientY};});
-const end=()=>{drag=null;cv.style.cursor='grab';};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
-function moveState(sx,sy){const r=Math.max(norm(p),0.05);const u=unproj(sx,sy);p=u.map(v=>v*r);ghosts=[];est=null;syncSliders();update();}
-// ---- ciclo
-let last=performance.now(),acc=0;
-function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
- if(running){if(t===0)p0=p.slice();const n=8;for(let i=0;i<n;i++)step(dt/n);t+=dt;syncSliders();update();
-  trail.push(p.slice());if(trail.length>900)trail.shift();}
- acc+=dt;if(acc>.03){acc=0;const r=norm(p);hist.push([t+(running?0:0),p[0],p[1],p[2],.5*(1+r*r)]);if(!running)hist[hist.length-1][0]=hist.length>1?hist[hist.length-2][0]+(running?0:.03):0;if(hist.length>600)hist.shift();}
- $('tO').textContent=t.toFixed(2);drawSphere();drawTrace();requestAnimationFrame(loop);}
-setPolar(Math.PI/3,Math.PI/2,1);syncSliders();update();resize();requestAnimationFrame(loop);
-})();
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const tnum = (x, d = 2) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace(".", "{,}"); };
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const norm = a => Math.hypot(a[0], a[1], a[2]);
+function rotate(v, n, ang) {            // formula di Rodrigues: rotazione di v attorno al versore n
+  const c = Math.cos(ang), s = Math.sin(ang), d = dot(n, v);
+  const cr = [n[1] * v[2] - n[2] * v[1], n[2] * v[0] - n[0] * v[2], n[0] * v[1] - n[1] * v[0]];
+  return [0, 1, 2].map(i => v[i] * c + cr[i] * s + n[i] * d * (1 - c));
+}
+// ---- stato: vettore di Bloch p (x = σ₁, y = σ₂, z = σ₃)
+let p = [Math.sin(1.1), 0, Math.cos(1.1)];
+let spinning = true, axis = [0, 0, 1], omega = 1.2;
+let anim = null, trail = [], est = null, est3 = null;
+let yaw = -0.55, pitch = 0.32, drag = null;
+const AX = { 1: [1, 0, 0], 2: [0, 1, 0], 3: [0, 0, 1] };
+const GATES = { X: [1, 0, 0], Y: [0, 1, 0], Z: [0, 0, 1], H: [Math.SQRT1_2, 0, Math.SQRT1_2] };
+
+// ---- proiezione 3D → schermo
+function proj(v, W, H) {
+  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const X = v[0] * cy - v[1] * sy, Y = v[0] * sy + v[1] * cy, Z = v[2];
+  const Zs = Z * cp - X * sp, depth = X * cp + Z * sp;
+  const R = Math.min(W, H) * 0.34;
+  return [W / 2 + Y * R, H / 2 - Zs * R, depth];
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+function circle3(g, W, H, f, col, w) {     // cerchio 3D: davanti continuo, dietro tratteggiato
+  for (const front of [false, true]) {
+    g.beginPath(); let pen = false;
+    for (let i = 0; i <= 160; i++) {
+      const q = proj(f(i / 160 * 2 * Math.PI), W, H);
+      if ((q[2] >= 0) !== front) { pen = false; continue; }
+      pen ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); pen = true;
+    }
+    g.setLineDash(front ? [] : [4, 4]); g.strokeStyle = col; g.lineWidth = w; g.globalAlpha = front ? 1 : .55; g.stroke();
+  }
+  g.setLineDash([]); g.globalAlpha = 1;
+}
+function label(g, W, text, x, y, col, font) {
+  g.font = font || "13px system-ui"; g.fillStyle = col; g.textBaseline = "middle";
+  const w = g.measureText(text).width;
+  g.textAlign = "left"; g.fillText(text, Math.max(10, Math.min(W - w - 10, x - w / 2)), y);
+}
+function arrow(g, a, b, col, w, dashed) {
+  g.strokeStyle = col; g.fillStyle = col; g.lineWidth = w; if (dashed) g.setLineDash([6, 4]);
+  g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); g.setLineDash([]);
+  const L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 6) return;
+  const ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L, h = 11;
+  g.beginPath(); g.moveTo(b[0], b[1]); g.lineTo(b[0] - h * ux + h * .45 * uy, b[1] - h * uy - h * .45 * ux); g.lineTo(b[0] - h * ux - h * .45 * uy, b[1] - h * uy + h * .45 * ux); g.closePath(); g.fill();
+}
+function draw() {
+  const { g, W, H } = setup($("sphere")); g.clearRect(0, 0, W, H);
+  const bd = css("--bd"), mut = css("--mut"), fg = css("--fg");
+  const O = proj([0, 0, 0], W, H), R = Math.min(W, H) * 0.34;
+  // sfera
+  g.fillStyle = css("--soft"); g.beginPath(); g.arc(W / 2, H / 2, R, 0, 2 * Math.PI); g.fill();
+  g.strokeStyle = bd; g.lineWidth = 1.2; g.stroke();
+  circle3(g, W, H, a => [Math.cos(a), Math.sin(a), 0], mut, 1);
+  circle3(g, W, H, a => [Math.cos(a), 0, Math.sin(a)], bd, 1);
+  circle3(g, W, H, a => [0, Math.cos(a), Math.sin(a)], bd, 1);
+  // assi ed etichette
+  const axes = [[[0, 0, 1], "|+⟩", "σ₃"], [[0, 0, -1], "|−⟩", ""], [[1, 0, 0], "|ψ₁⟩", "σ₁"], [[-1, 0, 0], "|ψ₂⟩", ""], [[0, 1, 0], "σ₂", ""], [[0, -1, 0], "", ""]];
+  for (const [v, l] of axes) {
+    const q = proj(v.map(x => x * 1.14), W, H);
+    g.strokeStyle = mut; g.lineWidth = 1; g.globalAlpha = .7; g.beginPath(); g.moveTo(O[0], O[1]); g.lineTo(q[0], q[1]); g.stroke(); g.globalAlpha = 1;
+    if (l) { const q2 = proj(v.map(x => x * 1.26), W, H); label(g, W, l, q2[0], q2[1], fg, "600 14px system-ui"); }
+  }
+  // asse di rotazione
+  if (spinning) { const a1 = proj(axis.map(x => x * 1.1), W, H), a2 = proj(axis.map(x => -x * 1.1), W, H);
+    g.strokeStyle = css("--c2"); g.lineWidth = 2; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(a2[0], a2[1]); g.lineTo(a1[0], a1[1]); g.stroke(); g.setLineDash([]); }
+  // cerchio degli stati compatibili con la sola misura di σ₃
+  if (est3 !== null) {
+    const z = Math.max(-1, Math.min(1, est3)), rr = Math.sqrt(1 - z * z);
+    circle3(g, W, H, a => [rr * Math.cos(a), rr * Math.sin(a), z], css("--c2"), 2.5);
+  }
+  // scia
+  if (trail.length > 1) {
+    g.strokeStyle = css("--c1"); g.lineWidth = 2;
+    for (let i = 1; i < trail.length; i++) {
+      const a = proj(trail[i - 1], W, H), b = proj(trail[i], W, H);
+      g.globalAlpha = 0.08 + 0.6 * i / trail.length; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+  // stato stimato dalle misure
+  if (est) { const e = proj(est, W, H); arrow(g, O, e, css("--c2"), 2.2, true); label(g, W, "stima", e[0] + 26, e[1] - 12, css("--c2"), "600 13px system-ui"); }
+  // proiezione e vettore dello stato
+  const P = proj(p, W, H), Pz = proj([p[0], p[1], 0], W, H);
+  g.setLineDash([3, 3]); g.strokeStyle = mut; g.lineWidth = 1;
+  g.beginPath(); g.moveTo(O[0], O[1]); g.lineTo(Pz[0], Pz[1]); g.lineTo(P[0], P[1]); g.stroke(); g.setLineDash([]);
+  arrow(g, O, P, css("--c3"), 3.2);
+  g.fillStyle = css("--c3"); g.beginPath(); g.arc(P[0], P[1], 5.5, 0, 2 * Math.PI); g.fill();
+  label(g, W, "p", P[0] + 14, P[1] - 12, css("--c3"), "italic 700 16px Georgia, serif");
+}
+
+// ---- testi e valori
+let lastRho = "", lastKet = "", lastPure = null;
+function updateTexts() {
+  const r = norm(p), Tr = 0.5 * (1 + r * r), det = 0.25 * (1 - r * r);
+  const s = String.raw`\rho=\begin{pmatrix}${tnum((1 + p[2]) / 2)} & ${cx(p[0] / 2, -p[1] / 2)}\\ ${cx(p[0] / 2, p[1] / 2)} & ${tnum((1 - p[2]) / 2)}\end{pmatrix}`;
+  if (s !== lastRho) { tex($("rhoTex"), s, true); lastRho = s; }
+  let k;
+  if (r > 0.995) {
+    const th = Math.acos(Math.max(-1, Math.min(1, p[2] / r))); let ph = Math.atan2(p[1], p[0]) * 180 / Math.PI; if (ph < 0) ph += 360;
+    const c = Math.cos(th / 2), sn = Math.sin(th / 2);
+    k = String.raw`\ket{\psi}=${tnum(c)}\ket{+}+${tnum(sn)}\,e^{i\,${Math.round(ph) % 360}^\circ}\ket{-}`;
+  } else {
+    const lp = (1 + r) / 2;
+    k = String.raw`\text{autovalori di }\rho:\ ${tnum(lp)}\ \text{e}\ ${tnum(1 - lp)}`;
+  }
+  if (k !== lastKet) {
+    tex($("ketTex"), k, true); lastKet = k;
+    const pureNow = r > 0.995;
+    if (pureNow !== lastPure) {
+      lastPure = pureNow;
+      $("ketHint").innerHTML = pureNow ? "Stato puro, quindi $\\rho=\\ket{\\psi}\\bra{\\psi}$ con $\\ket{\\psi}=\\cos\\frac\\theta2\\ket{+}+e^{i\\varphi}\\sin\\frac\\theta2\\ket{-}$:"
+        : "Miscela: nessun $\\ket{\\psi}$ la descrive. Gli autovalori di $\\rho$ sono i pesi della miscela:";
+      mathify($("ketHint"));
+    }
+  }
+  $("v1").textContent = num(p[0]); $("v2").textContent = num(p[1]); $("v3").textContent = num(p[2]);
+  $("vtr").textContent = num(Tr); $("vdet").textContent = num(det); $("vP").textContent = num((1 + p[2]) / 2);
+  const pure = r > 0.995;
+  $("badge").textContent = pure ? "puro: |p| = 1, Tr ρ² = 1" : `misto: |p| = ${num(r, 2)} < 1`;
+  $("badge").className = "badge " + (pure ? "pure" : "mix");
+}
+function cx(re, im) {       // numero complesso in LaTeX
+  const a = tnum(re), b = tnum(Math.abs(im));
+  if (b === "0{,}00") return a;
+  return `${a}${im < 0 ? "-" : "+"}${b}\\,i`;
+}
+function syncSliders() {
+  const r = norm(p);
+  if (r > 1e-6) {
+    $("th").value = (Math.acos(Math.max(-1, Math.min(1, p[2] / r))) * 180 / Math.PI).toFixed(1);
+    if (Math.hypot(p[0], p[1]) > 1e-4 * r) { let ph = Math.atan2(p[1], p[0]) * 180 / Math.PI; if (ph < 0) ph += 360; $("ph").value = ph.toFixed(1); }
+  }
+  $("r").value = r.toFixed(3);
+  $("thO").textContent = num(+$("th").value, 1).replace(",0", "") + "°";
+  $("phO").textContent = num(+$("ph").value, 1).replace(",0", "") + "°";
+  $("rO").textContent = num(r, 3);
+}
+function fromSliders() {
+  const th = +$("th").value * Math.PI / 180, ph = +$("ph").value * Math.PI / 180, r = +$("r").value;
+  p = [r * Math.sin(th) * Math.cos(ph), r * Math.sin(th) * Math.sin(ph), r * Math.cos(th)];
+  trail = []; est = null; est3 = null; $("tomoOut").textContent = "";
+  $("thO").textContent = num(+$("th").value, 1).replace(",0", "") + "°";
+  $("phO").textContent = num(+$("ph").value, 1).replace(",0", "") + "°";
+  $("rO").textContent = num(r, 3);
+}
+
+// ---- animazione
+let last = performance.now(), trailT = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (anim) {
+    const k = Math.min(1, (now - anim.t0) / 900), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+    p = rotate(anim.from, anim.n, Math.PI * e);
+    if (k >= 1) anim = null;
+  } else if (spinning) p = rotate(p, axis, omega * dt);
+  trailT += dt;
+  if ((anim || spinning) && trailT > 0.03) { trail.push(p.slice()); if (trail.length > 160) trail.shift(); trailT = 0; }
+  if (spinning || anim) syncSliders();
+  updateTexts(); draw();
+  requestAnimationFrame(frame);
+}
+
+// ---- controlli
+const setSpin = v => { spinning = v; $("spin").textContent = v ? "⏸ Ferma la rotazione" : "▶ Fai ruotare lo stato"; };
+$("spin").onclick = () => setSpin(!spinning);
+$("axis").onchange = () => { axis = AX[$("axis").value]; trail = []; setSpin(true); };
+$("view").onclick = () => { yaw = -0.55; pitch = 0.32; };
+["th", "ph", "r"].forEach(id => $(id).addEventListener("input", () => { anim = null; fromSliders(); }));
+document.querySelectorAll("[data-g]").forEach(b => b.onclick = () => {
+  setSpin(false); est = null; est3 = null; $("tomoOut").textContent = "";
+  anim = { from: p.slice(), n: GATES[b.dataset.g], t0: performance.now() };
+});
+const S = Math.SQRT1_2;
+const presets = [
+  [String.raw`$\ket{+}$`, [0, 0, 1]], [String.raw`$\ket{-}$`, [0, 0, -1]],
+  [String.raw`$\ket{\psi_1}=\frac{\ket{+}+\ket{-}}{\sqrt2}$`, [1, 0, 0]], [String.raw`$\frac{\ket{+}+i\ket{-}}{\sqrt2}$`, [0, 1, 0]],
+  [String.raw`miscela $\frac12\Id$`, [0, 0, 0]], [String.raw`75% $\ket{+}$, 25% $\ket{-}$`, [0, 0, 0.5]]];
+for (const [l, v] of presets) {
+  const b = document.createElement("button"); b.innerHTML = l; b.title = "Prepara questo stato";
+  b.onclick = () => { anim = null; p = v.slice(); trail = []; est = null; est3 = null; $("tomoOut").textContent = ""; setSpin(false); syncSliders(); };
+  $("presets").append(b);
+}
+mathify($("presets"));
+function binom(N, P) {     // numero di risultati +1 su N copie (normale per N grande)
+  if (N <= 200) { let k = 0; for (let i = 0; i < N; i++) if (Math.random() < P) k++; return k; }
+  const u = 1 - Math.random(), v = Math.random(), z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  return Math.max(0, Math.min(N, Math.round(N * P + z * Math.sqrt(N * P * (1 - P)))));
+}
+function measure(all) {
+  setSpin(false); anim = null;
+  const N = +$("N").value, out = [];
+  for (let i = 0; i < 3; i++) {
+    if (!all && i < 2) { out.push(null); continue; }
+    const k = binom(N, (1 + p[i]) / 2); out.push((2 * k - N) / N);
+  }
+  const err = i => Math.sqrt(Math.max(0, 1 - p[i] * p[i]) / N);
+  if (all) {
+    est = out; est3 = null;
+    const r = norm(out);
+    $("tomoOut").innerHTML = `Stima: $\\tilde p=(${tnum(out[0])},\\ ${tnum(out[1])},\\ ${tnum(out[2])})$, $|\\tilde p|=${tnum(r)}$` +
+      ` (errore tipico su ogni componente $\\approx ${tnum(Math.max(err(0), err(1), err(2)), 3)}$).` +
+      (r > 1 ? ` <b class="bad">Fuori dalla sfera: è solo rumore statistico, servono più copie.</b>` : "");
+  } else {
+    est = null; est3 = out[2];
+    $("tomoOut").innerHTML = `Stima $\\tilde p_3=${tnum(out[2])}$, cioè $P_+\\approx${tnum((1 + out[2]) / 2)}$. ` +
+      `Tutti gli stati puri sul cerchio arancione danno queste statistiche: la fase $\\varphi$ resta sconosciuta.`;
+  }
+  mathify($("tomoOut"));
+}
+$("tomo").onclick = () => measure(true);
+$("tomo3").onclick = () => measure(false);
+const cv = $("sphere");
+cv.addEventListener("pointerdown", e => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener("pointermove", e => { if (!drag) return; yaw = drag.yaw - (e.clientX - drag.x) * 0.01; pitch = Math.max(-1.45, Math.min(1.45, drag.pitch + (e.clientY - drag.y) * 0.01)); });
+const end = () => { drag = null; };
+cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+syncSliders();
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>

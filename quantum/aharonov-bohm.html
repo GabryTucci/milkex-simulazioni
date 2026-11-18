@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Effetto Aharonov–Bohm ed effetto Zeeman</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#exp{height:330px}
+#ring{height:230px}
+#zee{height:200px}
+@media (max-width:600px){#exp{height:260px}}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Effetto Aharonov–Bohm ed effetto Zeeman</h1>
+  <p>Una carica $q$ sente il potenziale vettore $\vec A$ attraverso la fase della funzione d'onda. Dietro le due fenditure c'è un solenoide sottile: fuori $\vec B=0$, ma $\oint\vec A\cdot d\vec x=\Phi\neq0$, e le due strade accumulano una differenza di fase $\Delta g=\frac{q\Phi}{\hbar c}$.</p>
+  <div class="start"><b>Inizia da qui:</b> le particelle arrivano una alla volta e formano le frange. Muovi il flusso $\Phi$: le frange scivolano di lato anche se la particella non attraversa mai il campo magnetico.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>Due fenditure con un solenoide nel mezzo</h2>
+      <canvas id="exp" role="img" aria-label="Esperimento di Aharonov-Bohm con le frange"></canvas>
+      <div class="row">
+        <button class="pri" id="play" title="Ferma o fai ripartire l'arrivo delle particelle">⏸ Pausa</button>
+        <button id="clr" title="Cancella i punti sullo schermo">Pulisci lo schermo</button>
+        <span class="hint" id="cnt"></span>
+      </div>
+      <p class="hint">A destra: i punti sono le singole particelle, la curva è $|\psi|^2$ previsto. La linea tratteggiata segna il massimo centrale senza flusso.</p>
+    </section>
+    <section class="card">
+      <h2>Carica su un anello attorno al solenoide: $E_n(\Phi)$</h2>
+      <canvas id="ring" role="img" aria-label="Livelli di energia sull'anello in funzione del flusso"></canvas>
+      <p class="hint">$E_n=\frac{\hbar^2}{2mb^2}\left(n-\frac{q\Phi}{2\pi\hbar c}\right)^2$ per $n=-3,\dots,3$. La linea verticale è il flusso attuale.</p>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Flusso nel solenoide</h2>
+      <div class="ctl" title="Flusso magnetico in unità del quanto di flusso Φ₀ = 2πħc/q">
+        <div class="lab"><span>$\Phi/\Phi_0$, con $\Phi_0=\frac{2\pi\hbar c}{q}$</span><output id="fO"></output></div>
+        <input type="range" id="f" min="-1.5" max="1.5" step="0.01" value="0">
+      </div>
+      <label class="row" style="margin:.2rem 0" title="Fa variare il flusso avanti e indietro da solo"><input type="checkbox" id="sweep" checked> varia il flusso da solo</label>
+      <div class="vals">
+        <div><span>$\Delta g=\frac{q\Phi}{\hbar c}$</span><b id="vg"></b></div>
+        <div><span>spostamento frange</span><b id="vs"></b></div>
+        <div><span>$\vec B$ dove passa la particella</span><b>0</b></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Effetto Zeeman normale ($\ell=1$)</h2>
+      <canvas id="zee" role="img" aria-label="Separazione dei livelli in campo magnetico"></canvas>
+      <div class="ctl" title="Campo magnetico uniforme lungo z">
+        <div class="lab"><span>Campo $B$</span><output id="bO"></output></div>
+        <input type="range" id="b" min="0" max="1" step="0.01" value="0.6">
+      </div>
+      <p class="hint">Il livello si divide in $2\ell+1=3$ righe distanti $\mu_BB$, con $\mu_B=\frac{|e|\hbar}{2mc}$: $\Delta E=m\,\mu_BB$.</p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Le frange si spostano rigidamente.</b> Cambiando $\Phi$ la figura trasla ma la distanza tra le frange resta la stessa: cambia solo la fase relativa $\Delta g=\frac{q\Phi}{\hbar c}$ tra i due cammini.</li>
+    <li><b>Periodicità.</b> Con $\Phi=\Phi_0$ la figura torna identica a quella senza flusso (sfasamento $2\pi$). Con $\Phi=\Phi_0/2$ al centro c'è un minimo dove prima c'era un massimo.</li>
+    <li><b>Un campo che non si tocca.</b> La particella passa solo dove $\vec B=0$ e $\vec E=0$, eppure la figura cambia: in meccanica quantistica conta il potenziale $\vec A$ (meglio: la sua circuitazione, che non si può eliminare con un cambio di gauge).</li>
+    <li><b>L'anello.</b> Sull'anello le parabole $E_n(\Phi)$ si incrociano: a $\Phi=0$ i livelli $n$ e $-n$ sono degeneri, con il flusso la degenerazione si rompe e lo spettro è periodico con periodo $\Phi_0$.</li>
+    <li><b>Zeeman.</b> Un campo $\vec B$ vero, invece, agisce sul momento magnetico $\vec\mu=-\frac{\mu_B}{\hbar}\vec L$: il livello $\ell=1$ si divide in tre righe equidistanti, che crescono linearmente con $B$.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 2) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+let phi = 0, hits = [], playing = true, sweepT = 0;
+const FR = 7;           // frange visibili sullo schermo (y da −1 a 1)
+function I(y, f) { const env = y === 0 ? 1 : (Math.sin(3.2 * y) / (3.2 * y)) ** 2; return env * Math.cos(Math.PI * FR * y / 2 + Math.PI * f) ** 2; }   // fase relativa Δg = 2π Φ/Φ₀
+function sample(f) { for (;;) { const y = Math.random() * 2 - 1; if (Math.random() < I(y, f)) return y; } }
+function setup(cv) { const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); } const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height }; }
+function drawExp() {
+  const { g, W, H } = setup($("exp")); g.clearRect(0, 0, W, H);
+  const cy = H / 2, xs = W * .08, xw = W * .36, xsc = W * .74, sh = H * .42, Y = y => cy - y * sh;
+  // sorgente e fenditure
+  g.fillStyle = css("--c2"); g.beginPath(); g.arc(xs, cy, 6, 0, 2 * Math.PI); g.fill(); g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center"; g.fillText("sorgente", xs, cy + 22);
+  g.fillStyle = css("--fg"); const s1 = cy - H * .16, s2 = cy + H * .16, sw = 7;
+  g.fillRect(xw - 3, 8, 6, s1 - sw - 8); g.fillRect(xw - 3, s1 + sw, 6, s2 - s1 - 2 * sw); g.fillRect(xw - 3, s2 + sw, 6, H - 8 - s2 - sw);
+  // cammini
+  g.strokeStyle = css("--c1"); g.globalAlpha = .55; g.lineWidth = 2;
+  for (const s of [s1, s2]) { g.beginPath(); g.moveTo(xs, cy); g.lineTo(xw, s); g.lineTo(xsc, cy); g.stroke(); }
+  g.globalAlpha = 1;
+  // solenoide (B solo dentro), tra le due fenditure
+  const sx = xw + (xsc - xw) * .22, r = Math.max(7, H * .035);
+  g.fillStyle = css("--c3"); g.globalAlpha = .25 + .55 * Math.min(1, Math.abs(phi)); g.beginPath(); g.arc(sx, cy, r, 0, 2 * Math.PI); g.fill(); g.globalAlpha = 1;
+  g.strokeStyle = css("--c3"); g.lineWidth = 2; g.stroke(); g.fillStyle = css("--fg"); g.font = "bold 13px system-ui"; g.fillText(phi === 0 ? "" : phi > 0 ? "⊙" : "⊗", sx, cy + 5);
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.fillText("solenoide", sx, cy + r + 16); g.fillText("Φ = " + num(phi) + " Φ₀", sx, cy - r - 8);
+  // schermo con le particelle
+  g.fillStyle = css("--bd"); g.fillRect(xsc - 2, 8, 4, H - 16);
+  g.fillStyle = css("--c1"); for (const [y, dx] of hits) { g.globalAlpha = .7; g.fillRect(xsc + 4 + dx * (W - xsc - 70) * .35, Y(y) - 1, 2, 2); } g.globalAlpha = 1;
+  // curva |ψ|²
+  const x0 = xsc + 6, wmax = W - x0 - 10;
+  g.beginPath(); for (let i = 0; i <= 300; i++) { const y = -1 + 2 * i / 300, v = I(y, phi); i ? g.lineTo(x0 + v * wmax, Y(y)) : g.moveTo(x0 + v * wmax, Y(y)); } g.strokeStyle = css("--c3"); g.lineWidth = 2; g.stroke();
+  g.setLineDash([4, 4]); g.strokeStyle = css("--mut"); g.beginPath(); g.moveTo(xsc - 10, cy); g.lineTo(W - 10, cy); g.stroke(); g.setLineDash([]);
+  $("cnt").textContent = hits.length.toLocaleString("it-IT") + " particelle arrivate";
+}
+function drawRing() {
+  const { g, W, H } = setup($("ring")); g.clearRect(0, 0, W, H);
+  const L0 = 30, B = 22, fmin = -1.5, fmax = 1.5, Emax = 4.5, X = f => L0 + (f - fmin) / (fmax - fmin) * (W - L0 - 10), Y = e => H - B - e / Emax * (H - B - 8);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - B); g.lineTo(W - 10, H - B); g.moveTo(L0, 8); g.lineTo(L0, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "center"; for (let f = -1; f <= 1; f++) g.fillText(f + " Φ₀", X(f), H - 6);
+  const cols = ["--c4", "--c1", "--c3", "--c2"];
+  for (let n = -3; n <= 3; n++) { g.beginPath(); for (let i = 0; i <= 200; i++) { const f = fmin + (fmax - fmin) * i / 200, e = (n - f) ** 2; if (e > Emax) { g.moveTo(X(f), Y(Emax)); continue; } g.lineTo(X(f), Y(e)); } g.strokeStyle = css(cols[Math.abs(n) % 4]); g.lineWidth = 1.8; g.stroke();
+    const e0 = (n - phi) ** 2; if (e0 <= Emax) { g.fillStyle = css(cols[Math.abs(n) % 4]); g.beginPath(); g.arc(X(phi), Y(e0), 4, 0, 2 * Math.PI); g.fill(); } }
+  g.setLineDash([4, 4]); g.strokeStyle = css("--fg"); g.beginPath(); g.moveTo(X(phi), 8); g.lineTo(X(phi), H - B); g.stroke(); g.setLineDash([]);
+  g.textAlign = "left"; g.fillStyle = css("--mut"); g.fillText("E in unità di ħ²/2mb²", L0 + 6, 16);
+}
+function drawZee() {
+  const { g, W, H } = setup($("zee")); g.clearRect(0, 0, W, H);
+  const B = +$("b").value, L0 = 16, Bx = b => L0 + b * (W - L0 - 60), Y = e => H / 2 - e * (H * .38);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - 14); g.lineTo(W - 50, H - 14); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "center"; g.fillText("B →", W - 66, H - 2);
+  for (const mm of [1, 0, -1]) {
+    g.strokeStyle = css(mm === 0 ? "--fg" : mm > 0 ? "--c2" : "--c1"); g.lineWidth = 2;
+    g.beginPath(); g.moveTo(Bx(0), Y(0)); g.lineTo(Bx(1), Y(mm)); g.stroke();
+    g.fillStyle = g.strokeStyle; g.beginPath(); g.arc(Bx(B), Y(mm * B), 4, 0, 2 * Math.PI); g.fill();
+    g.textAlign = "left"; g.fillText("m = " + (mm > 0 ? "+1" : mm < 0 ? "−1" : "0"), Bx(1) + 6, Y(mm) + 4);
+  }
+  g.setLineDash([3, 3]); g.strokeStyle = css("--mut"); g.beginPath(); g.moveTo(Bx(B), 6); g.lineTo(Bx(B), H - 14); g.stroke(); g.setLineDash([]);
+  $("bO").textContent = num(B) + " (unità arbitrarie)";
+}
+function labels() { $("fO").textContent = num(phi); $("vg").textContent = num(2 * Math.PI * phi) + " rad"; $("vs").textContent = num(-phi, 2) + " frange"; }
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if ($("sweep").checked) { sweepT += dt; const nf = Math.round(Math.sin(sweepT * .35) * 1.05 * 100) / 100; if (nf !== phi) { phi = nf; $("f").value = phi; hits = hits.slice(-400); } }
+  if (playing) { const k = Math.min(60, 4 + hits.length / 25); for (let i = 0; i < k; i++) hits.push([sample(phi), Math.random()]); if (hits.length > 6000) hits.splice(0, hits.length - 6000); }
+  labels(); drawExp(); drawRing(); drawZee();
+  requestAnimationFrame(frame);
+}
+$("f").addEventListener("input", () => { phi = +$("f").value; $("sweep").checked = false; hits = []; });
+$("b").addEventListener("input", drawZee);
+$("clr").onclick = () => { hits = []; };
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

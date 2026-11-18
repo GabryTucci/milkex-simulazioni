@@ -82,5 +82,12 @@
   "project": "Quantum",
   "section": "L'atomo di idrogeno",
   "time": 1794960972.313975
+ },
+ {
+  "path": "quantum/aharonov-bohm.html",
+  "title": "Effetto Aharonov–Bohm ed effetto Zeeman",
+  "project": "Quantum",
+  "section": "Particella carica in campo elettromagnetico",
+  "time": 1794960979.3031976
  }
 ]

@@ -1,27 +1,102 @@
 <!doctype html>
-<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Simulazioni interattive</title>
-<style>:root{color-scheme:light dark;--bg:#faf8ff;--fg:#1d1830;--mut:#6b6480;--card:#fff;--bd:#e3ddf3;--ac:#7b4fd6}
-@media (prefers-color-scheme:dark){:root{--bg:#16121f;--fg:#ece8f6;--mut:#a59fb8;--card:#211b30;--bd:#342b48;--ac:#b18cff}}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}main{max-width:860px;margin:0 auto;padding:2rem 1rem}
-h1{margin:0 0 .3rem}p.s{color:var(--mut);margin:0 0 1.5rem}h2{font-size:1.05rem;margin:1.6rem 0 .6rem;color:var(--mut)}
-a.c{display:block;padding:.8rem 1rem;margin:.5rem 0;background:var(--card);border:1px solid var(--bd);border-radius:.6rem;color:inherit;text-decoration:none}
-a.c:hover{border-color:var(--ac)}a.c b{color:var(--ac)}a.c small{display:block;color:var(--mut)}footer{margin-top:2rem;color:var(--mut);font-size:.85rem}</style>
-</head><body><main><h1>Simulazioni interattive</h1><p class="s">Simulazioni create con MILKeX per capire meglio gli argomenti degli appunti.</p>
-
-<h2>Quantum</h2>
-<a class="c" href="quantum/stern-gerlach.html"><b>Stern–Gerlach in sequenza: misure di spin 12</b><small>Spin</small></a>
-<a class="c" href="quantum/aharonov-bohm.html"><b>Effetto Aharonov–Bohm ed effetto Zeeman</b><small>Particella carica in campo elettromagnetico</small></a>
-<a class="c" href="quantum/atomo-idrogeno.html"><b>Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali</b><small>L&#x27;atomo di idrogeno</small></a>
-<a class="c" href="quantum/potenziale-efficace.html"><b>Problemi a simmetria centrale: potenziale efficace e degenerazioni</b><small>Problemi a simmetria centrale</small></a>
-<a class="c" href="quantum/momento-angolare.html"><b>Momento angolare: armoniche sferiche e modello vettoriale</b><small>Il momento angolare</small></a>
-<a class="c" href="quantum/scatola-2d.html"><b>Particella in una scatola 2D: separazione delle variabili e degenerazione</b><small>Sistemi in più dimensioni</small></a>
-<a class="c" href="quantum/oscillatore-armonico.html"><b>Oscillatore armonico: autostati, stati coerenti e operatori a, a^</b><small>L&#x27;oscillatore armonico</small></a>
-<a class="c" href="quantum/effetto-tunnel.html"><b>Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel</b><small>Problemi unidimensionali</small></a>
-<a class="c" href="quantum/evoluzione-pacchetto.html"><b>Evoluzione temporale di un pacchetto: particella libera e forza costante</b><small>Evoluzione temporale</small></a>
-<a class="c" href="quantum/posizione-impulso.html"><b>Posizione e impulso: la trasformata di Fourier</b><small>Postulati, posizione e impulso</small></a>
-<a class="c" href="quantum/pacchetto-onde.html"><b>Particelle e gruppi d&#x27;onde: velocità di fase e di gruppo</b><small>Particelle e onde</small></a>
-<a class="c" href="quantum/sfera-di-bloch.html"><b>Sfera di Bloch: stati puri, miscele e porte quantistiche</b><small>Informazione quantistica</small></a>
-<a class="c" href="quantum/buca-infinita.html"><b>Particella in una buca di potenziale infinita</b><small>Buca di potenziale infinita</small></a>
-<a class="c" href="quantum/misura-qbit.html"><b>Misurare un qubit: probabilità, collasso e indeterminazione</b><small>Stati, operatori e misure</small></a>
-<footer>Creato con MILKeX</footer></main></body></html>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%237b4fd6'/%3E%3Cpath d='M3 13c2 0 2-6 4.5-6S10 17 12 17s2-10 4.5-10S19 13 21 13' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--ac2:#f0884a}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--ac2:#fdba74}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+header.top{display:flex;gap:16px;align-items:center;margin-bottom:6px}
+header.top .logo{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#7b4fd6,#f0884a);display:grid;place-items:center}
+header.top .logo svg{width:32px;height:32px;stroke:#fff}
+h1{font-size:1.6rem;line-height:1.2;margin:0}
+.lead{color:var(--mut);margin:.3rem 0 0}
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);padding:12px 0 10px;margin:10px 0 4px;border-bottom:1px solid var(--bd)}
+.bar .lab{font-size:.85rem;color:var(--mut);margin-bottom:6px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.chip{flex:none;font:inherit;font-size:.92rem;min-height:38px;padding:.35rem .85rem;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--fg);cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--ac)}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.chip .n{opacity:.7;margin-left:.35rem;font-variant-numeric:tabular-nums}
+section.ch{margin-top:22px}
+section.ch h2{display:flex;align-items:baseline;gap:10px;font-size:1.12rem;margin:0 0 10px}
+section.ch h2 .num{flex:none;display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:8px;background:var(--soft);color:var(--ac);font-size:.9rem}
+section.ch h2 small{color:var(--mut);font-weight:400;font-size:.85rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+@media (max-width:640px){.cards{grid-template-columns:minmax(0,1fr)}h1{font-size:1.3rem}header.top .logo{width:44px;height:44px}}
+a.card{display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--bd);color:inherit;text-decoration:none;transition:transform .12s,border-color .12s,box-shadow .12s;min-width:0}
+a.card:hover{border-color:var(--ac);transform:translateY(-2px);box-shadow:0 8px 24px rgba(60,30,120,.12)}
+a.card:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.ico{flex:none;width:52px;height:52px;border-radius:12px;display:grid;place-items:center;background:var(--soft)}
+.ico svg{width:30px;height:30px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ico svg .a2{stroke:var(--ac2)}
+.txt{min-width:0}
+.txt b{display:block;font-size:1rem;line-height:1.3}
+.txt p{margin:.3rem 0 0;color:var(--mut);font-size:.9rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--mut);margin-bottom:.25rem}
+.tag i{font-style:normal;display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:6px;background:var(--soft);color:var(--ac);font-size:.75rem}
+.go{margin-top:.45rem;font-size:.85rem;color:var(--ac);font-weight:600}
+.empty{color:var(--mut);padding:20px 0}
+footer{margin-top:36px;color:var(--mut);font-size:.85rem;text-align:center}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 13c2 0 2-6 4.5-6S10 17 12 17s2-10 4.5-10S19 13 21 13"/></svg></div>
+    <div>
+      <h1>Simulazioni interattive</h1>
+      <p class="lead">Simulazioni da usare nel browser per vedere e “toccare” gli argomenti degli appunti. Scegli un capitolo oppure scorri l'elenco.</p>
+    </div>
+  </header>
+  <div class="bar"><div class="lab">Mostra:</div><div class="chips" id="chips"></div></div>
+  <div id="list"></div>
+  <footer>Simulazioni create con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const DATA = [{"path": "quantum/buca-infinita.html", "title": "Particella in una buca di potenziale infinita", "project": "Quantum", "section": "Problemi unidimensionali", "time": 1794958828.769867, "desc": "Lancia un pacchetto d'onda contro le pareti, componi una sovrapposizione degli autostati ψⱼ e guarda evolvere |ψ(x,t)|²: il pacchetto rimbalza, si sparpaglia e si ricompone al tempo di rinascita Tᵣᵢᵥ = 2πħ/E₁.", "order": 5196, "icon": "buca"}, {"path": "quantum/misura-qbit.html", "title": "Misurare un qubit: probabilità, collasso e indeterminazione", "project": "Quantum", "section": "Stati, operatori e misure", "time": 1794958828.769867, "desc": "Prepara lo stato |ψ⟩ = a₊|+⟩+a₋|-⟩ e misuralo: con tante copie le frequenze tendono a P± = |a±|², con una sola misura lo stato collassa. Vedrai anche perché la fase relativa conta solo in un'altra base e il principio di indeterminazione tra due osservabili che non commutano.", "order": 488, "icon": "misura"}, {"path": "quantum/sfera-di-bloch.html", "title": "Sfera di Bloch: stati puri, miscele e porte quantistiche", "project": "Quantum", "section": "Informazione quantistica", "time": 1794958828.7703671, "desc": "Muovi il vettore p della matrice densità ρ = ½(+p·σ) dalla superficie (stati puri) all'interno (miscele), applica le porte quantistiche X, Y, Z, H e ricostruisci lo stato misurando σ₁,σ₂,σ₃ su N copie.", "order": 1574, "icon": "bloch"}, {"path": "quantum/pacchetto-onde.html", "title": "Particelle e gruppi d'onde: velocità di fase e di gruppo", "project": "Quantum", "section": "Particelle e onde", "time": 1794960918.4859602, "desc": "Costruisci un pacchetto sommando onde monocromatiche e guarda le creste correre con la velocità di fase vφ = ω/k mentre il pacchetto avanza con la velocità di gruppo vg = dω/dk, la stessa della particella classica.", "order": 297, "icon": "pacchetto"}, {"path": "quantum/posizione-impulso.html", "title": "Posizione e impulso: la trasformata di Fourier", "project": "Quantum", "section": "Postulati, posizione e impulso", "time": 1794960924.908764, "desc": "Disegna a mano una funzione d'onda ψ(x) e vedi subito la sua distribuzione di impulsi ψ̃(p); trasla e spingi il pacchetto e verifica ΔxΔp ≥ ħ/2.", "order": 2091, "icon": "fourier"}, {"path": "quantum/evoluzione-pacchetto.html", "title": "Evoluzione temporale di un pacchetto: particella libera e forza costante", "project": "Quantum", "section": "Evoluzione temporale", "time": 1794960931.5488722, "desc": "L'equazione di Schrödinger risolta in tempo reale per un pacchetto gaussiano libero o sotto una forza costante: il valor medio segue la traiettoria classica (teorema di Ehrenfest) mentre il pacchetto si allarga.", "order": 3005, "icon": "evoluzione"}, {"path": "quantum/effetto-tunnel.html", "title": "Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel", "project": "Quantum", "section": "Problemi unidimensionali", "time": 1794960938.4023492, "desc": "Lancia un pacchetto d'onda contro una barriera, un gradino o una buca e misura le probabilità di riflessione e trasmissione, confrontandole con il coefficiente T(E): effetto tunnel e risonanze.", "order": 5196, "icon": "tunnel"}, {"path": "quantum/oscillatore-armonico.html", "title": "Oscillatore armonico: autostati, stati coerenti e operatori a, a†", "project": "Quantum", "section": "L'oscillatore armonico", "time": 1794960945.3752143, "desc": "Confronta gli autostati |n⟩, fermi, con gli stati coerenti |α⟩, che oscillano come una molla classica, nello spazio delle posizioni e in quello delle fasi; applica a e a† con un clic.", "order": 6821, "icon": "oscillatore"}, {"path": "quantum/scatola-2d.html", "title": "Particella in una scatola 2D: separazione delle variabili e degenerazione", "project": "Quantum", "section": "Sistemi in più dimensioni", "time": 1794960952.656874, "desc": "Componi stati ψn_1n_2(x,y) = ψn_1(x)ψn_2(y) in una scatola rettangolare: guarda le degenerazioni del quadrato e come si rompono allungando la scatola.", "order": 7918, "icon": "scatola"}, {"path": "quantum/momento-angolare.html", "title": "Momento angolare: armoniche sferiche e modello vettoriale", "project": "Quantum", "section": "Il momento angolare", "time": 1794960959.1876357, "desc": "Ruota in 3D le armoniche sferiche Yℓᵐ (forma complessa e orbitali reali) e guarda il vettore L precedere sul cono con |L| = ħ√(ℓ(ℓ+1)) e Lz = mħ.", "order": 8797, "icon": "momento"}, {"path": "quantum/potenziale-efficace.html", "title": "Problemi a simmetria centrale: potenziale efficace e degenerazioni", "project": "Quantum", "section": "Problemi a simmetria centrale", "time": 1794960965.777845, "desc": "L'equazione radiale con il potenziale efficace, risolta numericamente per ℓ = 0,,3: confronta gli spettri del potenziale coulombiano, dell'oscillatore isotropo e della buca sferica e le loro degenerazioni.", "order": 10171, "icon": "radiale"}, {"path": "quantum/atomo-idrogeno.html", "title": "Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali", "project": "Quantum", "section": "L'atomo di idrogeno", "time": 1794960972.313975, "desc": "Esplora gli orbitali ψnℓm, la distribuzione radiale r²Rnℓ² e lo spettro: clicca due livelli per vedere il fotone emesso, con la sua lunghezza d'onda e il suo colore.", "order": 10952, "icon": "atomo"}, {"path": "quantum/aharonov-bohm.html", "title": "Effetto Aharonov–Bohm ed effetto Zeeman", "project": "Quantum", "section": "Particella carica in campo elettromagnetico", "time": 1794960979.3031976, "desc": "Le frange di due fenditure si spostano quando cambia il flusso Φ di un solenoide che le particelle non attraversano mai: la fase qΦ/ħc. Con i livelli su un anello e lo Zeeman normale.", "order": 12377, "icon": "fenditure"}, {"path": "quantum/stern-gerlach.html", "title": "Stern–Gerlach in sequenza: misure di spin ½", "project": "Quantum", "section": "Spin", "time": 1794960986.4004807, "desc": "Monta in fila fino a tre apparati di Stern–Gerlach orientati come vuoi, blocca un fascio e conta gli atomi: vedrai come ogni misura prepara lo stato e cancella le informazioni precedenti.", "order": 13105, "icon": "spin"}];
+const ICONS = {"onda": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 12c2 0 2.5-6 5-6s2.5 12 5 12 2.5-12 5-12 2.5 6 5 6\"/></svg>", "pacchetto": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 16h20\"/><path class=\"a2\" d=\"M3 16c3 0 4-1 5-4s2-8 4-8 3 5 4 8 2 4 5 4\"/><path d=\"M8 12c1 2 2 3 4 3s3-1 4-3\"/></svg>", "fourier": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 10h9M13 20h9\"/><path d=\"M3 10c1.5 0 2-6 3.5-6S8 10 10 10\"/><path class=\"a2\" d=\"M14 20c2 0 2.5-3 4-3s2 3 4 3\"/><path d=\"M12 6l0 12M10.5 16l1.5 2 1.5-2\"/></svg>", "buca": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 3v18h16V3\"/><path class=\"a2\" d=\"M4 13c4-9 12-9 16 0\"/><path d=\"M4 13h16\" opacity=\".4\"/></svg>", "misura": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 17a8 8 0 0 1 16 0\"/><path class=\"a2\" d=\"M12 17l4-6\"/><circle cx=\"12\" cy=\"17\" r=\"1.4\"/><path d=\"M6 21h3M15 21h3\"/></svg>", "bloch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><ellipse cx=\"12\" cy=\"12\" rx=\"9\" ry=\"3\"/><path class=\"a2\" d=\"M12 12l4-6\"/><circle class=\"a2\" cx=\"16\" cy=\"6\" r=\"1.2\"/></svg>", "evoluzione": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 19h20\"/><path d=\"M3 19c2 0 3-8 5-8s3 8 5 8\"/><path class=\"a2\" d=\"M11 19c2 0 3-5 5-5s3 5 5 5\"/><path d=\"M15 5l3 3-3 3M6 8h12\"/></svg>", "tunnel": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 18h20\"/><rect x=\"10\" y=\"6\" width=\"4\" height=\"12\"/><path class=\"a2\" d=\"M2 13c1.5 0 2-4 3.5-4S7 13 8.5 13M15.5 15c1 0 1.3-2 2.3-2s1.3 2 2.3 2\"/></svg>", "oscillatore": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 4c2 10 5 15 8 15s6-5 8-15\"/><path class=\"a2\" d=\"M7 15h10M6 11h12M5 7h14\"/></svg>", "scatola": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"1\"/><path class=\"a2\" d=\"M12 3v18M3 12h18\"/><circle cx=\"7.5\" cy=\"7.5\" r=\"1.6\"/><circle cx=\"16.5\" cy=\"16.5\" r=\"1.6\"/></svg>", "momento": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"7\" rx=\"7\" ry=\"2.4\"/><path d=\"M12 21L5 7M12 21l7-14\"/><path class=\"a2\" d=\"M12 21l4-14.3\"/><path d=\"M12 3v18\" opacity=\".5\"/></svg>", "radiale": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 3v18h18\"/><path class=\"a2\" d=\"M5 4c1 9 3 11 6 11s6-2 9-2\"/><path d=\"M6 17h13\" opacity=\".5\"/></svg>", "atomo": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1.8\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\"/><ellipse class=\"a2\" cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(60 12 12)\"/><ellipse cx=\"12\" cy=\"12\" rx=\"10\" ry=\"4\" transform=\"rotate(120 12 12)\"/></svg>", "fenditure": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M9 2v5M9 10v4M9 17v5\"/><circle class=\"a2\" cx=\"14\" cy=\"12\" r=\"2\"/><path d=\"M2 12h3M20 4v16\" /><path d=\"M20 8c-1 0-1 1.5-2 1.5M20 12h-2M20 16c-1 0-1-1.5-2-1.5\" opacity=\".6\"/></svg>", "spin": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3 12h4\"/><rect x=\"7\" y=\"8\" width=\"5\" height=\"8\" rx=\"1\"/><path class=\"a2\" d=\"M12 12l9-6M12 12l9 6\"/><circle cx=\"21\" cy=\"6\" r=\"1\"/><circle cx=\"21\" cy=\"18\" r=\"1\"/></svg>"};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// capitoli in ordine (per progetto, poi per posizione negli appunti)
+const chapters = [];
+for (const s of [...DATA].sort((a, b) => (a.project || "").localeCompare(b.project || "") || (a.order ?? 1e9) - (b.order ?? 1e9) || a.time - b.time)) {
+  const key = (s.project || "") + "|" + (s.section || "Altro");
+  let c = chapters.find(c => c.key === key);
+  if (!c) chapters.push(c = { key, project: s.project || "", name: s.section || "Altro", items: [] });
+  c.items.push(s);
+}
+const multi = new Set(chapters.map(c => c.project)).size > 1;
+let current = decodeURIComponent(location.hash.slice(1)) || "";
+function chips() {
+  const all = [["", "Tutti i capitoli", DATA.length], ...chapters.map((c, i) => [c.key, `${i + 1}. ${c.name}`, c.items.length])];
+  document.getElementById("chips").replaceChildren(...all.map(([k, l, n]) => {
+    const b = document.createElement("button"); b.className = "chip" + (k === current ? " on" : ""); b.innerHTML = esc(l) + `<span class="n">${n}</span>`;
+    b.onclick = () => { current = k; history.replaceState(null, "", k ? "#" + encodeURIComponent(k) : location.pathname); chips(); list(); if (k) b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); };
+    return b;
+  }));
+}
+function card(s, c, i) {
+  const a = document.createElement("a"); a.className = "card"; a.href = s.path;
+  a.innerHTML = `<div class="ico">${ICONS[s.icon] || ICONS.onda}</div><div class="txt"><div class="tag"><i>${i + 1}</i>${esc(c.name)}${multi ? " · " + esc(c.project) : ""}</div><b>${esc(s.title)}</b>${s.desc ? `<p>${esc(s.desc)}</p>` : ""}<div class="go">Apri la simulazione →</div></div>`;
+  return a;
+}
+function list() {
+  // una sola griglia in ordine di capitolo: ogni scheda riporta il suo capitolo
+  const g = document.createElement("div"); g.className = "cards";
+  chapters.forEach((c, i) => { if (!current || c.key === current) c.items.forEach(s => g.append(card(s, c, i))); });
+  const sec = document.createElement("section"); sec.className = "ch";
+  if (current) { const i = chapters.findIndex(c => c.key === current); sec.innerHTML = `<h2><span class="num">${i + 1}</span><span>${esc(chapters[i].name)}</span></h2>`; }
+  sec.append(g);
+  document.getElementById("list").replaceChildren(g.children.length ? sec : Object.assign(document.createElement("p"), { className: "empty", textContent: "Nessuna simulazione." }));
+}
+if (current && !chapters.some(c => c.key === current)) current = "";
+chips(); list();
+</script>
+</body>
+</html>

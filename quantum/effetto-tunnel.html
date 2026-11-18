@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #cx{height:290px}
@@ -65,9 +85,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 18h20"/><rect x="10" y="6" width="4" height="12"/><path class="a2" d="M2 13c1.5 0 2-4 3.5-4S7 13 8.5 13M15.5 15c1 0 1.3-2 2.3-2s1.3 2 2.3 2"/></svg></div><div><div class="chap">Problemi unidimensionali</div><h1>Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel</h1></div></div>
   <p>Un pacchetto d'onda di energia media $E$ arriva da sinistra contro una barriera alta $V_0$ e larga $2a$ (o contro un gradino). Classicamente passa solo se $E&gt;V_0$; quantisticamente una parte passa sempre (effetto tunnel) e una parte torna indietro anche quando $E&gt;V_0$.</p>
   <div class="start"><b>Inizia da qui:</b> il pacchetto ha energia minore della barriera, eppure una parte la attraversa. Guarda la percentuale trasmessa $T$ e poi allarga la barriera con il cursore $a$.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 <div class="grid">
   <div class="stack">
@@ -126,8 +148,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
     </section>
   </div>
 </div>
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Il pacchetto arriva da sinistra; la zona colorata è l'ostacolo e la linea tratteggiata arancione è l'energia $E$ del pacchetto.</li><li>Scegli l'ostacolo (barriera, gradino o buca) e regola altezza $V_0$, semilarghezza $a$ ed energia $E$.</li><li>Dopo l'urto leggi a destra le percentuali riflessa $R$ e trasmessa $T$; il pacchetto viene rilanciato da solo.</li><li>Nel grafico in basso il pallino è il risultato del pacchetto sulla curva $T(E)$: prova energie sopra e sotto $V_0$.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Fuori dall'ostacolo la funzione d'onda è una sovrapposizione di onde piane, $e^{\pm ikx}$ con $k=\frac{\sqrt{2mE}}{\hbar}$; imponendo la continuità di $\psi$ e $\psi'$ ai bordi si ricavano le ampiezze riflessa e trasmessa, e da queste i coefficienti $R$ e $T$, con $R+T=1$ (conservazione della probabilità).</p>
+<p>Se $E&lt;V_0$, dentro la barriera $\psi$ non oscilla ma decresce come $e^{-\beta x}$, $\beta=\frac{\sqrt{2m(V_0-E)}}{\hbar}$; non si annulla, quindi una parte passa: è l'<b>effetto tunnel</b>, con $T\approx e^{-4\beta a}$ per barriere spesse (alla base del decadimento α e del microscopio a effetto tunnel). Se $E&gt;V_0$ una parte viene comunque <b>riflessa</b>, tranne alle risonanze $2k'a=n\pi$, quando nella barriera entra un numero intero di mezze lunghezze d'onda.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Effetto tunnel.</b> Con $E&lt;V_0$ nella barriera la funzione d'onda decresce come $e^{-\beta x}$, con $\beta=\frac{\sqrt{2m(V_0-E)}}{\hbar}$, ma non si annulla: dall'altra parte resta un'onda trasmessa. $$T=\left[1+\frac{V_0^2\sinh^2(2\beta a)}{4E(V_0-E)}\right]^{-1}\approx e^{-4\beta a}$$ per barriere spesse: raddoppiando $a$ la trasmissione crolla.</li>
     <li><b>Riflessione sopra la barriera.</b> Porta $E$ sopra $V_0$: classicamente passerebbe tutto, invece una parte si riflette. $T$ vale 1 solo per le risonanze $2k'a=n\pi$, con $k'=\frac{\sqrt{2m(E-V_0)}}{\hbar}$: lì la barriera contiene un numero intero di mezze lunghezze d'onda.</li>

@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #cx{height:300px}
@@ -65,9 +85,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Oscillatore armonico: autostati, stati coerenti e operatori $a$, $a^\dagger$</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4c2 10 5 15 8 15s6-5 8-15"/><path class="a2" d="M7 15h10M6 11h12M5 7h14"/></svg></div><div><div class="chap">L'oscillatore armonico</div><h1>Oscillatore armonico: autostati, stati coerenti e operatori $a$, $a^\dagger$</h1></div></div>
   <p>Per $V=\frac12m\omega^2x^2$ gli autostati $\ket{n}$ hanno energia $E_n=\hbar\omega\left(n+\frac12\right)$. Uno stato qualsiasi evolve come $\sum_n c_n\,e^{-i(n+\frac12)\omega t}\ket{n}$: gli autostati restano fermi, gli stati coerenti oscillano come una molla classica.</p>
   <div class="start"><b>Inizia da qui:</b> sta oscillando uno stato coerente. Premi <b>Autostato</b> per vedere uno stato che non si muove, poi prova a premere $a^\dagger$ più volte.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 <div class="grid">
   <div class="stack">
@@ -121,8 +143,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
     </section>
   </div>
 </div>
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Il grafico mostra la parabola $V(x)$, i livelli $E_n$ e la densità $|\psi|^2$ appoggiata all'energia media; il pallino è una molla classica con la stessa energia.</li><li>Scegli “Stato coerente” e cambia $|\alpha|$, oppure “Autostato” e cambia $n$.</li><li>Premi $a^\dagger$ e $a$ per applicare gli operatori di innalzamento e abbassamento allo stato attuale.</li><li>Guarda a destra lo spazio delle fasi (valori medi e incertezze) e in basso i pesi $|c_n|^2$.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Per $V=\frac12m\omega^2x^2$ si introducono $a=\sqrt{\frac{m\omega}{2\hbar}}\left(\hat x+\frac{i\hat p}{m\omega}\right)$ e $a^\dagger$, con $[a,a^\dagger]=1$ e $\hat H=\hbar\omega\left(a^\dagger a+\frac12\right)$. Gli autostati $\ket n$ hanno $E_n=\hbar\omega\left(n+\frac12\right)$, e $a^\dagger\ket n=\sqrt{n+1}\ket{n+1}$, $a\ket n=\sqrt n\ket{n-1}$: gli operatori salgono e scendono la “scala” dei livelli, equispaziati.</p>
+<p>Un autostato è stazionario. Uno <b>stato coerente</b> $\ket\alpha$, autostato di $a$, è un pacchetto gaussiano che oscilla senza deformarsi alla frequenza $\omega$, con $\Delta x\,\Delta p=\frac\hbar2$ sempre: è lo stato quantistico più vicino a una molla classica. I suoi pesi $|c_n|^2$ seguono una distribuzione di Poisson con $\ave n=|\alpha|^2$.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Gli autostati sono fermi.</b> Con un autostato $\ket{n}$, $|\psi|^2$ non si muove e $\ave{x}=\ave{p}=0$: cambia solo la fase globale $e^{-i(n+\frac12)\omega t}$ (guarda $\mathrm{Re}\,\psi$ che pulsa). Il numero di nodi è $n$, e la parità è $(-1)^n$.</li>
     <li><b>Lo stato coerente è una molla.</b> $\ket{\alpha}=e^{-|\alpha|^2/2}\sum_n\frac{\alpha^n}{\sqrt{n!}}\ket{n}$ oscilla senza deformarsi, seguendo il pallino classico, e nello spazio delle fasi gira su una circonferenza. Mantiene sempre $\Delta x\,\Delta p=\frac\hbar2$ e i pesi $|c_n|^2$ seguono una distribuzione di Poisson con media $|\alpha|^2$.</li>

@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #cv{height:300px}
@@ -66,9 +86,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Stern–Gerlach in sequenza: misure di spin $\tfrac12$</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4"/><rect x="7" y="8" width="5" height="8" rx="1"/><path class="a2" d="M12 12l9-6M12 12l9 6"/><circle cx="21" cy="6" r="1"/><circle cx="21" cy="18" r="1"/></svg></div><div><div class="chap">Spin</div><h1>Stern–Gerlach in sequenza: misure di spin $\tfrac12$</h1></div></div>
   <p>Un apparato di Stern–Gerlach orientato lungo $\hat n$ misura $\hat S_n=\frac\hbar2\,\hat n\cdot\vec\sigma$: ogni atomo esce in uno di due fasci, $+\frac\hbar2$ o $-\frac\hbar2$. Mettendo più apparati in fila e bloccando un fascio si vede come una misura prepara lo stato e cancella le informazioni precedenti.</p>
   <div class="start"><b>Inizia da qui:</b> è già montato l'esperimento classico $z\to x\to z$. Il primo apparato tiene solo gli atomi con spin $+$ lungo $z$, eppure l'ultimo ritrova $-$ nella metà dei casi. Prova a spegnere l'apparato centrale.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 <div class="grid">
   <div class="stack">
@@ -100,8 +122,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
     </section>
   </div>
 </div>
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Gli atomi escono dal forno a sinistra e attraversano gli apparati SG; la freccia in ogni magnete indica la direzione in cui misura lo spin.</li><li>Scegli un esperimento pronto oppure, a destra, cambia l'angolo di ogni apparato, accendilo o spegnilo e scegli quale fascio far passare.</li><li>I fasci bloccati finiscono contro la sbarretta rossa; all'ultimo apparato entrambi i fasci arrivano al rivelatore.</li><li>Confronta i conteggi del rivelatore con la previsione scritta sotto.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>In un campo magnetico non uniforme un atomo con momento magnetico viene deviato in proporzione alla componente del suo spin lungo il campo. Per spin $\frac12$ i risultati sono solo due, $\pm\frac\hbar2$: il fascio si divide in due (Stern e Gerlach, 1922). Un apparato orientato lungo $\hat n$ misura $\hat S_n=\frac\hbar2\,\hat n\cdot\vec\sigma$ e lascia l'atomo nell'autostato trovato.</p>
+<p>Se l'atomo è in $\ket+$ lungo $\hat n_1$ e lo si misura lungo $\hat n_2$, a un angolo $\theta$, si trova $+$ con probabilità $\cos^2\frac\theta2$. Componenti diverse dello spin non commutano: misurare $S_x$ cancella l'informazione su $S_z$, perché $\ket+_x=\frac{1}{\sqrt2}(\ket+_z+\ket-_z)$. Il forno produce una miscela non polarizzata, $\rho=\frac12\Id$, che dà 50% e 50% lungo qualunque direzione.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Due soli risultati.</b> Ogni apparato divide il fascio in due, mai in un ventaglio continuo: la componente dello spin lungo un asse può valere solo $\pm\frac\hbar2$. È il risultato che stupì Stern e Gerlach.</li>
     <li><b>Ripetere la stessa misura.</b> Con due apparati lungo $z$ e il fascio $+$ selezionato dal primo, il secondo dà sempre $+$: dopo la misura lo stato è l'autostato $\ket{+}_z$.</li>

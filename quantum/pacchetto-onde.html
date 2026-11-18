@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #wave{height:300px}
@@ -65,9 +85,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Particelle e gruppi d'onde: velocità di fase e di gruppo</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 16h20"/><path class="a2" d="M3 16c3 0 4-1 5-4s2-8 4-8 3 5 4 8 2 4 5 4"/><path d="M8 12c1 2 2 3 4 3s3-1 4-3"/></svg></div><div><div class="chap">Particelle e onde</div><h1>Particelle e gruppi d'onde: velocità di fase e di gruppo</h1></div></div>
   <p>Un pacchetto è una somma di onde monocromatiche $e^{i(kx-\omega t)}$ con $p=\hbar k$ (de Broglie) ed $E=\hbar\omega$ (Planck). Le creste corrono con la velocità di fase $v_\varphi=\omega/k$, l'inviluppo con la velocità di gruppo $v_g=d\omega/dk$: è lui a muoversi come la particella.</p>
   <div class="start"><b>Inizia da qui:</b> segui il triangolino arancione (una cresta) e il pallino viola (la particella classica): la cresta va a metà velocità del pacchetto. Poi riduci il numero di onde a 2.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 
 <div class="grid">
@@ -123,8 +145,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
   </div>
 </div>
 
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Guarda il grafico in alto: la curva viola è l'inviluppo $|\psi|$ del pacchetto, quella blu la sua parte reale (le creste).</li><li>Segui con gli occhi il triangolino arancione (una cresta) e il pallino viola (la particella classica): si muovono a velocità diverse.</li><li>Nel riquadro “Che onde sommare” prova “Luce nel vuoto”, poi torna a “Particella”.</li><li>Abbassa “Numero di onde sommate” fino a 2, poi rialzalo piano piano. Cambia $\bar k$ e $\Delta k$ e guarda come cambiano $\lambda$, le velocità e $\Delta x$.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Secondo de Broglie una particella con impulso $p$ ed energia $E$ è associata a un'onda con $p=\hbar k$ ed $E=\hbar\omega$. Un'onda sola, $e^{i(kx-\omega t)}$, occupa però tutto lo spazio: per descrivere una particella localizzata bisogna <b>sommare tante onde</b> con $k$ vicini a un valore medio $\bar k$. Dove sono in fase si rinforzano (il pacchetto), altrove si cancellano.</p>
+<p>Le creste si muovono con la <b>velocità di fase</b> $v_\varphi=\omega/k$, il pacchetto con la <b>velocità di gruppo</b> $v_g=d\omega/dk$. Per una particella libera $\omega=\frac{\hbar k^2}{2m}$, quindi $v_g=\frac{\hbar k}{m}=\frac pm$: il pacchetto si muove esattamente come la particella classica, mentre le creste vanno a metà velocità. Poiché $\omega$ non è proporzionale a $k$ (onde <b>dispersive</b>), le componenti si sfasano e il pacchetto si allarga. Più è stretto in $x$, più $k$ diversi servono: $\Delta x\,\Delta k\ge\frac12$, cioè $\Delta x\,\Delta p\ge\frac\hbar2$.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Due velocità diverse.</b> Per un'onda di materia $\omega=\frac{\hbar k^2}{2m}$, quindi $v_\varphi=\frac{\hbar k}{2m}=\frac{v_p}{2}$ mentre $v_g=\frac{\hbar k}{m}=v_p$: le creste (triangolino) scivolano all'indietro dentro il pacchetto, che invece avanza insieme alla particella classica (pallino). È la condizione $v_p=v_g$ degli appunti.</li>
     <li><b>La luce non si allarga.</b> Scegli “Luce nel vuoto”: con $\omega=ck$ tutte le onde hanno la stessa velocità, $v_\varphi=v_g=c$, e il pacchetto viaggia senza deformarsi. Le onde di materia invece sono dispersive e il pacchetto si allarga ($\Delta x$ cresce).</li>

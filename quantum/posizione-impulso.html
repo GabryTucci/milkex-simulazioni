@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #cx,#cp{height:230px}
@@ -63,9 +83,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Posizione e impulso: la trasformata di Fourier</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h9M13 20h9"/><path d="M3 10c1.5 0 2-6 3.5-6S8 10 10 10"/><path class="a2" d="M14 20c2 0 2.5-3 4-3s2 3 4 3"/><path d="M12 6l0 12M10.5 16l1.5 2 1.5-2"/></svg></div><div><div class="chap">Postulati, posizione e impulso</div><h1>Posizione e impulso: la trasformata di Fourier</h1></div></div>
   <p>La stessa particella si descrive nella base delle posizioni, con $\psi(x)=\braket{x}{\psi}$, o in quella degli impulsi, con $\tilde\psi(p)=\braket{p}{\psi}=\int\frac{dx}{\sqrt{2\pi\hbar}}\,e^{-ipx/\hbar}\psi(x)$. Più una è stretta, più l'altra è larga.</p>
   <div class="start"><b>Inizia da qui:</b> premi <b>✏️ Disegna tu</b> e disegna col mouse (o col dito) una funzione d'onda qualsiasi: sotto compare subito la sua distribuzione di impulsi.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 
 <div class="grid">
@@ -109,8 +131,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
   </div>
 </div>
 
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>In alto c'è $|\psi(x)|^2$, in basso $|\tilde\psi(p)|^2$: sono la stessa particella vista nelle due basi. Il colore indica la fase.</li><li>Scegli una forma pronta (gaussiana, due gaussiane, rettangolo…) e cambia la larghezza $\sigma$: guarda cosa succede sotto.</li><li>Muovi “Traslazione $a$” e “Impulso medio $p_0$”: uno sposta il grafico in alto, l'altro quello in basso.</li><li>Premi “✏️ Disegna tu” e disegna una funzione d'onda col mouse o col dito: la sua distribuzione di impulsi compare subito.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Lo stesso stato $\ket\psi$ si può proiettare sulla base delle posizioni, $\psi(x)=\braket{x}{\psi}$, o su quella degli impulsi, $\tilde\psi(p)=\braket{p}{\psi}$. Poiché $\braket{x}{p}=\frac{e^{ipx/\hbar}}{\sqrt{2\pi\hbar}}$, le due funzioni sono legate dalla <b>trasformata di Fourier</b>: $\tilde\psi(p)=\int\frac{dx}{\sqrt{2\pi\hbar}}e^{-ipx/\hbar}\psi(x)$. $|\psi(x)|^2$ dà la probabilità delle posizioni, $|\tilde\psi(p)|^2$ quella degli impulsi.</p>
+<p>Una funzione stretta in $x$ contiene molte frequenze, quindi è larga in $p$: è il <b>principio di indeterminazione</b> $\Delta x\,\Delta p\ge\frac\hbar2$, con l'uguale solo per la gaussiana. Traslare, $\psi(x)\to\psi(x-a)$, moltiplica $\tilde\psi$ per la fase $e^{-ipa/\hbar}$ (l'operatore di traslazione $e^{-i\hat pa/\hbar}$); moltiplicare $\psi$ per $e^{ip_0x/\hbar}$ sposta invece $\tilde\psi$ di $p_0$.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Indeterminazione.</b> Con la gaussiana, stringi $\sigma$: $|\psi(x)|^2$ si stringe e $|\tilde\psi(p)|^2$ si allarga. Per la gaussiana $\Delta x\,\Delta p=\frac\hbar2$ esatto: è lo stato di minima indeterminazione. Qualunque forma tu disegni dà un prodotto più grande.</li>
     <li><b>Traslare cambia solo la fase in $p$.</b> Muovi $a$: in $x$ il pacchetto si sposta, in $p$ la distribuzione $|\tilde\psi(p)|^2$ resta identica e cambiano solo i colori. È l'operatore di traslazione: $\tilde\psi(p)\to e^{-ipa/\hbar}\tilde\psi(p)$.</li>

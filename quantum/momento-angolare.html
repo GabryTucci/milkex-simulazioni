@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #cy{aspect-ratio:1/1;max-height:440px;cursor:grab}
@@ -66,9 +86,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Momento angolare: armoniche sferiche e modello vettoriale</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="7" rx="7" ry="2.4"/><path d="M12 21L5 7M12 21l7-14"/><path class="a2" d="M12 21l4-14.3"/><path d="M12 3v18" opacity=".5"/></svg></div><div><div class="chap">Il momento angolare</div><h1>Momento angolare: armoniche sferiche e modello vettoriale</h1></div></div>
   <p>Gli autostati comuni di $\hat L^2$ e $\hat L_z$ sono le armoniche sferiche $Y_\ell^m(\theta,\varphi)$, con $\hat L^2Y_\ell^m=\hbar^2\ell(\ell+1)Y_\ell^m$ e $\hat L_zY_\ell^m=\hbar m\,Y_\ell^m$, per $m=-\ell,\dots,\ell$.</p>
   <div class="start"><b>Inizia da qui:</b> scegli $\ell$ e $m$ e trascina la figura per girarla. A destra il vettore $\vec L$ gira su un cono: la sua componente $L_z$ è fissata, $L_x$ e $L_y$ no.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 <div class="grid">
   <div class="stack">
@@ -104,8 +126,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
     </section>
   </div>
 </div>
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>A sinistra c'è la forma dell'armonica sferica: la distanza dal centro in ogni direzione è il valore della funzione. Trascinala per girarla.</li><li>Scegli $\ell$ con il cursore e $m$ con i pulsanti; passa tra “Forma complessa” e “Forma reale”.</li><li>A destra il modello vettoriale: il vettore $\vec L$ gira su un cono, i trattini sull'asse sono i valori permessi di $L_z$.</li><li>Leggi nella tabella $|\vec L|$, $L_z$ e l'incertezza $\Delta L_x$.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Le componenti del momento angolare non commutano, $[\hat L_x,\hat L_y]=i\hbar\hat L_z$, ma $\hat L^2$ commuta con ciascuna: si possono conoscere insieme solo $L^2$ e una componente, di solito $L_z$. Gli autostati comuni sono le <b>armoniche sferiche</b> $Y_\ell^m(\theta,\varphi)$, con $L^2=\hbar^2\ell(\ell+1)$ e $L_z=m\hbar$, $m=-\ell,\dots,\ell$ ($2\ell+1$ valori).</p>
+<p>Siccome $\ell(\ell+1)&gt;m^2$, il vettore non è mai allineato all'asse $z$: sta su un cono, e $L_x$, $L_y$ restano incerti, con $\Delta L_x^2=\frac{\hbar^2}{2}[\ell(\ell+1)-m^2]$. Le armoniche hanno $\ell$ superfici nodali e parità $(-1)^\ell$. Le combinazioni reali (gli orbitali $p_x$, $d_{xy}$…) non sono più autostati di $L_z$ ma hanno la stessa $L^2$.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Simmetria attorno a $z$.</b> Nella forma complessa $|Y_\ell^m|^2$ non dipende da $\varphi$: la figura è simmetrica per rotazioni attorno all'asse $z$, perché $Y_\ell^m\propto e^{im\varphi}$. Lo si vede anche dal colore: la fase gira $m$ volte attorno all'asse.</li>
     <li><b>Il vettore non punta mai lungo $z$.</b> Anche con $m=\ell$ si ha $|\vec L|=\hbar\sqrt{\ell(\ell+1)}&gt;\ell\hbar=L_z$: il vettore sta su un cono. Se fosse allineato a $z$ conosceremmo esattamente anche $L_x=L_y=0$, impossibile perché $[\hat L_x,\hat L_y]=i\hbar\hat L_z$.</li>

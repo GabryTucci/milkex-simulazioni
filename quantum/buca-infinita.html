@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #plot{height:360px;cursor:crosshair}
@@ -63,9 +83,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Particella in una buca di potenziale infinita</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v18h16V3"/><path class="a2" d="M4 13c4-9 12-9 16 0"/><path d="M4 13h16" opacity=".4"/></svg></div><div><div class="chap">Problemi unidimensionali</div><h1>Particella in una buca di potenziale infinita</h1></div></div>
   <p>Una particella è libera di muoversi in $|x|&lt;a$ ed è chiusa da pareti di potenziale infinito. Il suo stato è una sovrapposizione degli autostati $\psi_j$, e ognuno evolve con la propria fase $e^{-iE_jt/\hbar}$.</p>
   <div class="start"><b>Inizia da qui:</b> clicca in un punto della buca per lanciare un pacchetto d'onda, poi guarda come rimbalza, si sparpaglia e… si ricompone.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 
 <div class="grid">
@@ -134,8 +156,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
   </div>
 </div>
 
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Clicca o trascina dentro la buca per lanciare un pacchetto d'onda da quel punto; i cursori in basso ne scelgono impulso e larghezza.</li><li>Accendi e spegni le curve nella legenda: $|\psi|^2$, $\mathrm{Re}\,\psi$, $\mathrm{Im}\,\psi$ e il valor medio $\ave x$.</li><li>Usa “Salta a T_riv/2” e “Salta a T_riv” per vedere la rinascita del pacchetto.</li><li>Scegli gli stati pronti ($\psi_1$, $\psi_1+\psi_2$…) e guarda a destra i pesi $|c_j|^2$ degli autostati.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>In una buca $|x|&lt;a$ con pareti infinite la funzione d'onda deve annullarsi sulle pareti. Gli autostati sono seni e coseni, $\psi_j$, che contengono un numero intero di mezze lunghezze d'onda, come una corda vibrante; le energie sono quantizzate: $E_j=\frac{\hbar^2\pi^2j^2}{8ma^2}=j^2E_1$. Lo stato fondamentale ha $E_1&gt;0$: la particella non può stare ferma (energia di punto zero).</p>
+<p>Uno stato qualsiasi è una sovrapposizione $\psi(x,t)=\sum_jc_je^{-iE_jt/\hbar}\psi_j(x)$. Un autostato da solo è <b>stazionario</b>; due o più autostati con energie diverse interferiscono e la densità si muove. Poiché $E_j\propto j^2$, al <b>tempo di rinascita</b> $T_{\rm riv}=\frac{2\pi\hbar}{E_1}$ tutte le fasi tornano uguali e qualunque stato si ricompone esattamente.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Il rimbalzo.</b> Lancia un pacchetto: il valor medio $\ave{x}$ (linea tratteggiata) va avanti e indietro come la particella classica, che torna al punto di partenza dopo $T=\frac{4a}{v}$ con $v=\frac{p_0}{m}$. Prova a raddoppiare $p_0$: il periodo si dimezza.</li>
     <li><b>Si sparpaglia e si ricompone.</b> Dopo qualche rimbalzo il pacchetto si allarga e diventa un groviglio di onde. Premi “Salta a T_riv”: al tempo di rinascita $$T_{\rm riv}=\frac{2\pi\hbar}{E_1}=\frac{16\,ma^2}{\pi\hbar}$$ tutte le fasi $e^{-ij^2E_1t/\hbar}$ tornano uguali e lo stato è di nuovo identico a quello iniziale. A $T_{\rm riv}/2$ ricompare riflesso dall'altra parte.</li>

@@ -3,98 +3,140 @@
   "path": "quantum/buca-infinita.html",
   "title": "Particella in una buca di potenziale infinita",
   "project": "Quantum",
-  "section": "Buca di potenziale infinita",
-  "time": 1794958828.769867
+  "section": "Problemi unidimensionali",
+  "time": 1794958828.769867,
+  "desc": "Lancia un pacchetto d'onda contro le pareti, componi una sovrapposizione degli autostati ψⱼ e guarda evolvere |ψ(x,t)|²: il pacchetto rimbalza, si sparpaglia e si ricompone al tempo di rinascita Tᵣᵢᵥ = 2πħ/E₁.",
+  "order": 5196,
+  "icon": "buca"
  },
  {
   "path": "quantum/misura-qbit.html",
   "title": "Misurare un qubit: probabilità, collasso e indeterminazione",
   "project": "Quantum",
   "section": "Stati, operatori e misure",
-  "time": 1794958828.769867
+  "time": 1794958828.769867,
+  "desc": "Prepara lo stato |ψ⟩ = a₊|+⟩+a₋|-⟩ e misuralo: con tante copie le frequenze tendono a P± = |a±|², con una sola misura lo stato collassa. Vedrai anche perché la fase relativa conta solo in un'altra base e il principio di indeterminazione tra due osservabili che non commutano.",
+  "order": 488,
+  "icon": "misura"
  },
  {
   "path": "quantum/sfera-di-bloch.html",
   "title": "Sfera di Bloch: stati puri, miscele e porte quantistiche",
   "project": "Quantum",
   "section": "Informazione quantistica",
-  "time": 1794958828.7703671
+  "time": 1794958828.7703671,
+  "desc": "Muovi il vettore p della matrice densità ρ = ½(+p·σ) dalla superficie (stati puri) all'interno (miscele), applica le porte quantistiche X, Y, Z, H e ricostruisci lo stato misurando σ₁,σ₂,σ₃ su N copie.",
+  "order": 1574,
+  "icon": "bloch"
  },
  {
   "path": "quantum/pacchetto-onde.html",
   "title": "Particelle e gruppi d'onde: velocità di fase e di gruppo",
   "project": "Quantum",
   "section": "Particelle e onde",
-  "time": 1794960918.4859602
+  "time": 1794960918.4859602,
+  "desc": "Costruisci un pacchetto sommando onde monocromatiche e guarda le creste correre con la velocità di fase vφ = ω/k mentre il pacchetto avanza con la velocità di gruppo vg = dω/dk, la stessa della particella classica.",
+  "order": 297,
+  "icon": "pacchetto"
  },
  {
   "path": "quantum/posizione-impulso.html",
   "title": "Posizione e impulso: la trasformata di Fourier",
   "project": "Quantum",
   "section": "Postulati, posizione e impulso",
-  "time": 1794960924.908764
+  "time": 1794960924.908764,
+  "desc": "Disegna a mano una funzione d'onda ψ(x) e vedi subito la sua distribuzione di impulsi ψ̃(p); trasla e spingi il pacchetto e verifica ΔxΔp ≥ ħ/2.",
+  "order": 2091,
+  "icon": "fourier"
  },
  {
   "path": "quantum/evoluzione-pacchetto.html",
   "title": "Evoluzione temporale di un pacchetto: particella libera e forza costante",
   "project": "Quantum",
   "section": "Evoluzione temporale",
-  "time": 1794960931.5488722
+  "time": 1794960931.5488722,
+  "desc": "L'equazione di Schrödinger risolta in tempo reale per un pacchetto gaussiano libero o sotto una forza costante: il valor medio segue la traiettoria classica (teorema di Ehrenfest) mentre il pacchetto si allarga.",
+  "order": 3005,
+  "icon": "evoluzione"
  },
  {
   "path": "quantum/effetto-tunnel.html",
   "title": "Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel",
   "project": "Quantum",
   "section": "Problemi unidimensionali",
-  "time": 1794960938.4023492
+  "time": 1794960938.4023492,
+  "desc": "Lancia un pacchetto d'onda contro una barriera, un gradino o una buca e misura le probabilità di riflessione e trasmissione, confrontandole con il coefficiente T(E): effetto tunnel e risonanze.",
+  "order": 5196,
+  "icon": "tunnel"
  },
  {
   "path": "quantum/oscillatore-armonico.html",
-  "title": "Oscillatore armonico: autostati, stati coerenti e operatori a, a^",
+  "title": "Oscillatore armonico: autostati, stati coerenti e operatori a, a†",
   "project": "Quantum",
   "section": "L'oscillatore armonico",
-  "time": 1794960945.3752143
+  "time": 1794960945.3752143,
+  "desc": "Confronta gli autostati |n⟩, fermi, con gli stati coerenti |α⟩, che oscillano come una molla classica, nello spazio delle posizioni e in quello delle fasi; applica a e a† con un clic.",
+  "order": 6821,
+  "icon": "oscillatore"
  },
  {
   "path": "quantum/scatola-2d.html",
   "title": "Particella in una scatola 2D: separazione delle variabili e degenerazione",
   "project": "Quantum",
   "section": "Sistemi in più dimensioni",
-  "time": 1794960952.656874
+  "time": 1794960952.656874,
+  "desc": "Componi stati ψn_1n_2(x,y) = ψn_1(x)ψn_2(y) in una scatola rettangolare: guarda le degenerazioni del quadrato e come si rompono allungando la scatola.",
+  "order": 7918,
+  "icon": "scatola"
  },
  {
   "path": "quantum/momento-angolare.html",
   "title": "Momento angolare: armoniche sferiche e modello vettoriale",
   "project": "Quantum",
   "section": "Il momento angolare",
-  "time": 1794960959.1876357
+  "time": 1794960959.1876357,
+  "desc": "Ruota in 3D le armoniche sferiche Yℓᵐ (forma complessa e orbitali reali) e guarda il vettore L precedere sul cono con |L| = ħ√(ℓ(ℓ+1)) e Lz = mħ.",
+  "order": 8797,
+  "icon": "momento"
  },
  {
   "path": "quantum/potenziale-efficace.html",
   "title": "Problemi a simmetria centrale: potenziale efficace e degenerazioni",
   "project": "Quantum",
   "section": "Problemi a simmetria centrale",
-  "time": 1794960965.777845
+  "time": 1794960965.777845,
+  "desc": "L'equazione radiale con il potenziale efficace, risolta numericamente per ℓ = 0,,3: confronta gli spettri del potenziale coulombiano, dell'oscillatore isotropo e della buca sferica e le loro degenerazioni.",
+  "order": 10171,
+  "icon": "radiale"
  },
  {
   "path": "quantum/atomo-idrogeno.html",
   "title": "Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali",
   "project": "Quantum",
   "section": "L'atomo di idrogeno",
-  "time": 1794960972.313975
+  "time": 1794960972.313975,
+  "desc": "Esplora gli orbitali ψnℓm, la distribuzione radiale r²Rnℓ² e lo spettro: clicca due livelli per vedere il fotone emesso, con la sua lunghezza d'onda e il suo colore.",
+  "order": 10952,
+  "icon": "atomo"
  },
  {
   "path": "quantum/aharonov-bohm.html",
   "title": "Effetto Aharonov–Bohm ed effetto Zeeman",
   "project": "Quantum",
   "section": "Particella carica in campo elettromagnetico",
-  "time": 1794960979.3031976
+  "time": 1794960979.3031976,
+  "desc": "Le frange di due fenditure si spostano quando cambia il flusso Φ di un solenoide che le particelle non attraversano mai: la fase qΦ/ħc. Con i livelli su un anello e lo Zeeman normale.",
+  "order": 12377,
+  "icon": "fenditure"
  },
  {
   "path": "quantum/stern-gerlach.html",
-  "title": "Stern–Gerlach in sequenza: misure di spin 12",
+  "title": "Stern–Gerlach in sequenza: misure di spin ½",
   "project": "Quantum",
   "section": "Spin",
-  "time": 1794960986.4004807
+  "time": 1794960986.4004807,
+  "desc": "Monta in fila fino a tre apparati di Stern–Gerlach orientati come vuoi, blocca un fascio e conta gli atomi: vedrai come ogni misura prepara lo stato e cancella le informazioni precedenti.",
+  "order": 13105,
+  "icon": "spin"
  }
 ]

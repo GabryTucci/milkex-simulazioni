@@ -43,7 +43,8 @@ button.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
 input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
 .vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
-.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;align-items:baseline;min-width:0}
+.vals>div>b{margin-left:auto;text-align:right}
 .vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
 .legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
@@ -53,6 +54,25 @@ details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut)
 .obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
 .ok{color:var(--ok)}.bad{color:var(--bad)}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+/* intestazione, guida e impaginazione per telefono e tablet */
+a.home{display:inline-flex;align-items:center;gap:.3rem;font-size:.88rem;color:var(--ac);text-decoration:none;margin-bottom:.5rem}
+a.home:hover{text-decoration:underline}
+.hrow{display:flex;gap:14px;align-items:center}
+.hico{flex:none;width:54px;height:54px;border-radius:14px;background:var(--soft);border:1px solid var(--bd);display:grid;place-items:center}
+.hico svg{width:32px;height:32px;fill:none;stroke:var(--ac);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hico svg .a2{stroke:var(--c2)}
+.chap{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+a.jump{display:inline-flex;align-items:center;gap:.4rem;margin:.5rem 0 0 .2rem;font-size:.92rem;color:var(--ac);font-weight:600;text-decoration:none}
+a.jump:hover{text-decoration:underline}
+.guide .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:20px}
+.guide h3{font-size:.98rem;margin:.2rem 0 .4rem;color:var(--ac)}
+.guide ol{padding-left:1.3rem;margin:.2rem 0}.guide li{margin:.45rem 0}
+.guide p{margin:.3rem 0 .7rem}
+html{scroll-behavior:smooth}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.guide .g2{grid-template-columns:minmax(0,1fr);gap:6px}}
+@media (max-width:600px){main{padding:12px}header.top h1{font-size:1.18rem}.hico{width:44px;height:44px}.hico svg{width:26px;height:26px}
+  .card{padding:12px;border-radius:12px}.start{display:block}.vals{grid-template-columns:repeat(auto-fit,minmax(135px,1fr))}
+  button{min-height:40px}.row{gap:6px}}
 </style>
 <style>
 #orb{width:100%;aspect-ratio:1/1;max-height:420px;display:block;margin:0 auto;border-radius:10px;background:#000}
@@ -67,9 +87,11 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
 <body>
 <main>
 <header class="top">
-  <h1>Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali</h1>
+  <a class="home" href="../">← Tutte le simulazioni</a>
+  <div class="hrow"><div class="hico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="1.8"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse class="a2" cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg></div><div><div class="chap">L'atomo di idrogeno</div><h1>Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali</h1></div></div>
   <p>Gli stati legati sono $\psi_{n\ell m}=R_{n\ell}(r)\,Y_\ell^m(\theta,\varphi)$ con energia $E_n=-\frac{me^4}{2\hbar^2n^2}\approx-\frac{13{,}6\ \text{eV}}{n^2}$, che dipende solo da $n$. Qui vedi la densità $|\psi|^2$ in una sezione che contiene l'asse $z$.</p>
   <div class="start"><b>Inizia da qui:</b> scegli $n$, $\ell$, $m$ per vedere l'orbitale. Nello spettro clicca due livelli per far “saltare” l'elettrone e vedere il colore del fotone emesso.</div>
+  <a class="jump" href="#guida">📖 Come si usa e la teoria ↓</a>
 </header>
 <div class="grid">
   <div class="stack">
@@ -111,8 +133,16 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
     </section>
   </div>
 </div>
+<section class="card guide" id="guida" style="margin-top:14px">
+  <h2>📖 Guida all'uso</h2>
+  <div class="g2">
+    <div><h3>Come si usa</h3><ol><li>Scegli $n$, $\ell$ e $m$: l'immagine mostra $|\psi|^2$ in una sezione verticale, il colore indica segno o fase. Il cursore “Contrasto” mette in risalto le zone deboli.</li><li>Passa tra “Orbitali reali” e “Autostati di $L_z$”.</li><li>Sotto c'è la distribuzione radiale $P(r)$, con il valor medio $\ave r$ e il raggio di Bohr.</li><li>Nello spettro clicca un livello e poi un altro: compare la riga emessa (o assorbita) con il colore del fotone.</li></ol></div>
+    <div><h3>La fisica in breve</h3><p>Per il potenziale $-\frac{e^2}{r}$ gli stati legati sono $\psi_{n\ell m}=R_{n\ell}(r)Y_\ell^m(\theta,\varphi)$, con $n=1,2,\dots$, $\ell=0,\dots,n-1$, $m=-\ell,\dots,\ell$, ed energia $E_n=-\frac{me^4}{2\hbar^2n^2}\approx-\frac{13{,}6\ \text{eV}}{n^2}$, che dipende solo da $n$: ogni livello contiene $n^2$ stati. La funzione radiale ha $n-\ell-1$ nodi e la sua scala è il raggio di Bohr $a_0=\frac{\hbar^2}{me^2}\approx0{,}53$ Å.</p>
+<p>Quando l'elettrone passa da $n_i$ a $n_f&lt;n_i$ emette un fotone di energia $h\nu=E_{n_i}-E_{n_f}$ e lunghezza d'onda $\lambda=\frac{hc}{\Delta E}$. Le righe verso $n_f=2$ (<b>serie di Balmer</b>) sono visibili: 656 nm (rosso), 486 nm (azzurro), 434 e 410 nm (viola). Verso $n_f=1$ (Lyman) sono nell'ultravioletto.</p></div>
+  </div>
+</section>
 <section class="card obs" style="margin-top:14px">
-  <h2>Cosa osservare</h2>
+  <h2>🔬 Esperimenti da provare</h2>
   <ol>
     <li><b>Energia solo da $n$.</b> Cambia $\ell$ e $m$ a $n$ fisso: la forma cambia moltissimo, l'energia no. Il livello $n$ contiene $n^2$ stati (senza contare lo spin): è la degenerazione accidentale del potenziale coulombiano.</li>
     <li><b>Nodi.</b> L'orbitale ha $n-\ell-1$ nodi radiali (sfere scure) e $\ell$ nodi angolari (piani o coni scuri): in tutto $n-1$. Per esempio $3s$ ha due gusci, $3d$ nessuno.</li>

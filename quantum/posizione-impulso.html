@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Posizione e impulso: la trasformata di Fourier</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cx,#cp{height:230px}
+#cx.draw{cursor:crosshair}
+.wheel{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;background:conic-gradient(from 90deg,hsl(0 80% 55%),hsl(90 80% 55%),hsl(180 80% 55%),hsl(270 80% 55%),hsl(360 80% 55%))}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Posizione e impulso: la trasformata di Fourier</h1>
+  <p>La stessa particella si descrive nella base delle posizioni, con $\psi(x)=\braket{x}{\psi}$, o in quella degli impulsi, con $\tilde\psi(p)=\braket{p}{\psi}=\int\frac{dx}{\sqrt{2\pi\hbar}}\,e^{-ipx/\hbar}\psi(x)$. Più una è stretta, più l'altra è larga.</p>
+  <div class="start"><b>Inizia da qui:</b> premi <b>✏️ Disegna tu</b> e disegna col mouse (o col dito) una funzione d'onda qualsiasi: sotto compare subito la sua distribuzione di impulsi.</div>
+</header>
+
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>Nella base delle posizioni: $|\psi(x)|^2$</h2>
+      <canvas id="cx" role="img" aria-label="Densità di probabilità in x colorata con la fase"></canvas>
+      <p class="hint" id="drawHint">Il colore è la fase di $\psi$ <span class="wheel"></span>: stesso colore = stessa fase.</p>
+      <h2 style="margin-top:.8rem">Nella base degli impulsi: $|\tilde\psi(p)|^2$</h2>
+      <canvas id="cp" role="img" aria-label="Densità di probabilità in p colorata con la fase"></canvas>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Forma della funzione d'onda</h2>
+      <div class="row" id="shapes"></div>
+      <div class="ctl" title="Larghezza delle forme preimpostate">
+        <div class="lab"><span>Larghezza $\sigma$</span><output id="sO"></output></div>
+        <input type="range" id="s" min="0.15" max="3" step="0.01" value="0.8">
+      </div>
+      <div class="ctl" title="Trasla la funzione d'onda: ψ(x) → ψ(x−a), cioè applica l'operatore di traslazione e^{−ipa/ħ}">
+        <div class="lab"><span>Traslazione $a$</span><output id="aO"></output></div>
+        <input type="range" id="a" min="-6" max="6" step="0.05" value="0">
+      </div>
+      <div class="ctl" title="Moltiplica ψ per l'onda piana e^{ip₀x/ħ}: dà un impulso medio p₀">
+        <div class="lab"><span>Impulso medio $p_0$ (spinta)</span><output id="pO"></output></div>
+        <input type="range" id="p" min="-6" max="6" step="0.05" value="0">
+      </div>
+    </section>
+    <section class="card">
+      <h2>Valori medi</h2>
+      <div class="vals">
+        <div><span>$\ave{x}$</span><b id="vx"></b></div>
+        <div><span>$\Delta x$</span><b id="vdx"></b></div>
+        <div><span>$\ave{p}$</span><b id="vp"></b></div>
+        <div><span>$\Delta p$</span><b id="vdp"></b></div>
+        <div><span>$\Delta x\,\Delta p$</span><b id="vdd"></b></div>
+      </div>
+      <p class="hint">Unità: $\hbar=1$. Il controllo ✓ verifica $\Delta x\,\Delta p\ge\frac\hbar2$.</p>
+    </section>
+  </div>
+</div>
+
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Indeterminazione.</b> Con la gaussiana, stringi $\sigma$: $|\psi(x)|^2$ si stringe e $|\tilde\psi(p)|^2$ si allarga. Per la gaussiana $\Delta x\,\Delta p=\frac\hbar2$ esatto: è lo stato di minima indeterminazione. Qualunque forma tu disegni dà un prodotto più grande.</li>
+    <li><b>Traslare cambia solo la fase in $p$.</b> Muovi $a$: in $x$ il pacchetto si sposta, in $p$ la distribuzione $|\tilde\psi(p)|^2$ resta identica e cambiano solo i colori. È l'operatore di traslazione: $\tilde\psi(p)\to e^{-ipa/\hbar}\tilde\psi(p)$.</li>
+    <li><b>Spingere sposta in $p$.</b> Muovi $p_0$: moltiplicare per $e^{ip_0x/\hbar}$ non cambia $|\psi(x)|^2$ (in $x$ i colori ruotano lungo il pacchetto) ma sposta $|\tilde\psi(p)|^2$ di $p_0$. Posizione e impulso si scambiano i ruoli.</li>
+    <li><b>Interferenza in $p$.</b> Con “Due gaussiane”, in $p$ compaiono frange con passo $\frac{2\pi\hbar}{d}$ ($d$ = distanza tra i due picchi): è l'analogo dell'esperimento di Young. Allontana i picchi aumentando $\sigma$ e guarda le frange infittirsi.</li>
+    <li><b>Spigoli costano impulso.</b> Il “rettangolo” ha spigoli netti: $\tilde\psi(p)\propto\frac{\sin(pL/2\hbar)}{p}$ ha code lunghe e $\Delta p$ cresce molto. Disegna una forma piena di spigoli e guarda $\Delta p$.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const N = 512, L = 10, dx = 2 * L / N, NP = 401, PMAX = 12;
+const xs = Float64Array.from({ length: N }, (_, i) => -L + dx * (i + .5));
+const ps = Float64Array.from({ length: NP }, (_, j) => -PMAX + 2 * PMAX * j / (NP - 1));
+const dp = ps[1] - ps[0];
+let shape = "gauss", drawn = new Float64Array(N), drawing = false;
+const SH = {
+  gauss: (x, s) => Math.exp(-x * x / (4 * s * s)),
+  due: (x, s) => Math.exp(-((x - 1.6 * s - .8) ** 2) / (4 * .09)) + Math.exp(-((x + 1.6 * s + .8) ** 2) / (4 * .09)),
+  rett: (x, s) => Math.abs(x) <= 1.5 * s ? 1 : 0,
+  lorentz: (x, s) => 1 / (1 + (x / s) ** 2),
+  disegno: (x) => { const i = Math.round((x + L) / dx - .5); return i >= 0 && i < N ? drawn[i] : 0; },
+};
+let psiR = new Float64Array(N), psiI = new Float64Array(N), phR = new Float64Array(NP), phI = new Float64Array(NP), st = {};
+const cosT = new Float64Array(N * NP), sinT = new Float64Array(N * NP);
+for (let j = 0; j < NP; j++) for (let i = 0; i < N; i++) { cosT[j * N + i] = Math.cos(ps[j] * xs[i]); sinT[j * N + i] = Math.sin(ps[j] * xs[i]); }
+function compute() {
+  const s = +$("s").value, a = +$("a").value, p0 = +$("p").value, f = SH[shape];
+  let n = 0;
+  for (let i = 0; i < N; i++) { const b = shape === "disegno" ? f(xs[i] - a) : f(xs[i] - a, s); psiR[i] = b * Math.cos(p0 * xs[i]); psiI[i] = b * Math.sin(p0 * xs[i]); n += b * b; }
+  n = Math.sqrt(n * dx) || 1;
+  for (let i = 0; i < N; i++) { psiR[i] /= n; psiI[i] /= n; }
+  // trasformata: psi_tilde(p) = ∫ dx/√(2πħ) e^{−ipx/ħ} ψ(x)
+  const k = dx / Math.sqrt(2 * Math.PI);
+  for (let j = 0; j < NP; j++) {
+    let r = 0, m = 0, o = j * N;
+    for (let i = 0; i < N; i++) { const c = cosT[o + i], sn = sinT[o + i]; r += psiR[i] * c + psiI[i] * sn; m += psiI[i] * c - psiR[i] * sn; }
+    phR[j] = r * k; phI[j] = m * k;
+  }
+  let mx = 0, mx2 = 0, np = 0, mp = 0, mp2 = 0;
+  for (let i = 0; i < N; i++) { const w = (psiR[i] ** 2 + psiI[i] ** 2) * dx; mx += w * xs[i]; mx2 += w * xs[i] ** 2; }
+  for (let j = 0; j < NP; j++) { const w = (phR[j] ** 2 + phI[j] ** 2) * dp; np += w; mp += w * ps[j]; mp2 += w * ps[j] ** 2; }
+  mp /= np; mp2 /= np;
+  st = { mx, Dx: Math.sqrt(Math.max(0, mx2 - mx * mx)), mp, Dp: Math.sqrt(Math.max(0, mp2 - mp * mp)), np };
+  draw();
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+function plotPhase(cv, grid, re, im, lo, hi, axisLabel, ticks) {
+  const { g, W, H } = setup(cv); g.clearRect(0, 0, W, H);
+  const B = 26, T = 10, n = grid.length, X = v => 12 + (v - lo) / (hi - lo) * (W - 24);
+  let mx = 1e-9; for (let i = 0; i < n; i++) mx = Math.max(mx, re[i] ** 2 + im[i] ** 2);
+  const Y = v => H - B - v / mx * (H - B - T) * .92;
+  for (let i = 0; i < n - 1; i++) {        // colonne colorate con la fase
+    const v = re[i] ** 2 + im[i] ** 2; if (v < mx * 1e-4) continue;
+    const hue = (Math.atan2(im[i], re[i]) * 180 / Math.PI + 360) % 360;
+    g.fillStyle = `hsl(${hue} 75% 55%)`; const x0 = X(grid[i]), x1 = X(grid[i + 1]);
+    g.fillRect(x0, Y(v), Math.max(1, x1 - x0 + .5), H - B - Y(v));
+  }
+  g.beginPath(); for (let i = 0; i < n; i++) { const yy = Y(re[i] ** 2 + im[i] ** 2); i ? g.lineTo(X(grid[i]), yy) : g.moveTo(X(grid[i]), yy); }
+  g.strokeStyle = css("--fg"); g.lineWidth = 1.5; g.stroke();
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(12, H - B); g.lineTo(W - 12, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
+  for (const tk of ticks) g.fillText(num(tk, 0), X(tk), H - 9);
+  g.textAlign = "right"; g.fillText(axisLabel, W - 12, T + 6);
+}
+function draw() {
+  plotPhase($("cx"), xs, psiR, psiI, -L, L, "x", [-8, -4, 0, 4, 8]);
+  plotPhase($("cp"), ps, phR, phI, -PMAX, PMAX, "p", [-10, -5, 0, 5, 10]);
+  $("vx").textContent = num(st.mx); $("vdx").textContent = num(st.Dx);
+  $("vp").textContent = num(st.mp); $("vdp").textContent = num(st.Dp);
+  const pr = st.Dx * st.Dp, ok = pr >= 0.5 - 3e-3;
+  $("vdd").textContent = num(pr) + " ħ" + (ok ? " ✓" : ""); $("vdd").className = ok ? "ok" : "";
+}
+const SHAPES = [["gauss", "Gaussiana"], ["due", "Due gaussiane"], ["rett", "Rettangolo"], ["lorentz", "Lorentziana"], ["disegno", "✏️ Disegna tu"]];
+for (const [k, l] of SHAPES) {
+  const b = document.createElement("button"); b.textContent = l; b.dataset.s = k; b.title = k === "disegno" ? "Disegna |ψ(x)| col mouse o col dito nel grafico in alto" : "Usa questa forma";
+  b.onclick = () => { shape = k; document.querySelectorAll("#shapes button").forEach(x => x.classList.toggle("on", x === b));
+    $("cx").classList.toggle("draw", k === "disegno");
+    if (k === "disegno") { $("a").value = 0; drawn.fill(0); $("drawHint").textContent = "✏️ Disegna col mouse o col dito nel grafico: l'altezza è |ψ(x)|. Puoi ripassare per correggere."; }
+    else { $("drawHint").innerHTML = "Il colore è la fase di ψ <span class='wheel'></span>: stesso colore = stessa fase."; }
+    labels(); compute(); };
+  $("shapes").append(b);
+}
+document.querySelector("#shapes button").classList.add("on");
+function labels() { $("sO").textContent = num(+$("s").value, 2); $("aO").textContent = num(+$("a").value, 2); $("pO").textContent = num(+$("p").value, 2) + " ħ"; }
+["s", "a", "p"].forEach(id => $(id).addEventListener("input", () => { labels(); compute(); }));
+// disegno a mano libera
+let lastI = null;
+function paint(e) {
+  const r = $("cx").getBoundingClientRect(), x = -L + (e.clientX - r.left - 12) / (r.width - 24) * 2 * L;
+  const v = Math.max(0, Math.min(1, (r.bottom - 26 - e.clientY) / (r.height - 36))), i = Math.round((x + L) / dx - .5);
+  const from = lastI === null ? i : lastI;
+  for (let k = Math.min(from, i); k <= Math.max(from, i); k++) for (let q = -3; q <= 3; q++) { const j = k + q; if (j >= 0 && j < N) drawn[j] = q === 0 ? v : Math.max(drawn[j] * .5, v * (1 - Math.abs(q) / 4)); }
+  lastI = i; compute();
+}
+$("cx").addEventListener("pointerdown", e => { if (shape !== "disegno") return; drawing = true; lastI = null; $("cx").setPointerCapture(e.pointerId); paint(e); });
+$("cx").addEventListener("pointermove", e => { if (drawing) paint(e); });
+const stop = () => { drawing = false; lastI = null; };
+$("cx").addEventListener("pointerup", stop); $("cx").addEventListener("pointercancel", stop);
+// all'apertura: una gaussiana che oscilla avanti e indietro finché l'utente non tocca qualcosa
+let demo = true, t0 = performance.now();
+["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, () => { demo = false; }, { once: true }));
+function anim(now) {
+  if (demo) { $("a").value = (3 * Math.sin((now - t0) / 1400)).toFixed(2); $("p").value = (2 * Math.cos((now - t0) / 1400)).toFixed(2); labels(); compute(); requestAnimationFrame(anim); }
+}
+window.addEventListener("resize", draw);
+labels(); compute(); requestAnimationFrame(anim);
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Evoluzione temporale di un pacchetto: particella libera e forza costante</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cx{height:280px}
+#cg{height:200px}
+@media (max-width:600px){#cx{height:230px}}
+.wheel{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;background:conic-gradient(from 90deg,hsl(0 80% 55%),hsl(90 80% 55%),hsl(180 80% 55%),hsl(270 80% 55%),hsl(360 80% 55%))}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Evoluzione temporale di un pacchetto: particella libera e forza costante</h1>
+  <p>Risolvo davvero l'equazione di Schrödinger $i\hbar\,\partial_t\psi=-\frac{\hbar^2}{2m}\partial_x^2\psi+V(x)\psi$ per un pacchetto gaussiano, con $V=0$ (particella libera) o $V=-Fx$ (forza costante $F$), e confronto i valori medi con la traiettoria classica.</p>
+  <div class="start"><b>Inizia da qui:</b> il pacchetto viene lanciato contro una forza che lo riporta indietro. Guarda il grafico in basso: il valor medio $\ave{x}$ (punti) segue esattamente la parabola classica.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>$|\psi(x,t)|^2$ colorata con la fase <span class="wheel"></span></h2>
+      <canvas id="cx" role="img" aria-label="Pacchetto d'onda che evolve"></canvas>
+      <div class="row">
+        <button class="pri" id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <button id="restart" title="Riparte dallo stato iniziale">↺ Ricomincia</button>
+        <span class="hint" id="tlab"></span>
+      </div>
+      <h2 style="margin-top:.6rem">Teorema di Ehrenfest: valori medi e traiettoria classica</h2>
+      <canvas id="cg" role="img" aria-label="Valor medio della posizione e larghezza nel tempo"></canvas>
+      <div class="legend" style="margin-top:.3rem"><span><i style="background:var(--c3)"></i>⟨x⟩ quantistico (punti)</span><span><i style="background:var(--fg)"></i>x(t) classico</span><span><i style="background:var(--c2)"></i>Δx(t) (punti) e formula</span></div>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Esperimenti</h2>
+      <div class="row" id="presets"></div>
+    </section>
+    <section class="card">
+      <h2>Parametri</h2>
+      <div class="ctl" title="Forza costante F = −dV/dx: positiva spinge verso destra">
+        <div class="lab"><span>Forza costante $F$</span><output id="FO"></output></div>
+        <input type="range" id="F" min="-3" max="3" step="0.05" value="-1.5">
+      </div>
+      <div class="ctl" title="Impulso medio iniziale p₀">
+        <div class="lab"><span>Impulso iniziale $p_0$</span><output id="pO"></output></div>
+        <input type="range" id="p" min="-8" max="8" step="0.1" value="6">
+      </div>
+      <div class="ctl" title="Larghezza iniziale del pacchetto: più è stretto, più velocemente si allarga">
+        <div class="lab"><span>Larghezza iniziale $\sigma_0$</span><output id="sO"></output></div>
+        <input type="range" id="s" min="0.3" max="3" step="0.05" value="1">
+      </div>
+      <div class="ctl" title="Velocità della simulazione">
+        <div class="lab"><span>Velocità</span><output id="vO"></output></div>
+        <input type="range" id="v" min="0.2" max="3" step="0.1" value="1">
+      </div>
+      <p class="hint">I nuovi parametri si applicano premendo “Ricomincia” (o subito, se cambi un cursore).</p>
+    </section>
+    <section class="card">
+      <h2>Valori</h2>
+      <div class="vals">
+        <div><span>$\ave{x}$</span><b id="vx"></b></div>
+        <div><span>$x_{\rm cl}(t)$</span><b id="vxc"></b></div>
+        <div><span>$\ave{p}$</span><b id="vp"></b></div>
+        <div><span>$p_0+Ft$</span><b id="vpc"></b></div>
+        <div><span>$\Delta x$</span><b id="vdx"></b></div>
+        <div><span>$\Delta p$</span><b id="vdp"></b></div>
+        <div><span>$\int|\psi|^2dx$</span><b id="vn"></b></div>
+      </div>
+      <p class="hint">Unità: $\hbar=m=1$.</p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Ehrenfest.</b> $\frac{d}{dt}\ave{x}=\frac{\ave{p}}{m}$ e $\frac{d}{dt}\ave{p}=\ave{-V'(x)}=F$: per forza costante (o nulla) i valori medi seguono esattamente le equazioni classiche, $\ave{x}=x_0+\frac{p_0}{m}t+\frac{F}{2m}t^2$ e $\ave{p}=p_0+Ft$. Confronta le due colonne dei valori.</li>
+    <li><b>Il pacchetto si allarga.</b> Anche senza forza la larghezza cresce come $$\Delta x(t)=\sigma_0\sqrt{1+\left(\frac{\hbar t}{2m\sigma_0^2}\right)^2},$$ perché le componenti con impulso diverso viaggiano a velocità diverse. $\Delta p$ invece resta costante: la forza costante sposta tutti gli impulsi della stessa quantità.</li>
+    <li><b>Più stretto, più veloce ad allargarsi.</b> Riduci $\sigma_0$: il tempo caratteristico $2m\sigma_0^2/\hbar$ crolla e il pacchetto si sparpaglia quasi subito. Un pacchetto largo resta compatto a lungo: per questo un oggetto macroscopico sembra avere una traiettoria precisa.</li>
+    <li><b>Le frange di fase.</b> Guarda i colori: dove il pacchetto va veloce la fase gira rapidamente ($e^{ipx/\hbar}$ con $p$ grande); nel punto di inversione, dove $\ave{p}=0$, i colori quasi non cambiano lungo il pacchetto.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+// ---- griglia e FFT (radice 2)
+const N = 1024, L = 40, dx = 2 * L / N, DT = 0.005, X0 = -10;
+const xs = Float64Array.from({ length: N }, (_, i) => -L + dx * i);
+const ks = Float64Array.from({ length: N }, (_, i) => 2 * Math.PI * (i < N / 2 ? i : i - N) / (2 * L));
+function fft(re, im, inv) {
+  for (let i = 1, j = 0; i < N; i++) { let b = N >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= N; len <<= 1) {
+    const a = 2 * Math.PI / len * (inv ? 1 : -1), wr = Math.cos(a), wi = Math.sin(a);
+    for (let i = 0; i < N; i += len) { let cr = 1, ci = 0;
+      for (let j = 0; j < len / 2; j++) { const ur = re[i + j], ui = im[i + j], vr = re[i + j + len / 2] * cr - im[i + j + len / 2] * ci, vi = re[i + j + len / 2] * ci + im[i + j + len / 2] * cr;
+        re[i + j] = ur + vr; im[i + j] = ui + vi; re[i + j + len / 2] = ur - vr; im[i + j + len / 2] = ui - vi; const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t; } }
+  }
+  if (inv) for (let i = 0; i < N; i++) { re[i] /= N; im[i] /= N; }
+}
+let re = new Float64Array(N), im = new Float64Array(N), t = 0, playing = true, hist = [], F = 0, p0 = 0, s0 = 1;
+let vR, vI, kR, kI;
+function init() {
+  F = +$("F").value; p0 = +$("p").value; s0 = +$("s").value; t = 0; hist = [];
+  let n = 0;
+  for (let i = 0; i < N; i++) { const env = Math.exp(-((xs[i] - X0) ** 2) / (4 * s0 * s0)); re[i] = env * Math.cos(p0 * xs[i]); im[i] = env * Math.sin(p0 * xs[i]); n += env * env; }
+  n = Math.sqrt(n * dx); for (let i = 0; i < N; i++) { re[i] /= n; im[i] /= n; }
+  // split-step: metà potenziale, cinetica esatta nello spazio k, metà potenziale (V = −F x)
+  vR = new Float64Array(N); vI = new Float64Array(N); kR = new Float64Array(N); kI = new Float64Array(N);
+  for (let i = 0; i < N; i++) { const ph = -(-F * xs[i]) * DT / 2; vR[i] = Math.cos(ph); vI[i] = Math.sin(ph); const pk = -0.5 * ks[i] * ks[i] * DT; kR[i] = Math.cos(pk); kI[i] = Math.sin(pk); }
+}
+function mul(aR, aI) { for (let i = 0; i < N; i++) { const r = re[i] * aR[i] - im[i] * aI[i]; im[i] = re[i] * aI[i] + im[i] * aR[i]; re[i] = r; } }
+function step() { mul(vR, vI); fft(re, im, false); mul(kR, kI); fft(re, im, true); mul(vR, vI); t += DT; }
+function stats() {
+  let n = 0, m = 0, m2 = 0;
+  for (let i = 0; i < N; i++) { const w = (re[i] ** 2 + im[i] ** 2) * dx; n += w; m += w * xs[i]; m2 += w * xs[i] ** 2; }
+  m /= n; m2 /= n;
+  const R = re.slice(), I = im.slice(); fft(R, I, false);
+  let q = 0, mp = 0, mp2 = 0; for (let i = 0; i < N; i++) { const w = R[i] ** 2 + I[i] ** 2; q += w; mp += w * ks[i]; mp2 += w * ks[i] ** 2; }
+  mp /= q; mp2 /= q;
+  return { n, mx: m, Dx: Math.sqrt(Math.max(0, m2 - m * m)), mp, Dp: Math.sqrt(Math.max(0, mp2 - mp * mp)) };
+}
+const xcl = tt => X0 + p0 * tt + 0.5 * F * tt * tt, dxth = tt => s0 * Math.sqrt(1 + (tt / (2 * s0 * s0)) ** 2);
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+const XA = -30, XB = 30;
+function drawX(s) {
+  const { g, W, H } = setup($("cx")); g.clearRect(0, 0, W, H);
+  const B = 26, T = 12, X = v => 12 + (v - XA) / (XB - XA) * (W - 24);
+  let mx = 1e-9; for (let i = 0; i < N; i++) mx = Math.max(mx, re[i] ** 2 + im[i] ** 2);
+  const top = Math.max(mx, 1 / (Math.sqrt(2 * Math.PI) * s0)) , Y = v => H - B - v / top * (H - B - T) * .9;
+  // potenziale V = −F x (scala arbitraria)
+  if (F !== 0) { g.strokeStyle = css("--mut"); g.setLineDash([5, 4]); g.beginPath(); g.moveTo(X(XA), H - B - (H - B - T) * (.5 + .45 * Math.sign(F))); g.lineTo(X(XB), H - B - (H - B - T) * (.5 - .45 * Math.sign(F))); g.stroke(); g.setLineDash([]);
+    g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "left"; g.fillText("V(x) = −F x", 16, T + 10); }
+  for (let i = 0; i < N - 1; i++) { if (xs[i] < XA || xs[i] > XB) continue; const v = re[i] ** 2 + im[i] ** 2; if (v < top * 2e-3) continue;
+    g.fillStyle = `hsl(${(Math.atan2(im[i], re[i]) * 180 / Math.PI + 360) % 360} 75% 55%)`; g.fillRect(X(xs[i]), Y(v), Math.max(1, X(xs[i + 1]) - X(xs[i]) + .5), H - B - Y(v)); }
+  g.beginPath(); let first = true; for (let i = 0; i < N; i++) { if (xs[i] < XA || xs[i] > XB) continue; const yy = Y(re[i] ** 2 + im[i] ** 2); first ? g.moveTo(X(xs[i]), yy) : g.lineTo(X(xs[i]), yy); first = false; }
+  g.strokeStyle = css("--fg"); g.lineWidth = 1.4; g.stroke();
+  const xc = X(xcl(t)); if (xc > 10 && xc < W - 10) { g.fillStyle = css("--fg"); g.beginPath(); g.arc(xc, H - B, 6, 0, 2 * Math.PI); g.fill(); g.font = "12px system-ui"; g.textAlign = "center"; g.fillText("classica", xc, H - B - 12); }
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(12, H - B); g.lineTo(W - 12, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center"; for (let v = -30; v <= 30; v += 10) g.fillText(String(v).replace("-", "−"), X(v), H - 8);
+}
+function drawG() {
+  const { g, W, H } = setup($("cg")); g.clearRect(0, 0, W, H);
+  const T = Math.max(8, t * 1.05), L0 = 34, B = 22, X = v => L0 + v / T * (W - L0 - 12);
+  let lo = -20, hi = 20; for (const h of hist) { lo = Math.min(lo, h[1] - 2); hi = Math.max(hi, h[1] + 2); }
+  const Y = v => 8 + (hi - v) / (hi - lo) * (H - B - 8);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - B); g.lineTo(W - 12, H - B); g.moveTo(L0, 8); g.lineTo(L0, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "right";
+  for (const v of [lo, (lo + hi) / 2, hi]) g.fillText(num(v, 0), L0 - 4, Y(v) + 4);
+  g.textAlign = "center"; g.fillText("t", W - 16, H - 6);
+  g.beginPath(); for (let i = 0; i <= 100; i++) { const tt = T * i / 100, yy = Y(xcl(tt)); i ? g.lineTo(X(tt), yy) : g.moveTo(X(tt), yy); } g.strokeStyle = css("--fg"); g.lineWidth = 1.5; g.stroke();
+  g.beginPath(); for (let i = 0; i <= 100; i++) { const tt = T * i / 100, yy = Y(lo + dxth(tt)); i ? g.lineTo(X(tt), yy) : g.moveTo(X(tt), yy); } g.strokeStyle = css("--c2"); g.lineWidth = 1.2; g.stroke();
+  for (const h of hist) { g.fillStyle = css("--c3"); g.beginPath(); g.arc(X(h[0]), Y(h[1]), 2.6, 0, 2 * Math.PI); g.fill(); g.fillStyle = css("--c2"); g.beginPath(); g.arc(X(h[0]), Y(lo + h[2]), 2.2, 0, 2 * Math.PI); g.fill(); }
+  g.fillStyle = css("--c2"); g.textAlign = "left"; g.fillText("Δx (dal basso)", L0 + 6, H - B - 6);
+}
+let last = performance.now(), acc = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) { acc += dt * 2.2 * +$("v").value; const n = Math.min(80, Math.floor(acc / DT)); for (let i = 0; i < n; i++) step(); acc -= n * DT; }
+  const s = stats();
+  if (playing && (!hist.length || t - hist[hist.length - 1][0] > 0.15)) hist.push([t, s.mx, s.Dx]);
+  if (Math.abs(s.mx) > 27 || s.Dx > 14) init();              // il pacchetto esce dalla zona visibile: si ricomincia
+  drawX(s); drawG();
+  $("vx").textContent = num(s.mx); $("vxc").textContent = num(xcl(t)); $("vp").textContent = num(s.mp); $("vpc").textContent = num(p0 + F * t);
+  $("vdx").textContent = num(s.Dx); $("vdp").textContent = num(s.Dp); $("vn").textContent = num(s.n, 4);
+  $("tlab").textContent = "t = " + num(t, 2);
+  requestAnimationFrame(frame);
+}
+const presets = [["Lancio contro la forza", -1.5, 6, 1], ["Particella libera", 0, 4, 1], ["Libera e stretta", 0, 3, 0.35], ["Ferma: si allarga", 0, 0, 0.6], ["Caduta da ferma", 1.2, 0, 1]];
+for (const [l, f, p, s] of presets) { const b = document.createElement("button"); b.textContent = l; b.title = "Prepara questo esperimento"; b.onclick = () => { $("F").value = f; $("p").value = p; $("s").value = s; labels(); init(); playing = true; $("play").textContent = "⏸ Pausa"; }; $("presets").append(b); }
+function labels() { $("FO").textContent = num(+$("F").value, 2); $("pO").textContent = num(+$("p").value, 1) + " ħ"; $("sO").textContent = num(+$("s").value, 2); $("vO").textContent = "× " + num(+$("v").value, 1); }
+["F", "p", "s"].forEach(id => $(id).addEventListener("input", () => { labels(); init(); }));
+$("v").addEventListener("input", labels);
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+$("restart").onclick = () => init();
+labels(); init(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

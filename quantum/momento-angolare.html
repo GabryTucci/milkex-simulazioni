@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Momento angolare: armoniche sferiche e modello vettoriale</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cy{aspect-ratio:1/1;max-height:440px;cursor:grab}
+#cy:active{cursor:grabbing}
+#cv{aspect-ratio:1/1;max-height:300px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:.3rem 0}
+.mrow{display:flex;flex-wrap:wrap;gap:6px}
+.mrow button{min-width:44px}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Momento angolare: armoniche sferiche e modello vettoriale</h1>
+  <p>Gli autostati comuni di $\hat L^2$ e $\hat L_z$ sono le armoniche sferiche $Y_\ell^m(\theta,\varphi)$, con $\hat L^2Y_\ell^m=\hbar^2\ell(\ell+1)Y_\ell^m$ e $\hat L_zY_\ell^m=\hbar m\,Y_\ell^m$, per $m=-\ell,\dots,\ell$.</p>
+  <div class="start"><b>Inizia da qui:</b> scegli $\ell$ e $m$ e trascina la figura per girarla. A destra il vettore $\vec L$ gira su un cono: la sua componente $L_z$ è fissata, $L_x$ e $L_y$ no.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2 id="ttl">Forma di $|Y_\ell^m(\theta,\varphi)|^2$</h2>
+      <canvas id="cy" role="img" aria-label="Armonica sferica in 3D"></canvas>
+      <p class="hint">👆 Trascina per ruotare. La distanza dal centro in ogni direzione è il valore della funzione. Colori: <span style="color:var(--c1)">■</span> parte positiva, <span style="color:var(--c2)">■</span> negativa (forma reale); oppure fase (forma complessa).</p>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Numeri quantici</h2>
+      <div class="ctl" title="Numero quantico orbitale ℓ: L² = ħ² ℓ(ℓ+1)">
+        <div class="lab"><span>$\ell$</span><output id="lO"></output></div>
+        <input type="range" id="l" min="0" max="5" step="1" value="2">
+      </div>
+      <p class="hint" style="margin:.2rem 0">Numero quantico magnetico $m$:</p>
+      <div class="mrow" id="ms"></div>
+      <div class="seg" id="form" style="margin-top:.6rem">
+        <button data-f="cplx" class="on" title="|Y_ℓ^m|²: autostato di L_z, simmetrico attorno all'asse z">Forma complessa<small style="display:block;opacity:.85">$|Y_\ell^m|^2$, autostato di $L_z$</small></button>
+        <button data-f="real" title="Combinazioni reali (orbitali dei chimici): non sono più autostati di L_z">Forma reale<small style="display:block;opacity:.85">orbitali $p_x$, $d_{xy}$, …</small></button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Modello vettoriale</h2>
+      <canvas id="cv" role="img" aria-label="Vettore momento angolare che precede su un cono"></canvas>
+      <div class="vals">
+        <div><span>$|\vec L|=\hbar\sqrt{\ell(\ell+1)}$</span><b id="vL"></b></div>
+        <div><span>$L_z=m\hbar$</span><b id="vz"></b></div>
+        <div><span>$\cos\theta_L=\frac{m}{\sqrt{\ell(\ell+1)}}$</span><b id="vth"></b></div>
+        <div><span>$\Delta L_x=\Delta L_y$</span><b id="vdx"></b></div>
+      </div>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Simmetria attorno a $z$.</b> Nella forma complessa $|Y_\ell^m|^2$ non dipende da $\varphi$: la figura è simmetrica per rotazioni attorno all'asse $z$, perché $Y_\ell^m\propto e^{im\varphi}$. Lo si vede anche dal colore: la fase gira $m$ volte attorno all'asse.</li>
+    <li><b>Il vettore non punta mai lungo $z$.</b> Anche con $m=\ell$ si ha $|\vec L|=\hbar\sqrt{\ell(\ell+1)}&gt;\ell\hbar=L_z$: il vettore sta su un cono. Se fosse allineato a $z$ conosceremmo esattamente anche $L_x=L_y=0$, impossibile perché $[\hat L_x,\hat L_y]=i\hbar\hat L_z$.</li>
+    <li><b>Quanto è incerto $L_x$.</b> In $Y_\ell^m$ si ha $\ave{L_x}=\ave{L_y}=0$ e $\Delta L_x^2=\Delta L_y^2=\frac{\hbar^2}{2}\left[\ell(\ell+1)-m^2\right]$: il cono si chiude per $|m|=\ell$ ma non sparisce mai (tranne che per $\ell=0$).</li>
+    <li><b>Nodi.</b> $Y_\ell^m$ ha $\ell-|m|$ coni nodali (dove $\theta$ è fissato) e, nella forma reale, $|m|$ piani nodali passanti per $z$. In tutto $\ell$ superfici nodali: più momento angolare, più struttura angolare.</li>
+    <li><b>Parità.</b> Sotto $\vec r\to-\vec r$ si ha $Y_\ell^m\to(-1)^\ell Y_\ell^m$: con la forma reale e $\ell$ dispari, punti opposti hanno colori opposti.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+let l = 2, m = 1, form = "cplx", yaw = 0.6, pitch = 0.35, drag = null, auto = true, tt = 0;
+function fact(n) { let f = 1; for (let i = 2; i <= n; i++) f *= i; return f; }
+function Plm(L, M, x) {           // polinomio di Legendre associato P_L^M(x), M ≥ 0 (con la fase di Condon–Shortley)
+  let pmm = 1; const s = Math.sqrt(Math.max(0, 1 - x * x)); for (let i = 1; i <= M; i++) pmm *= -(2 * i - 1) * s;
+  if (L === M) return pmm; let p1 = x * (2 * M + 1) * pmm; if (L === M + 1) return p1;
+  let p2 = 0; for (let ll = M + 2; ll <= L; ll++) { p2 = ((2 * ll - 1) * x * p1 - (ll + M - 1) * pmm) / (ll - M); pmm = p1; p1 = p2; } return p2;
+}
+function Y(L, M, th, ph) {       // armonica sferica complessa [Re, Im]
+  const am = Math.abs(M), K = Math.sqrt((2 * L + 1) / (4 * Math.PI) * fact(L - am) / fact(L + am)) * Plm(L, am, Math.cos(th));
+  let re = K * Math.cos(am * ph), im = K * Math.sin(am * ph);
+  if (M < 0) { const sg = am % 2 ? -1 : 1; re *= sg; im *= -sg; }        // Y_ℓ^{−m} = (−1)^m (Y_ℓ^m)*
+  return [re, im];
+}
+function value(th, ph) {        // [raggio, colore]
+  if (form === "cplx") { const [a, b] = Y(l, m, th, ph); return [a * a + b * b, Math.atan2(b, a)]; }
+  const [a, b] = Y(l, Math.abs(m), th, ph), v = m === 0 ? a : (m > 0 ? Math.SQRT2 * a : Math.SQRT2 * b);
+  return [v * v, v >= 0 ? 0 : Math.PI];
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+function rot(v) { const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch); const x = v[0] * cy - v[1] * sy, y = v[0] * sy + v[1] * cy, z = v[2]; return [y, z * cp - x * sp, x * cp + z * sp]; }
+const NT = 46, NP = 72;
+let mesh = null;
+function build() {
+  const pts = [], col = []; let mx = 1e-12;
+  for (let i = 0; i <= NT; i++) { pts.push([]); col.push([]); for (let j = 0; j <= NP; j++) { const th = Math.PI * i / NT, ph = 2 * Math.PI * j / NP, [r, c] = value(th, ph); mx = Math.max(mx, r); pts[i].push([r * Math.sin(th) * Math.cos(ph), r * Math.sin(th) * Math.sin(ph), r * Math.cos(th)]); col[i].push(c); } }
+  mesh = { pts, col, mx };
+}
+function colorOf(c, shade) {
+  if (form === "real") { const base = c === 0 ? css("--c1") : css("--c2"); return mix(base, shade); }
+  const h = ((c * 180 / Math.PI) + 360) % 360; return `hsl(${h} 70% ${Math.round(28 + 40 * shade)}%)`;
+}
+function mix(hex, s) { const n = parseInt(hex.replace("#", ""), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255, f = .45 + .75 * s; return `rgb(${Math.min(255, r * f) | 0},${Math.min(255, g * f) | 0},${Math.min(255, b * f) | 0})`; }
+function drawY() {
+  const { g, W, H } = setup($("cy")); g.clearRect(0, 0, W, H);
+  const S = Math.min(W, H) * 0.42 / mesh.mx, cx = W / 2, cy = H / 2;
+  // assi
+  for (const [v, lab] of [[[0, 0, 1], "z"], [[1, 0, 0], "x"], [[0, 1, 0], "y"]]) { const a = rot(v.map(x => -x * mesh.mx * 1.15)), b = rot(v.map(x => x * mesh.mx * 1.15)); g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(cx + a[0] * S, cy - a[1] * S); g.lineTo(cx + b[0] * S, cy - b[1] * S); g.stroke(); g.fillStyle = css("--mut"); g.font = "13px system-ui"; g.fillText(lab, cx + b[0] * S + 4, cy - b[1] * S); }
+  const quads = [], light = [0.4, 0.5, 0.77];
+  for (let i = 0; i < NT; i++) for (let j = 0; j < NP; j++) {
+    const P = [mesh.pts[i][j], mesh.pts[i + 1][j], mesh.pts[i + 1][j + 1], mesh.pts[i][j + 1]].map(rot);
+    const ux = P[2][0] - P[0][0], uy = P[2][1] - P[0][1], uz = P[2][2] - P[0][2], vx = P[3][0] - P[1][0], vy = P[3][1] - P[1][1], vz = P[3][2] - P[1][2];
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx; const nn = Math.hypot(nx, ny, nz) || 1;
+    const sh = Math.abs(nx * light[0] + ny * light[1] + nz * light[2]) / nn;
+    quads.push([(P[0][2] + P[1][2] + P[2][2] + P[3][2]) / 4, P, colorOf(mesh.col[i][j], sh)]);
+  }
+  quads.sort((a, b) => a[0] - b[0]);
+  for (const [, P, c] of quads) { g.beginPath(); P.forEach((p, k) => k ? g.lineTo(cx + p[0] * S, cy - p[1] * S) : g.moveTo(cx + p[0] * S, cy - p[1] * S)); g.closePath(); g.fillStyle = c; g.fill(); g.strokeStyle = c; g.lineWidth = .6; g.stroke(); }
+}
+function drawV() {
+  const { g, W, H } = setup($("cv")); g.clearRect(0, 0, W, H);
+  const Lm = Math.sqrt(l * (l + 1)) || 0, S = Math.min(W, H) * 0.4 / Math.max(1.6, Lm * 1.08), cx = W / 2, cy = H / 2;
+  const P = v => { const cp = Math.cos(.35), sp = Math.sin(.35); return [cx + v[1] * S, cy - (v[2] * cp - v[0] * sp) * S]; };
+  g.strokeStyle = css("--bd"); const a0 = P([0, 0, -Math.max(1.5, Lm * 1.1)]), a1 = P([0, 0, Math.max(1.5, Lm * 1.1)]); g.beginPath(); g.moveTo(a0[0], a0[1]); g.lineTo(a1[0], a1[1]); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "13px system-ui"; g.fillText("z", a1[0] + 5, a1[1] + 4);
+  // livelli L_z = m ħ permessi
+  for (let k = -l; k <= l; k++) { const q = P([0, 0, k]); g.fillStyle = k === m ? css("--c2") : css("--mut"); g.fillRect(q[0] - 4, q[1] - 1, 8, 2); }
+  if (Lm > 0) {
+    const r = Math.sqrt(Math.max(0, Lm * Lm - m * m));
+    g.beginPath(); for (let i = 0; i <= 80; i++) { const a = 2 * Math.PI * i / 80, q = P([r * Math.cos(a), r * Math.sin(a), m]); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }
+    g.strokeStyle = css("--c3"); g.setLineDash([4, 4]); g.stroke(); g.setLineDash([]);
+    const o = P([0, 0, 0]);
+    for (const a of [0, Math.PI]) { const q = P([r * Math.cos(a), r * Math.sin(a), m]); g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(o[0], o[1]); g.lineTo(q[0], q[1]); g.stroke(); }
+    const q = P([r * Math.cos(tt), r * Math.sin(tt), m]);
+    g.strokeStyle = css("--c3"); g.lineWidth = 3; g.beginPath(); g.moveTo(o[0], o[1]); g.lineTo(q[0], q[1]); g.stroke(); g.lineWidth = 1;
+    g.fillStyle = css("--c3"); g.beginPath(); g.arc(q[0], q[1], 5, 0, 2 * Math.PI); g.fill();
+    g.font = "italic 700 15px Georgia, serif"; g.fillText("L", q[0] + 8, q[1] - 6);
+  }
+  $("vL").textContent = num(Lm, 3) + " ħ"; $("vz").textContent = num(m, 0).replace("−0", "0") + " ħ";
+  $("vth").textContent = Lm ? num(m / Lm) : "—"; $("vdx").textContent = num(Math.sqrt(Math.max(0, (l * (l + 1) - m * m) / 2)), 3) + " ħ";
+}
+function renderM() {
+  $("ms").replaceChildren(...Array.from({ length: 2 * l + 1 }, (_, k) => { const v = k - l, b = document.createElement("button"); b.textContent = String(v).replace("-", "−"); b.title = "m = " + v; b.classList.toggle("on", v === m); b.onclick = () => { m = v; renderM(); refresh(); }; return b; }));
+}
+function refresh() {
+  build(); $("lO").textContent = l;
+  tex($("ttl"), form === "cplx" ? String.raw`\text{Forma di }|Y_{${l}}^{${m}}(\theta,\varphi)|^2` : String.raw`\text{Orbitale reale con }\ell=${l},\ |m|=${Math.abs(m)}`);
+}
+$("l").addEventListener("input", () => { l = +$("l").value; m = Math.max(-l, Math.min(l, m)); renderM(); refresh(); });
+document.querySelectorAll("#form button").forEach(b => b.onclick = () => { form = b.dataset.f; document.querySelectorAll("#form button").forEach(x => x.classList.toggle("on", x === b)); refresh(); });
+mathify($("form"));
+const cv = $("cy");
+cv.addEventListener("pointerdown", e => { auto = false; drag = { x: e.clientX, y: e.clientY, yaw, pitch }; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener("pointermove", e => { if (!drag) return; yaw = drag.yaw - (e.clientX - drag.x) * .01; pitch = Math.max(-1.5, Math.min(1.5, drag.pitch + (e.clientY - drag.y) * .01)); });
+cv.addEventListener("pointerup", () => drag = null); cv.addEventListener("pointercancel", () => drag = null);
+let last = performance.now();
+function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; if (auto) yaw += dt * .35; tt += dt * 1.4; drawY(); drawV(); requestAnimationFrame(frame); }
+renderM(); refresh(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -47,5 +47,12 @@
   "project": "Quantum",
   "section": "Problemi unidimensionali",
   "time": 1794960938.4023492
+ },
+ {
+  "path": "quantum/oscillatore-armonico.html",
+  "title": "Oscillatore armonico: autostati, stati coerenti e operatori a, a^",
+  "project": "Quantum",
+  "section": "L'oscillatore armonico",
+  "time": 1794960945.3752143
  }
 ]

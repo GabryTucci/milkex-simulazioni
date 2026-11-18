@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oscillatore armonico: autostati, stati coerenti e operatori a, a†</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cx{height:300px}
+#cph{aspect-ratio:1/1;max-height:300px}
+#cn{height:150px}
+@media (max-width:600px){#cx{height:240px}}
+.ops button{font-weight:600;min-width:64px}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Oscillatore armonico: autostati, stati coerenti e operatori $a$, $a^\dagger$</h1>
+  <p>Per $V=\frac12m\omega^2x^2$ gli autostati $\ket{n}$ hanno energia $E_n=\hbar\omega\left(n+\frac12\right)$. Uno stato qualsiasi evolve come $\sum_n c_n\,e^{-i(n+\frac12)\omega t}\ket{n}$: gli autostati restano fermi, gli stati coerenti oscillano come una molla classica.</p>
+  <div class="start"><b>Inizia da qui:</b> sta oscillando uno stato coerente. Premi <b>Autostato</b> per vedere uno stato che non si muove, poi prova a premere $a^\dagger$ più volte.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>$|\psi(x,t)|^2$ nella parabola $V(x)$</h2>
+      <canvas id="cx" role="img" aria-label="Densità di probabilità nell'oscillatore"></canvas>
+      <div class="legend" style="margin-top:.3rem"><span><i style="background:var(--c3)"></i>|ψ|²</span><span><i style="background:var(--c1)"></i>Re ψ</span><span><i style="background:var(--fg)"></i>● molla classica con la stessa energia</span></div>
+      <div class="row">
+        <button class="pri" id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <span class="hint" id="tlab"></span>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Pesi $|c_n|^2$ sugli autostati</h2>
+      <canvas id="cn" role="img" aria-label="Pesi sugli autostati"></canvas>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Stato</h2>
+      <div class="row" id="presets"></div>
+      <div class="ctl" title="Ampiezza dello stato coerente: |α|² è il numero medio di quanti">
+        <div class="lab"><span>Stato coerente: ampiezza $|\alpha|$</span><output id="alO"></output></div>
+        <input type="range" id="al" min="0" max="3.5" step="0.05" value="2.2">
+      </div>
+      <div class="ctl" title="Indice dell'autostato |n⟩">
+        <div class="lab"><span>Autostato: $n$</span><output id="nO"></output></div>
+        <input type="range" id="n" min="0" max="12" step="1" value="3">
+      </div>
+      <p class="hint" style="margin-bottom:.2rem">Applica gli operatori di innalzamento e abbassamento allo stato attuale (poi viene normalizzato):</p>
+      <div class="row ops">
+        <button id="up" title="a†|n⟩ = √(n+1) |n+1⟩">$a^\dagger$</button>
+        <button id="down" title="a|n⟩ = √n |n−1⟩">$a$</button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Spazio delle fasi</h2>
+      <canvas id="cph" role="img" aria-label="Valori medi di x e p nello spazio delle fasi"></canvas>
+      <p class="hint">Punto: $(\ave{x},\ave{p})$. Ellisse: incertezze $\Delta x$ e $\Delta p$.</p>
+    </section>
+    <section class="card">
+      <h2>Valori</h2>
+      <div class="vals">
+        <div><span>$\ave{x}$</span><b id="vx"></b></div>
+        <div><span>$\ave{p}$</span><b id="vp"></b></div>
+        <div><span>$\Delta x\,\Delta p$</span><b id="vdd"></b></div>
+        <div><span>$\ave{\hat N}$</span><b id="vn"></b></div>
+        <div><span>$\ave{E}$</span><b id="ve"></b></div>
+      </div>
+      <p class="hint">Unità: $\hbar=m=\omega=1$, quindi $x$ in $\sqrt{\hbar/m\omega}$ e $E$ in $\hbar\omega$.</p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Gli autostati sono fermi.</b> Con un autostato $\ket{n}$, $|\psi|^2$ non si muove e $\ave{x}=\ave{p}=0$: cambia solo la fase globale $e^{-i(n+\frac12)\omega t}$ (guarda $\mathrm{Re}\,\psi$ che pulsa). Il numero di nodi è $n$, e la parità è $(-1)^n$.</li>
+    <li><b>Lo stato coerente è una molla.</b> $\ket{\alpha}=e^{-|\alpha|^2/2}\sum_n\frac{\alpha^n}{\sqrt{n!}}\ket{n}$ oscilla senza deformarsi, seguendo il pallino classico, e nello spazio delle fasi gira su una circonferenza. Mantiene sempre $\Delta x\,\Delta p=\frac\hbar2$ e i pesi $|c_n|^2$ seguono una distribuzione di Poisson con media $|\alpha|^2$.</li>
+    <li><b>$a^\dagger$ e $a$.</b> Da $\ket{0}$, ogni $a^\dagger$ sale di un gradino: $a^\dagger\ket{n}=\sqrt{n+1}\ket{n+1}$, e l'energia cresce di $\hbar\omega$. $a\ket0=0$: dallo stato fondamentale non si scende (il pulsante non fa nulla). Uno stato coerente invece non cambia sotto $a$: è un suo autostato, $a\ket\alpha=\alpha\ket\alpha$.</li>
+    <li><b>Due livelli insieme.</b> “$\ket0+\ket1$” oscilla con frequenza $\omega=\frac{E_1-E_0}{\hbar}$: è la differenza di energia tra i livelli che fa muovere la densità.</li>
+    <li><b>Oltre i punti d'inversione.</b> Con $n$ grande, $|\psi|^2$ si accumula vicino ai punti d'inversione classici, come il tempo che la molla passa lì, ma sfora un po' oltre la parabola, dove classicamente non potrebbe stare.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const NM = 60, NX = 500, XM = 7.5;
+const xs = Float64Array.from({ length: NX }, (_, i) => -XM + 2 * XM * i / (NX - 1));
+const phi = [];        // autofunzioni ψ_n(x) con la ricorrenza di Hermite normalizzata
+phi[0] = xs.map(x => Math.PI ** -0.25 * Math.exp(-x * x / 2));
+phi[1] = xs.map((x, i) => Math.SQRT2 * x * phi[0][i]);
+for (let n = 1; n < NM - 1; n++) phi[n + 1] = xs.map((x, i) => Math.sqrt(2 / (n + 1)) * x * phi[n][i] - Math.sqrt(n / (n + 1)) * phi[n - 1][i]);
+let cR = new Float64Array(NM), cI = new Float64Array(NM), t = 0, playing = true;
+function normalize() { let s = 0; for (let n = 0; n < NM; n++) s += cR[n] ** 2 + cI[n] ** 2; if (s < 1e-14) { cR.fill(0); cI.fill(0); cR[0] = 1; return; } s = Math.sqrt(s); for (let n = 0; n < NM; n++) { cR[n] /= s; cI[n] /= s; } }
+function coherent(al) { let lf = 0; for (let n = 0; n < NM; n++) { if (n) lf += Math.log(n); cR[n] = Math.exp(-al * al / 2 + (n ? n * Math.log(al || 1e-300) : 0) - lf / 2); cI[n] = 0; } if (al === 0) { cR.fill(0); cR[0] = 1; } normalize(); t = 0; }
+function eigen(n) { cR.fill(0); cI.fill(0); cR[n] = 1; t = 0; }
+// coefficienti al tempo t: c_n e^{−i(n+½)t}
+function ct() { const R = new Float64Array(NM), I = new Float64Array(NM); for (let n = 0; n < NM; n++) { const a = -(n + .5) * t, c = Math.cos(a), s = Math.sin(a); R[n] = cR[n] * c - cI[n] * s; I[n] = cR[n] * s + cI[n] * c; } return [R, I]; }
+function moments(R, I) {
+  let Ar = 0, Ai = 0, A2r = 0, Nn = 0;
+  for (let n = 0; n < NM; n++) {
+    Nn += n * (R[n] ** 2 + I[n] ** 2);
+    if (n + 1 < NM) { const f = Math.sqrt(n + 1); Ar += f * (R[n] * R[n + 1] + I[n] * I[n + 1]); Ai += f * (R[n] * I[n + 1] - I[n] * R[n + 1]); }
+    if (n + 2 < NM) A2r += Math.sqrt((n + 1) * (n + 2)) * (R[n] * R[n + 2] + I[n] * I[n + 2]);
+  }
+  const mx = Math.SQRT2 * Ar, mp = Math.SQRT2 * Ai;                 // ⟨a⟩ = Σ c_n* c_{n+1} √(n+1)
+  const x2 = A2r + Nn + .5, p2 = -A2r + Nn + .5;
+  return { mx, mp, Dx: Math.sqrt(Math.max(0, x2 - mx * mx)), Dp: Math.sqrt(Math.max(0, p2 - mp * mp)), N: Nn };
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+let trail = [];
+function drawX(R, I, m) {
+  const { g, W, H } = setup($("cx")); g.clearRect(0, 0, W, H);
+  const B = 24, T = 10, X = v => 12 + (v + XM) / (2 * XM) * (W - 24), Emax = 15, Y = e => H - B - e / Emax * (H - B - T);
+  g.beginPath(); for (let i = 0; i < NX; i++) { const e = .5 * xs[i] ** 2; i ? g.lineTo(X(xs[i]), Y(Math.min(Emax, e))) : g.moveTo(X(xs[i]), Y(Math.min(Emax, e))); }
+  g.strokeStyle = css("--mut"); g.lineWidth = 1.5; g.stroke();
+  g.strokeStyle = css("--bd"); g.lineWidth = 1; for (let n = 0; n < 15; n++) { const e = n + .5, xt = Math.sqrt(2 * e); g.beginPath(); g.moveTo(X(-xt), Y(e)); g.lineTo(X(xt), Y(e)); g.stroke(); }
+  const E = m.N + .5, base = Y(E);
+  const re = new Float64Array(NX), im = new Float64Array(NX);
+  for (let n = 0; n < NM; n++) { if (Math.abs(R[n]) + Math.abs(I[n]) < 1e-12) continue; const f = phi[n]; for (let i = 0; i < NX; i++) { re[i] += R[n] * f[i]; im[i] += I[n] * f[i]; } }
+  const sc = (H - B - T) * 0.32 / 0.6;
+  g.beginPath(); for (let i = 0; i < NX; i++) { const v = re[i] ** 2 + im[i] ** 2, yy = base - v * sc; i ? g.lineTo(X(xs[i]), yy) : g.moveTo(X(xs[i]), yy); }
+  g.lineTo(X(XM), base); g.lineTo(X(-XM), base); g.closePath(); g.fillStyle = css("--c3"); g.globalAlpha = .22; g.fill(); g.globalAlpha = 1; g.strokeStyle = css("--c3"); g.lineWidth = 2; g.stroke();
+  g.beginPath(); for (let i = 0; i < NX; i++) { const yy = base - re[i] * sc * .55; i ? g.lineTo(X(xs[i]), yy) : g.moveTo(X(xs[i]), yy); } g.strokeStyle = css("--c1"); g.lineWidth = 1.2; g.stroke();
+  // molla classica con la stessa energia media e la stessa fase iniziale dei valori medi
+  const amp = Math.sqrt(2 * E), xc = Math.hypot(m.mx, m.mp) > 0.05 ? m.mx / Math.hypot(m.mx, m.mp) * amp : amp * Math.cos(t);
+  g.fillStyle = css("--fg"); g.beginPath(); g.arc(X(xc), base, 6, 0, 2 * Math.PI); g.fill();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
+  for (const v of [-6, -3, 0, 3, 6]) g.fillText(String(v).replace("-", "−"), X(v), H - 7);
+  g.textAlign = "left"; g.fillText(`⟨E⟩ = ${num(E, 2)} ħω`, 16, T + 12);
+}
+function drawPh(m) {
+  const { g, W, H } = setup($("cph")); g.clearRect(0, 0, W, H);
+  const S = Math.min(W, H) / 2 - 16, R = 4.5, cx = W / 2, cy = H / 2, P = (x, p) => [cx + x / R * S, cy - p / R * S];
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(cx - S, cy); g.lineTo(cx + S, cy); g.moveTo(cx, cy - S); g.lineTo(cx, cy + S); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.fillText("x", cx + S - 10, cy - 6); g.fillText("p", cx + 6, cy - S + 10);
+  trail.push([m.mx, m.mp]); if (trail.length > 240) trail.shift();
+  g.strokeStyle = css("--c1"); g.lineWidth = 1.5; g.globalAlpha = .6; g.beginPath(); trail.forEach(([x, p], i) => { const q = P(x, p); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.stroke(); g.globalAlpha = 1;
+  const q = P(m.mx, m.mp); g.fillStyle = css("--c3"); g.globalAlpha = .25; g.beginPath(); g.ellipse(q[0], q[1], Math.max(2, m.Dx / R * S), Math.max(2, m.Dp / R * S), 0, 0, 2 * Math.PI); g.fill(); g.globalAlpha = 1;
+  g.strokeStyle = css("--c3"); g.stroke(); g.fillStyle = css("--c3"); g.beginPath(); g.arc(q[0], q[1], 4.5, 0, 2 * Math.PI); g.fill();
+}
+function drawN() {
+  const { g, W, H } = setup($("cn")); g.clearRect(0, 0, W, H);
+  const K = 26, bw = (W - 20) / K, B = 18; let mx = .05; for (let n = 0; n < K; n++) mx = Math.max(mx, cR[n] ** 2 + cI[n] ** 2);
+  g.font = "11px system-ui"; g.textAlign = "center";
+  for (let n = 0; n < K; n++) { const w = cR[n] ** 2 + cI[n] ** 2, h = w / mx * (H - B - 8); g.fillStyle = css("--c3"); g.fillRect(10 + n * bw + bw * .15, H - B - h, bw * .7, h); if (n % 5 === 0) { g.fillStyle = css("--mut"); g.fillText(String(n), 10 + n * bw + bw / 2, H - 4); } }
+  g.textAlign = "right"; g.fillStyle = css("--mut"); g.fillText("n →", W - 6, 12);
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) t += dt * 1.6;
+  const [R, I] = ct(), m = moments(R, I);
+  drawX(R, I, m); drawPh(m); drawN();
+  $("vx").textContent = num(m.mx); $("vp").textContent = num(m.mp);
+  const pr = m.Dx * m.Dp, ok = pr >= .5 - 1e-3; $("vdd").textContent = num(pr) + " ħ" + (ok ? " ✓" : ""); $("vdd").className = ok ? "ok" : "";
+  $("vn").textContent = num(m.N, 2); $("ve").textContent = num(m.N + .5, 2) + " ħω";
+  $("tlab").textContent = `t = ${num(t / (2 * Math.PI), 2)} periodi`;
+  requestAnimationFrame(frame);
+}
+const presets = [
+  ["Stato coerente", () => coherent(+$("al").value)], ["Autostato", () => eigen(+$("n").value)],
+  [String.raw`$\ket0+\ket1$`, () => { cR.fill(0); cI.fill(0); cR[0] = cR[1] = 1; normalize(); t = 0; }],
+  [String.raw`$\ket0$`, () => eigen(0)]];
+for (const [l, f] of presets) { const b = document.createElement("button"); b.innerHTML = l; b.title = "Prepara questo stato"; b.onclick = () => { f(); trail = []; }; $("presets").append(b); }
+mathify($("presets"));
+function freeze() { const [R, I] = ct(); cR = R; cI = I; t = 0; }      // lo stato attuale diventa quello iniziale
+$("up").onclick = () => { freeze(); const R = new Float64Array(NM), I = new Float64Array(NM); for (let n = 0; n < NM - 1; n++) { R[n + 1] = Math.sqrt(n + 1) * cR[n]; I[n + 1] = Math.sqrt(n + 1) * cI[n]; } cR = R; cI = I; normalize(); trail = []; };
+$("down").onclick = () => { freeze(); const R = new Float64Array(NM), I = new Float64Array(NM); for (let n = 1; n < NM; n++) { R[n - 1] = Math.sqrt(n) * cR[n]; I[n - 1] = Math.sqrt(n) * cI[n]; } let s = 0; for (let n = 0; n < NM; n++) s += R[n] ** 2 + I[n] ** 2; if (s < 1e-12) { $("down").animate([{ transform: "translateX(-4px)" }, { transform: "translateX(4px)" }, { transform: "none" }], 250); return; } cR = R; cI = I; normalize(); trail = []; };
+function labels() { $("alO").textContent = num(+$("al").value, 2) + `  (⟨n⟩ = ${num((+$("al").value) ** 2, 2)})`; $("nO").textContent = $("n").value + `  (E = ${num(+$("n").value + .5, 1)} ħω)`; }
+$("al").addEventListener("input", () => { labels(); coherent(+$("al").value); trail = []; });
+$("n").addEventListener("input", () => { labels(); eigen(+$("n").value); trail = []; });
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+labels(); coherent(2.2); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

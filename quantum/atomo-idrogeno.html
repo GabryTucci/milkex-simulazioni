@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#orb{width:100%;aspect-ratio:1/1;max-height:420px;display:block;margin:0 auto;border-radius:10px;background:#000}
+#cr{height:170px}
+#cs{height:300px;cursor:pointer}
+.mrow{display:flex;flex-wrap:wrap;gap:6px}.mrow button{min-width:42px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:.4rem 0}
+.photon{display:flex;align-items:center;gap:10px;margin-top:.4rem}
+.photon i{width:34px;height:34px;border-radius:50%;display:inline-block;box-shadow:0 0 18px currentColor}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Atomo di idrogeno: orbitali, distribuzione radiale e righe spettrali</h1>
+  <p>Gli stati legati sono $\psi_{n\ell m}=R_{n\ell}(r)\,Y_\ell^m(\theta,\varphi)$ con energia $E_n=-\frac{me^4}{2\hbar^2n^2}\approx-\frac{13{,}6\ \text{eV}}{n^2}$, che dipende solo da $n$. Qui vedi la densità $|\psi|^2$ in una sezione che contiene l'asse $z$.</p>
+  <div class="start"><b>Inizia da qui:</b> scegli $n$, $\ell$, $m$ per vedere l'orbitale. Nello spettro clicca due livelli per far “saltare” l'elettrone e vedere il colore del fotone emesso.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2 id="ttl">Orbitale</h2>
+      <canvas id="orb" role="img" aria-label="Sezione della densità di probabilità dell'orbitale"></canvas>
+      <p class="hint">Sezione verticale che contiene l'asse $z$ (<span id="pl">piano $xz$</span>). Luminosità = $|\psi|^2$; colore = segno o fase di $\psi$. Lato del quadrato: <span id="side"></span>.</p>
+      <div class="ctl" title="Aumenta per vedere meglio le zone a bassa probabilità">
+        <div class="lab"><span>Contrasto</span><output id="gO"></output></div>
+        <input type="range" id="g" min="0.2" max="1" step="0.02" value="0.5">
+      </div>
+    </section>
+    <section class="card">
+      <h2>Distribuzione radiale $P(r)=r^2R_{n\ell}^2(r)$</h2>
+      <canvas id="cr" role="img" aria-label="Distribuzione radiale"></canvas>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Numeri quantici</h2>
+      <div class="ctl" title="Numero quantico principale: fissa l'energia"><div class="lab"><span>$n$</span><output id="nO"></output></div><input type="range" id="n" min="1" max="5" step="1" value="3"></div>
+      <p class="hint" style="margin:.2rem 0">$\ell$ (da $0$ a $n-1$):</p><div class="mrow" id="ls"></div>
+      <p class="hint" style="margin:.4rem 0 .2rem">$m$ (da $-\ell$ a $\ell$):</p><div class="mrow" id="ms"></div>
+      <div class="seg" id="form">
+        <button data-f="real" class="on" title="Orbitali reali (s, p_x, d_xz, …): colore = segno">Orbitali reali</button>
+        <button data-f="cplx" title="Autostati di L_z: colore = fase e^{imφ}">Autostati di $L_z$</button>
+      </div>
+      <div class="vals">
+        <div><span>$E_n$</span><b id="vE"></b></div>
+        <div><span>$\ave{r}$</span><b id="vr"></b></div>
+        <div><span>nodi radiali $n-\ell-1$</span><b id="vnr"></b></div>
+        <div><span>degenerazione $n^2$</span><b id="vdeg"></b></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Spettro e transizioni</h2>
+      <canvas id="cs" role="img" aria-label="Livelli di energia dell'idrogeno"></canvas>
+      <div class="photon"><i id="ph"></i><div id="phT" class="hint" style="margin:0"></div></div>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Energia solo da $n$.</b> Cambia $\ell$ e $m$ a $n$ fisso: la forma cambia moltissimo, l'energia no. Il livello $n$ contiene $n^2$ stati (senza contare lo spin): è la degenerazione accidentale del potenziale coulombiano.</li>
+    <li><b>Nodi.</b> L'orbitale ha $n-\ell-1$ nodi radiali (sfere scure) e $\ell$ nodi angolari (piani o coni scuri): in tutto $n-1$. Per esempio $3s$ ha due gusci, $3d$ nessuno.</li>
+    <li><b>Dove sta l'elettrone.</b> Il massimo di $P(r)$ per $\ell=n-1$ cade esattamente al raggio di Bohr $r=n^2a_0$: per $1s$ a $a_0$. Il valor medio è $\ave{r}=\frac{a_0}{2}\left[3n^2-\ell(\ell+1)\right]$: gli stati con $\ell$ piccolo arrivano anche più vicino al nucleo.</li>
+    <li><b>Righe spettrali.</b> Un salto da $n_i$ a $n_f$ emette un fotone di energia $13{,}6\ \text{eV}\left(\frac1{n_f^2}-\frac1{n_i^2}\right)$. Le transizioni verso $n_f=2$ (serie di Balmer) cadono nel visibile: rosso ($3\to2$, 656 nm), azzurro ($4\to2$), viola ($5\to2$, $6\to2$). Quelle verso $n_f=1$ (Lyman) sono ultraviolette.</li>
+    <li><b>Simmetria attorno a $z$.</b> Con gli autostati di $L_z$ la densità non dipende da $\varphi$ e i colori (la fase $e^{im\varphi}$) cambiano solo davanti e dietro il piano: per questo la sezione è simmetrica destra-sinistra.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 2) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+let n = 3, l = 2, m = 0, form = "real", from = 3, to = 2;
+const fact = k => { let f = 1; for (let i = 2; i <= k; i++) f *= i; return f; };
+function lag(k, a, x) { if (k === 0) return 1; let L0 = 1, L1 = 1 + a - x; for (let i = 1; i < k; i++) { const L2 = ((2 * i + 1 + a - x) * L1 - (i + a) * L0) / (i + 1); L0 = L1; L1 = L2; } return L1; }
+function R(N, Lq, r) { const rho = 2 * r / N, c = Math.sqrt((2 / N) ** 3 * fact(N - Lq - 1) / (2 * N * fact(N + Lq))); return c * Math.exp(-rho / 2) * rho ** Lq * lag(N - Lq - 1, 2 * Lq + 1, rho); }
+function Plm(L, M, x) { let pmm = 1; const s = Math.sqrt(Math.max(0, 1 - x * x)); for (let i = 1; i <= M; i++) pmm *= -(2 * i - 1) * s; if (L === M) return pmm; let p1 = x * (2 * M + 1) * pmm; if (L === M + 1) return p1; let p2 = 0; for (let ll = M + 2; ll <= L; ll++) { p2 = ((2 * ll - 1) * x * p1 - (ll + M - 1) * pmm) / (ll - M); pmm = p1; p1 = p2; } return p2; }
+const Kn = (L, M) => Math.sqrt((2 * L + 1) / (4 * Math.PI) * fact(L - M) / fact(L + M));
+function psi(x, z) {     // piano xz (y = 0): φ = 0 per x > 0, φ = π per x < 0; restituisce [re, im]
+  const f0 = plane(), r = Math.hypot(x, z) || 1e-9, ct = z / r, ph = x >= 0 ? f0 : f0 + Math.PI, am = Math.abs(m);
+  const ang = Kn(l, am) * Plm(l, am, ct), rad = R(n, l, r);
+  if (form === "cplx") { const sg = m < 0 && am % 2 ? -1 : 1; return [sg * rad * ang * Math.cos(am * ph), (m < 0 ? -1 : 1) * sg * rad * ang * Math.sin(am * ph)]; }
+  if (m === 0) return [rad * ang, 0];
+  return m > 0 ? [Math.SQRT2 * rad * ang * Math.cos(am * ph), 0] : [Math.SQRT2 * rad * ang * Math.sin(am * ph), 0];
+}
+// gli orbitali reali con m < 0 (p_y, d_yz, d_xy…) hanno un nodo sul piano xz: per loro si mostra un piano ruotato
+const plane = () => form === "real" && m < 0 ? Math.PI / (2 * Math.abs(m)) : 0;
+function hsl(h, s, L) { const q = L < .5 ? L * (1 + s) : L + s - L * s, p = 2 * L - q; const f = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < .5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; }; return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255]; }
+function side() { return 2 * Math.max(5, (n * n * 2.2 + 3 * n)); }
+function drawOrb() {
+  const cv = $("orb"), G = 220; if (cv.width !== G) { cv.width = G; cv.height = G; }
+  const g = cv.getContext("2d"), img = g.createImageData(G, G), S = side(), gm = +$("g").value;
+  const vals = new Float64Array(G * G), ph = new Float64Array(G * G); let mx = 1e-30;
+  for (let j = 0; j < G; j++) for (let i = 0; i < G; i++) { const x = (i + .5) / G * S - S / 2, z = S / 2 - (j + .5) / G * S, [a, b] = psi(x, z), v = a * a + b * b; vals[j * G + i] = v; ph[j * G + i] = Math.atan2(b, a); if (v > mx) mx = v; }
+  for (let p = 0; p < G * G; p++) {
+    const v = Math.pow(vals[p] / mx, gm), o = p * 4;
+    const hue = form === "real" ? (ph[p] === 0 ? 0.6 : 0.07) : ((ph[p] / (2 * Math.PI)) + 1) % 1;
+    const [r, gg, b] = hsl(hue, .85, .62 * v);
+    img.data[o] = r; img.data[o + 1] = gg; img.data[o + 2] = b; img.data[o + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  g.fillStyle = "rgba(255,255,255,.85)"; g.beginPath(); g.arc(G / 2, G / 2, 1.6, 0, 2 * Math.PI); g.fill();
+  $("side").textContent = num(S, 0) + " a₀";
+  const f0 = plane(); $("pl").textContent = f0 === 0 ? "piano xz" : `piano ruotato di ${Math.round(f0 * 180 / Math.PI)}° attorno a z, perché questo orbitale si annulla sul piano xz`;
+}
+function setup(cv) { const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1; if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); } const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height }; }
+function drawR() {
+  const { g, W, H } = setup($("cr")); g.clearRect(0, 0, W, H);
+  const Rm = side() / 2 * 1.2, L0 = 12, B = 22, X = r => L0 + r / Rm * (W - L0 - 12);
+  const P = r => r * r * R(n, l, r) ** 2; let mx = 0, rmax = 0; for (let i = 1; i <= 400; i++) { const r = Rm * i / 400, v = P(r); if (v > mx) { mx = v; rmax = r; } }
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - B); g.lineTo(W - 12, H - B); g.stroke();
+  g.beginPath(); for (let i = 0; i <= 400; i++) { const r = Rm * i / 400, y = H - B - P(r) / mx * (H - B - 12); i ? g.lineTo(X(r), y) : g.moveTo(X(r), y); }
+  g.lineTo(X(Rm), H - B); g.lineTo(X(0), H - B); g.closePath(); g.fillStyle = css("--c3"); g.globalAlpha = .2; g.fill(); g.globalAlpha = 1; g.strokeStyle = css("--c3"); g.lineWidth = 2; g.stroke();
+  const ra = (3 * n * n - l * (l + 1)) / 2;
+  g.setLineDash([4, 4]); g.strokeStyle = css("--c2"); g.beginPath(); g.moveTo(X(ra), 8); g.lineTo(X(ra), H - B); g.stroke(); g.strokeStyle = css("--mut"); g.beginPath(); g.moveTo(X(n * n), 8); g.lineTo(X(n * n), H - B); g.stroke(); g.setLineDash([]);
+  g.font = "12px system-ui"; g.fillStyle = css("--c2"); g.textAlign = "left"; g.fillText("⟨r⟩", Math.min(W - 40, X(ra) + 4), 18); g.fillStyle = css("--mut"); g.fillText("n²a₀ (Bohr)", Math.min(W - 80, X(n * n) + 4), 34);
+  g.textAlign = "center"; for (let k = 0; k <= 4; k++) g.fillText(num(Rm * k / 4, 0), X(Rm * k / 4), H - 6);
+  g.textAlign = "right"; g.fillText("r / a₀", W - 12, H - B - 6);
+  $("vr").textContent = num(ra, 1) + " a₀";
+}
+let hit = [];
+function wl2rgb(w) { let r = 0, g = 0, b = 0; if (w >= 380 && w < 440) { r = -(w - 440) / 60; b = 1; } else if (w < 490) { g = (w - 440) / 50; b = 1; } else if (w < 510) { g = 1; b = -(w - 510) / 20; } else if (w < 580) { r = (w - 510) / 70; g = 1; } else if (w < 645) { r = 1; g = -(w - 645) / 65; } else if (w <= 750) { r = 1; } return `rgb(${r * 255 | 0},${g * 255 | 0},${b * 255 | 0})`; }
+function drawS() {
+  const { g, W, H } = setup($("cs")); g.clearRect(0, 0, W, H);
+  const E = k => -13.6057 / (k * k), Y = e => 14 + Math.sqrt(-e / 13.6057) * (H - 40), L0 = 96;     // scala ∝ 1/n per separare i livelli alti
+  hit = [];
+  g.font = "12px system-ui";
+  for (let k = 1; k <= 6; k++) {
+    const y = Y(E(k)); g.strokeStyle = k === n ? css("--c3") : css("--fg"); g.lineWidth = k === n ? 3.5 : 1.8; g.beginPath(); g.moveTo(L0, y); g.lineTo(W - 14, y); g.stroke();
+    g.fillStyle = css("--mut");
+    if (k <= 4) { g.textAlign = "right"; g.fillText(`n = ${k}  ${num(E(k), 2)} eV`, L0 - 4, y + 4); }
+    else { g.textAlign = "left"; g.fillText(`n = ${k}`, k === 5 ? L0 - 40 : W - 50, y + (k === 5 ? 4 : -4)); }
+    hit.push([y, k]);
+  }
+  g.strokeStyle = css("--bd"); g.setLineDash([3, 3]); g.beginPath(); g.moveTo(L0, 10); g.lineTo(W - 14, 10); g.stroke(); g.setLineDash([]); g.fillStyle = css("--mut"); g.textAlign = "right"; g.fillText("0 eV", L0 - 4, 14);
+  if (from !== to) {
+    const dE = Math.abs(E(from) - E(to)), lam = 1239.84 / dE, col = lam >= 380 && lam <= 750 ? wl2rgb(lam) : css("--mut"), x = L0 + (W - L0 - 14) * .6;
+    g.strokeStyle = col; g.lineWidth = 3; g.beginPath(); g.moveTo(x, Y(E(from))); g.lineTo(x, Y(E(to))); g.stroke();
+    const dir = from > to ? 1 : -1, yt = Y(E(to)); g.fillStyle = col; g.beginPath(); g.moveTo(x, yt); g.lineTo(x - 7, yt - 10 * dir); g.lineTo(x + 7, yt - 10 * dir); g.closePath(); g.fill();
+    $("ph").style.color = col; $("ph").style.background = col;
+    const kind = lam < 380 ? "ultravioletto" : lam > 750 ? "infrarosso" : "visibile";
+    const serie = { 1: "Lyman", 2: "Balmer", 3: "Paschen", 4: "Brackett", 5: "Pfund" }[Math.min(from, to)] || "";
+    $("phT").textContent = (from > to ? `Emissione ${from} → ${to}` : `Assorbimento ${from} → ${to}`) + ` · ΔE = ${num(dE, 3)} eV · λ = ${num(lam, 0)} nm (${kind}) · serie di ${serie}`;
+  }
+}
+$("cs").addEventListener("click", e => {
+  const r = $("cs").getBoundingClientRect(), y = e.clientY - r.top; let best = null, bd = 16;
+  for (const [yy, k] of hit) if (Math.abs(y - yy) < bd) { bd = Math.abs(y - yy); best = k; }
+  if (!best) return; demo = false; from = to; to = best; if (from === to) return; drawS();
+});
+function renderQ() {
+  $("ls").replaceChildren(...Array.from({ length: n }, (_, k) => { const b = document.createElement("button"); b.textContent = "spdfg"[k] + " (" + k + ")"; b.classList.toggle("on", k === l); b.title = "ℓ = " + k; b.onclick = () => { l = k; m = Math.max(-l, Math.min(l, m)); renderQ(); refresh(); }; return b; }));
+  $("ms").replaceChildren(...Array.from({ length: 2 * l + 1 }, (_, k) => { const v = k - l, b = document.createElement("button"); b.textContent = String(v).replace("-", "−"); b.classList.toggle("on", v === m); b.onclick = () => { m = v; renderQ(); refresh(); }; return b; }));
+}
+const realName = () => { if (l === 0) return n + "s"; if (l === 1) return n + "p" + (m === 0 ? "_z" : m > 0 ? "_x" : "_y"); if (l === 2) return n + "d" + ({ 0: "_{z^2}", 1: "_{xz}", "-1": "_{yz}", 2: "_{x^2-y^2}", "-2": "_{xy}" })[m]; return n + "spdfg"[l]; };
+function refresh() {
+  $("nO").textContent = n; $("gO").textContent = num(+$("g").value);
+  $("vE").textContent = num(-13.6057 / (n * n), 3) + " eV"; $("vnr").textContent = n - l - 1; $("vdeg").textContent = n * n + " stati";
+  tex($("ttl"), form === "real" ? String.raw`\text{Orbitale }${realName()}` : String.raw`|\psi_{${n}${l}${m}}|^2,\ \text{ autostato di }L_z\text{ con }m=${m}`);
+  drawOrb(); drawR(); drawS();
+}
+$("n").addEventListener("input", () => { n = +$("n").value; l = Math.min(l, n - 1); m = Math.max(-l, Math.min(l, m)); renderQ(); refresh(); });
+$("g").addEventListener("input", () => { $("gO").textContent = num(+$("g").value); drawOrb(); });
+document.querySelectorAll("#form button").forEach(b => b.onclick = () => { form = b.dataset.f; document.querySelectorAll("#form button").forEach(x => x.classList.toggle("on", x === b)); refresh(); });
+mathify($("form"));
+// all'apertura: le righe di Balmer si accendono una dopo l'altra
+let demo = true, k = 0; document.addEventListener("pointerdown", () => { demo = false; }, { once: true });
+setInterval(() => { if (!demo) return; const seq = [[3, 2], [4, 2], [5, 2], [6, 2], [2, 1], [3, 1]]; k = (k + 1) % seq.length; [from, to] = seq[k]; drawS(); }, 1800);
+window.addEventListener("resize", () => { drawR(); drawS(); });
+renderQ(); refresh();
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Particella in una scatola 2D: separazione delle variabili e degenerazione</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#box{width:100%;max-height:440px;display:block;margin:0 auto;image-rendering:auto}
+.lv{display:flex;flex-direction:column;gap:6px;max-height:330px;overflow:auto;padding-right:2px}
+.lvrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lvrow .e{font-variant-numeric:tabular-nums;color:var(--mut);font-size:.85rem;min-width:5.6rem}
+.lvrow button{min-height:32px;padding:.2rem .55rem;font-size:.86rem}
+.deg{font-size:.78rem;color:var(--c2);font-weight:600}
+.wheel{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;background:conic-gradient(from 90deg,hsl(0 80% 55%),hsl(90 80% 55%),hsl(180 80% 55%),hsl(270 80% 55%),hsl(360 80% 55%))}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Particella in una scatola 2D: separazione delle variabili e degenerazione</h1>
+  <p>Con $V(x,y)=V_1(x)+V_2(y)$ l'hamiltoniana è separabile: gli autostati sono prodotti $\psi_{n_1n_2}(x,y)=\psi_{n_1}(x)\,\psi_{n_2}(y)$ e le energie si sommano, $E=E_{n_1}+E_{n_2}$. In una scatola quadrata stati diversi possono avere la stessa energia: è la degenerazione.</p>
+  <div class="start"><b>Inizia da qui:</b> due stati con energie diverse fanno muovere la densità. Clicca altri stati nell'elenco dei livelli per aggiungerli, poi deforma la scatola con il cursore.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>$|\psi(x,y,t)|^2$, colorata con la fase <span class="wheel"></span></h2>
+      <canvas id="box" role="img" aria-label="Densità di probabilità nella scatola"></canvas>
+      <div class="row">
+        <button class="pri" id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <span class="hint" id="tlab"></span>
+      </div>
+      <p class="hint">Luminosità = $|\psi|^2$, colore = fase. Le linee scure sono i nodi.</p>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Forma della scatola</h2>
+      <div class="ctl" title="Rapporto tra i lati: 1 = scatola quadrata (con degenerazioni)">
+        <div class="lab"><span>Rapporto dei lati $L_y/L_x$</span><output id="rO"></output></div>
+        <input type="range" id="r" min="0.5" max="1.6" step="0.01" value="1">
+      </div>
+      <div class="ctl" title="Fase relativa del secondo stato scelto rispetto al primo">
+        <div class="lab"><span>Fase relativa tra gli stati</span><output id="fO"></output></div>
+        <input type="range" id="f" min="0" max="360" step="1" value="0">
+      </div>
+      <div class="row" id="presets"></div>
+    </section>
+    <section class="card">
+      <h2>Livelli $E_{n_1n_2}$ (clicca per aggiungere o togliere)</h2>
+      <div class="lv" id="levels"></div>
+      <p class="hint">$E_{n_1n_2}=\frac{\hbar^2\pi^2}{2m}\left(\frac{n_1^2}{L_x^2}+\frac{n_2^2}{L_y^2}\right)$, in unità di $E_{11}$ della scatola quadrata.</p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Prodotti di soluzioni 1D.</b> Uno stato solo ($\psi_{21}$, per esempio) ha $n_1-1$ linee nodali verticali e $n_2-1$ orizzontali: è il prodotto di due stati della buca 1D. La densità non si muove, perché è uno stato stazionario.</li>
+    <li><b>Degenerazione.</b> Nella scatola quadrata $E_{12}=E_{21}$: i due livelli hanno la stessa energia. Una loro sovrapposizione è ancora stazionaria, ma la sua forma dipende dalla fase relativa: muovi il cursore della fase e guarda ruotare la linea nodale (con fase $90^\circ$ diventa un anello che gira).</li>
+    <li><b>Rompere la simmetria.</b> Allunga la scatola ($L_y/L_x\neq1$): i livelli degeneri si separano e la sovrapposizione di $\psi_{12}$ e $\psi_{21}$ comincia a muoversi, con periodo $\frac{2\pi\hbar}{|E_{12}-E_{21}|}$. La degenerazione era una conseguenza della simmetria del quadrato.</li>
+    <li><b>Degenerazioni “accidentali”.</b> Nel quadrato anche $E_{17}=E_{55}=E_{71}$ ($1+49=25+25$): numeri diversi, stessa energia. Cercale nell'elenco: il numero arancione indica quanti stati hanno quell'energia.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 2) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const NMAX = 7, G = 140;
+let sel = [[1, 2], [2, 1]], t = 0, playing = true;
+const E = (n1, n2, r) => (n1 * n1 + n2 * n2 / (r * r)) / 2;       // in unità di E₁₁ della scatola quadrata (Lx = 1)
+const sub = n => String(n).split("").map(c => "₀₁₂₃₄₅₆₇₈₉"[+c]).join("");
+function renderLevels() {
+  const r = +$("r").value, list = [];
+  for (let a = 1; a <= NMAX; a++) for (let b = 1; b <= NMAX; b++) list.push([a, b, E(a, b, r)]);
+  list.sort((p, q) => p[2] - q[2]);
+  const groups = [];
+  for (const s of list.filter(s => s[2] <= 25.01)) { const g = groups.find(g => Math.abs(g.e - s[2]) < 1e-6); g ? g.st.push(s) : groups.push({ e: s[2], st: [s] }); }
+  $("levels").replaceChildren(...groups.map(g => {
+    const row = document.createElement("div"); row.className = "lvrow";
+    const e = document.createElement("span"); e.className = "e"; e.textContent = "E = " + num(g.e, 2); row.append(e);
+    for (const [a, b] of g.st) {
+      const bt = document.createElement("button"); bt.textContent = "ψ" + sub(a) + sub(b); bt.title = "Aggiungi o togli lo stato (" + a + "," + b + ")";
+      const on = sel.some(s => s[0] === a && s[1] === b); bt.classList.toggle("on", on);
+      bt.onclick = () => { sel = on ? sel.filter(s => !(s[0] === a && s[1] === b)) : [...sel, [a, b]]; if (!sel.length) sel = [[a, b]]; t = 0; renderLevels(); };
+      row.append(bt);
+    }
+    if (g.st.length > 1) { const d = document.createElement("span"); d.className = "deg"; d.textContent = g.st.length + "× degenere"; row.append(d); }
+    return row;
+  }));
+}
+const cv = $("box");
+function draw() {
+  const r = +$("r").value, d = window.devicePixelRatio || 1, Wcss = Math.min(cv.parentElement.clientWidth, 440 / r), Hcss = Wcss * r;
+  cv.style.width = Wcss + "px"; cv.style.height = Hcss + "px";
+  const W = G, H = Math.round(G * r); if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const g = cv.getContext("2d"), img = g.createImageData(W, H), ph = +$("f").value * Math.PI / 180;
+  const coef = sel.map((s, i) => { const a = -E(s[0], s[1], r) * Math.PI * Math.PI * t + (i === 1 ? ph : 0); return [Math.cos(a), Math.sin(a)]; });
+  const nrm = 2 / Math.sqrt(r) / Math.sqrt(sel.length);
+  const sx = sel.map(s => Float64Array.from({ length: W }, (_, i) => Math.sin(s[0] * Math.PI * (i + .5) / W)));
+  const sy = sel.map(s => Float64Array.from({ length: H }, (_, j) => Math.sin(s[1] * Math.PI * (j + .5) / H)));
+  let mx = 1e-9; const R = new Float64Array(W * H), I = new Float64Array(W * H);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { let re = 0, im = 0; for (let k = 0; k < sel.length; k++) { const v = sx[k][i] * sy[k][j]; re += coef[k][0] * v; im += coef[k][1] * v; } re *= nrm; im *= nrm; R[j * W + i] = re; I[j * W + i] = im; mx = Math.max(mx, re * re + im * im); }
+  for (let p = 0; p < W * H; p++) {
+    const v = (R[p] ** 2 + I[p] ** 2) / mx, h = (Math.atan2(I[p], R[p]) / (2 * Math.PI) + 1) % 1;
+    const [cr, cg, cb] = hsl(h, .75, .1 + .5 * Math.sqrt(v));
+    const o = p * 4; img.data[o] = cr; img.data[o + 1] = cg; img.data[o + 2] = cb; img.data[o + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+}
+function hsl(h, s, l) { const q = l < .5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q; const f = t => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < .5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; }; return [f(h + 1 / 3) * 255, f(h) * 255, f(h - 1 / 3) * 255]; }
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) t += dt * 0.12;
+  draw(); $("tlab").textContent = "Stati: " + sel.map(s => "ψ" + sub(s[0]) + sub(s[1])).join(" + ");
+  requestAnimationFrame(frame);
+}
+const presets = [["ψ₁₂ + ψ₂₁ nel quadrato", [[1, 2], [2, 1]], 0, 1], ["… con fase 90°", [[1, 2], [2, 1]], 90, 1], ["ψ₁₁ + ψ₂₁ (si muove)", [[1, 1], [2, 1]], 0, 1], ["ψ₁₇ + ψ₅₅ + ψ₇₁", [[1, 7], [5, 5], [7, 1]], 0, 1], ["Solo ψ₃₂", [[3, 2]], 0, 1]];
+for (const [l, s, f, r] of presets) { const b = document.createElement("button"); b.textContent = l; b.title = "Prepara questi stati (scatola quadrata)"; b.onclick = () => { sel = s.map(x => x.slice()); $("f").value = f; $("r").value = r; labels(); t = 0; renderLevels(); }; $("presets").append(b); }
+function labels() { $("rO").textContent = num(+$("r").value, 2) + (Math.abs(+$("r").value - 1) < .005 ? "  (quadrata)" : ""); $("fO").textContent = $("f").value + "°"; }
+$("r").addEventListener("input", () => { labels(); renderLevels(); });
+$("f").addEventListener("input", labels);
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+$("r").value = 1.15; sel = [[1, 2], [2, 1]];          // all'apertura: scatola un po' allungata, così la sovrapposizione si muove
+labels(); renderLevels(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

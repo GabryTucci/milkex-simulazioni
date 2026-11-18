@@ -54,5 +54,12 @@
   "project": "Quantum",
   "section": "L'oscillatore armonico",
   "time": 1794960945.3752143
+ },
+ {
+  "path": "quantum/scatola-2d.html",
+  "title": "Particella in una scatola 2D: separazione delle variabili e degenerazione",
+  "project": "Quantum",
+  "section": "Sistemi in più dimensioni",
+  "time": 1794960952.656874
  }
 ]

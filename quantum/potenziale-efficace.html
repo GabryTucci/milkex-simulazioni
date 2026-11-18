@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Problemi a simmetria centrale: potenziale efficace e degenerazioni</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cr{height:330px}
+#cs{height:330px;cursor:pointer}
+@media (max-width:600px){#cr,#cs{height:260px}}
+.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:.3rem 0}
+.seg small{display:block;opacity:.85;font-size:.8rem}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Problemi a simmetria centrale: potenziale efficace e degenerazioni</h1>
+  <p>Con $V(r)$ centrale si separa $\psi=\frac{u_\ell(r)}{r}Y_\ell^m(\theta,\varphi)$ e resta un problema 1D: $$\begin{gathered}-\frac{\hbar^2}{2m}u''+\left[V(r)+\frac{\hbar^2\ell(\ell+1)}{2mr^2}\right]u=Eu\\ u(0)=0\end{gathered}$$ Qui l'equazione radiale è risolta numericamente per ogni $\ell$.</p>
+  <div class="start"><b>Inizia da qui:</b> nel grafico a destra ogni colonna è un valore di $\ell$. Clicca un livello per vederne la funzione radiale, poi cambia potenziale e guarda come si allineano (o no) i livelli.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2 id="ttl">Potenziale efficace e funzione radiale</h2>
+      <canvas id="cr" role="img" aria-label="Potenziale efficace, livelli e funzione radiale"></canvas>
+      <div class="legend" style="margin-top:.3rem"><span><i style="background:var(--mut)"></i>V(r)</span><span><i style="background:var(--c2)"></i>V_eff(r) con la barriera centrifuga</span><span><i style="background:var(--c3)"></i>u(r) del livello scelto</span></div>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Potenziale</h2>
+      <div class="seg" id="kind">
+        <button data-k="coul" class="on" title="Atomo di idrogeno (Z = 1)">Coulombiano<small>$V=-\frac{e^2}{r}$</small></button>
+        <button data-k="osc" title="Oscillatore armonico isotropo">Oscillatore 3D<small>$V=\frac12m\omega^2r^2$</small></button>
+        <button data-k="well" title="Buca sferica finita di raggio R">Buca sferica<small>$V=-V_0$ per $r&lt;R$</small></button>
+        <button data-k="box" title="Particella libera chiusa in una sfera rigida">Sfera rigida<small>$V=\infty$ per $r&gt;R$</small></button>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Spettro per $\ell=0,1,2,3$</h2>
+      <canvas id="cs" role="img" aria-label="Livelli per ogni valore di l"></canvas>
+      <p class="hint">👆 Clicca un livello. Le linee che collegano colonne diverse indicano livelli con la stessa energia (degeneri).</p>
+    </section>
+    <section class="card">
+      <h2>Livello scelto</h2>
+      <div class="vals">
+        <div><span>$\ell$, nodi radiali $n_r$</span><b id="vq"></b></div>
+        <div><span>$E$ calcolata</span><b id="ve"></b></div>
+        <div><span>$E$ esatta</span><b id="vx"></b></div>
+        <div><span>degenerazione</span><b id="vd"></b></div>
+      </div>
+      <p class="hint" id="unit"></p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>La barriera centrifuga.</b> Il termine $\frac{\hbar^2\ell(\ell+1)}{2mr^2}$ respinge la particella dall'origine: con $\ell$ grande $u(r)$ parte da zero come $r^{\ell+1}$ e si sposta verso l'esterno. Ogni livello ha anche la degenerazione $2\ell+1$ in $m$, perché $V$ non dipende dagli angoli.</li>
+    <li><b>Coulomb: degenerazione “accidentale”.</b> Le energie dipendono solo da $n=n_r+\ell+1$: $E_n=-\frac{me^4}{2\hbar^2n^2}$. Livelli con $\ell$ diversi si allineano perfettamente e il livello $n$ contiene $n^2$ stati: è la simmetria nascosta del problema di Keplero (vettore di Runge–Lenz).</li>
+    <li><b>Oscillatore isotropo.</b> $E=\hbar\omega\left(2n_r+\ell+\frac32\right)$: si allineano solo $\ell$ della stessa parità ($\ell=0$ con $\ell=2$, $\ell=1$ con $\ell=3$). I livelli sono equispaziati.</li>
+    <li><b>Nessuna degenerazione extra.</b> Nella buca sferica e nella sfera rigida le colonne non si allineano: resta solo la degenerazione $2\ell+1$ dovuta alla simmetria per rotazioni. Le degenerazioni in più del Coulombiano e dell'oscillatore vengono da simmetrie speciali.</li>
+    <li><b>Nodi.</b> Il livello $n_r$-esimo di una colonna ha $n_r$ nodi nella funzione radiale (escluso $r=0$): controlla cliccando livelli sempre più alti.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 4) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+// unità ħ = m = 1 (Coulomb: e² = 1, quindi energie in hartree; oscillatore: ω = 1)
+const CFG = {
+  coul: { R: 70, N: 1400, V: r => -1 / r, lev: 4, emin: -0.55, emax: 0.02, exact: (l, nr) => -1 / (2 * (nr + l + 1) ** 2), unit: "Unità: ħ = m = e² = 1, cioè energie in hartree (27,2 eV) e raggi in raggi di Bohr." },
+  osc: { R: 9, N: 900, V: r => r * r / 2, lev: 5, emin: 0, emax: 10, exact: (l, nr) => 2 * nr + l + 1.5, unit: "Unità: ħ = m = ω = 1, cioè energie in ħω." },
+  well: { R: 8, N: 900, V: r => r < 2 ? -12 : 0, lev: 4, emin: -12.5, emax: -0.001, exact: null, unit: "Unità: ħ = m = 1, buca con V₀ = 12 e R = 2." },
+  box: { R: 2, N: 900, V: () => 0, lev: 4, emin: 0, emax: 45, exact: null, unit: "Unità: ħ = m = 1, sfera di raggio R = 2 (energie ∝ zeri delle funzioni di Bessel sferiche)." },
+};
+let kind = "coul", spec = [], selL = 0, selN = 1;
+function solve(l) {        // matrice tridiagonale: −½u'' + V_eff u = E u, u(0) = u(R) = 0
+  const c = CFG[kind], N = c.N, h = c.R / (N + 1), d = new Float64Array(N), e = -0.5 / (h * h);
+  for (let i = 0; i < N; i++) { const r = (i + 1) * h; d[i] = 1 / (h * h) + c.V(r) + l * (l + 1) / (2 * r * r); }
+  const count = x => { let q = d[0] - x, k = q < 0 ? 1 : 0; for (let i = 1; i < N; i++) { q = d[i] - x - e * e / (q === 0 ? 1e-300 : q); if (q < 0) k++; } return k; };
+  const vals = [];
+  const lev = kind === "coul" ? 5 - l : c.lev;      // Coulomb: fino a n = 5 (oltre, la sfera di raggio R non basta)
+  for (let k = 0; k < lev; k++) {        // k-esimo autovalore con la bisezione di Sturm
+    let lo = c.emin - 1, hi = c.emax + 60; if (count(hi) <= k) break;
+    for (let it = 0; it < 70; it++) { const mid = (lo + hi) / 2; count(mid) > k ? hi = mid : lo = mid; }
+    const E = (lo + hi) / 2; if (E > c.emax) break; vals.push(E);
+  }
+  return { vals, h, d, e };
+}
+function vector(sol, E) {        // iterazione inversa (Thomas) per l'autovettore
+  const N = sol.d.length, e = sol.e; let u = new Float64Array(N).fill(1);
+  for (let it = 0; it < 3; it++) {
+    const c = new Float64Array(N), y = new Float64Array(N); let b = sol.d[0] - E - 1e-10; c[0] = e / b; y[0] = u[0] / b;
+    for (let i = 1; i < N; i++) { b = sol.d[i] - E - 1e-10 - e * c[i - 1]; c[i] = e / b; y[i] = (u[i] - e * y[i - 1]) / b; }
+    for (let i = N - 2; i >= 0; i--) y[i] -= c[i] * y[i + 1];
+    let n = 0; for (let i = 0; i < N; i++) n += y[i] * y[i]; n = Math.sqrt(n * sol.h); u = y.map(v => v / n);
+  }
+  let mx = 0; for (let i = 0; i < N; i++) mx = Math.max(mx, Math.abs(u[i]));
+  const first = u.findIndex(v => Math.abs(v) > 1e-3 * mx); if (first >= 0 && u[first] < 0) u = u.map(v => -v);   // u > 0 vicino all'origine
+  return u;
+}
+function computeAll() { spec = [0, 1, 2, 3].map(l => solve(l)); }
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+let hit = [];
+function drawSpec() {
+  const { g, W, H } = setup($("cs")); g.clearRect(0, 0, W, H);
+  const c = CFG[kind], L0 = 44, B = 26, Y = e => 10 + (c.emax - e) / (c.emax - c.emin) * (H - B - 10), colW = (W - L0 - 8) / 4;
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
+  for (let l = 0; l < 4; l++) g.fillText("ℓ = " + l, L0 + colW * (l + .5), H - 8);
+  g.textAlign = "right"; for (let k = 0; k <= 4; k++) { const e = c.emin + (c.emax - c.emin) * k / 4; g.fillText(num(e, kind === "coul" ? 2 : 1), L0 - 6, Y(e) + 4); }
+  hit = [];
+  // collegamenti tra livelli degeneri
+  const all = []; spec.forEach((s, l) => s.vals.forEach((E, n) => all.push([l, n, E])));
+  g.setLineDash([3, 4]); g.strokeStyle = css("--c2");
+  for (const a of all) for (const b of all) if (b[0] === a[0] + 1 && Math.abs(a[2] - b[2]) < 2e-3 * Math.max(1, Math.abs(a[2]))) { g.beginPath(); g.moveTo(L0 + colW * (a[0] + .82), Y(a[2])); g.lineTo(L0 + colW * (b[0] + .18), Y(b[2])); g.stroke(); }
+  g.setLineDash([]);
+  for (const [l, n, E] of all) {
+    const x0 = L0 + colW * (l + .18), x1 = L0 + colW * (l + .82), on = l === selL && n === selN - 1;
+    g.strokeStyle = on ? css("--c3") : css("--fg"); g.lineWidth = on ? 4 : 2; g.beginPath(); g.moveTo(x0, Y(E)); g.lineTo(x1, Y(E)); g.stroke();
+    hit.push([x0, x1, Y(E), l, n]);
+  }
+}
+function drawR() {
+  const { g, W, H } = setup($("cr")); g.clearRect(0, 0, W, H);
+  const c = CFG[kind], s = spec[selL], E = s.vals[selN - 1], u = vector(s, E), h = s.h, N = s.d.length;
+  const Rv = kind === "coul" ? Math.min(c.R, Math.max(14, (selN + selL) ** 2 * 3.2)) : c.R;
+  const L0 = 40, B = 24, X = r => L0 + r / Rv * (W - L0 - 10), Y = e => 10 + (c.emax - e) / (c.emax - c.emin) * (H - B - 10);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - B); g.lineTo(W - 10, H - B); g.moveTo(L0, 10); g.lineTo(L0, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
+  for (let k = 0; k <= 4; k++) g.fillText(num(Rv * k / 4, 1), X(Rv * k / 4), H - 8); g.textAlign = "right"; g.fillText("r", W - 12, H - B - 6);
+  const curve = (f, col, w) => { g.beginPath(); let first = true; for (let i = 0; i < N; i++) { const r = (i + 1) * h; if (r > Rv) break; const v = Math.max(c.emin - 1, Math.min(c.emax + 1, f(r))); const yy = Math.max(2, Math.min(H - B, Y(v))); first ? g.moveTo(X(r), yy) : g.lineTo(X(r), yy); first = false; } g.strokeStyle = col; g.lineWidth = w; g.stroke(); };
+  curve(c.V, css("--mut"), 1.5);
+  if (selL > 0) curve(r => c.V(r) + selL * (selL + 1) / (2 * r * r), css("--c2"), 2);
+  s.vals.forEach((e, n) => { g.strokeStyle = n === selN - 1 ? css("--c3") : css("--bd"); g.setLineDash(n === selN - 1 ? [] : [4, 4]); g.beginPath(); g.moveTo(L0, Y(e)); g.lineTo(W - 10, Y(e)); g.stroke(); }); g.setLineDash([]);
+  let mx = 1e-9; for (let i = 0; i < N; i++) mx = Math.max(mx, Math.abs(u[i]));
+  const amp = (H - B - 10) * 0.18;
+  g.beginPath(); for (let i = 0; i < N; i++) { const r = (i + 1) * h; if (r > Rv) break; const yy = Y(E) - u[i] / mx * amp; i ? g.lineTo(X(r), yy) : g.moveTo(X(r), yy); } g.strokeStyle = css("--c3"); g.lineWidth = 2.2; g.stroke();
+  let nodes = 0; for (let i = 1; i < N; i++) if ((i + 1) * h < c.R * 0.97 && u[i - 1] * u[i] < 0 && Math.abs(u[i]) + Math.abs(u[i - 1]) > 1e-6 * mx) nodes++;
+  tex($("ttl"), String.raw`V_{\rm eff}(r)=V(r)+\frac{\hbar^2\ell(\ell+1)}{2mr^2}\ \text{ e }\ u(r)\ \text{ per }\ \ell=${selL},\ n_r=${selN - 1}`);
+  $("vq").textContent = `ℓ = ${selL}, n_r = ${nodes}`; $("ve").textContent = num(E);
+  $("vx").textContent = c.exact ? num(c.exact(selL, selN - 1)) : "—";
+  const same = []; spec.forEach((sp, l) => sp.vals.forEach(e => { if (Math.abs(e - E) < 2e-3 * Math.max(1, Math.abs(E))) same.push(l); }));
+  $("vd").textContent = same.reduce((a, l) => a + 2 * l + 1, 0) + " stati" + (same.length > 1 ? " (ℓ = " + same.join(", ") + ")" : " (2ℓ+1)") + ((kind === "coul" && selN + selL > 4) || (kind === "osc" && Math.round(E - 1.5) > 3) ? " + altri con ℓ > 3" : "");
+  $("unit").textContent = c.unit;
+}
+$("cs").addEventListener("click", e => {
+  const r = $("cs").getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  let best = null, bd = 14; for (const [x0, x1, yy, l, n] of hit) if (x >= x0 - 6 && x <= x1 + 6 && Math.abs(y - yy) < bd) { bd = Math.abs(y - yy); best = [l, n]; }
+  if (best) { selL = best[0]; selN = best[1] + 1; drawSpec(); drawR(); }
+});
+document.querySelectorAll("#kind button").forEach(b => b.onclick = () => { kind = b.dataset.k; document.querySelectorAll("#kind button").forEach(x => x.classList.toggle("on", x === b)); computeAll(); selL = 0; selN = 1; drawSpec(); drawR(); });
+mathify($("kind"));
+// all'apertura passa da solo da un livello all'altro, finché l'utente non clicca
+let demo = true, k = 0; document.addEventListener("pointerdown", () => demo = false, { once: true });
+setInterval(() => { if (!demo) return; const all = []; spec.forEach((s, l) => s.vals.forEach((E, n) => all.push([l, n]))); k = (k + 1) % all.length; [selL, selN] = [all[k][0], all[k][1] + 1]; drawSpec(); drawR(); }, 2200);
+window.addEventListener("resize", () => { drawSpec(); drawR(); });
+computeAll(); drawSpec(); drawR();
+</script>
+</body>
+</html>

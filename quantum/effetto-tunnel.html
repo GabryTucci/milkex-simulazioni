@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#cx{height:290px}
+#ct{height:210px}
+@media (max-width:600px){#cx{height:240px}}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:.3rem 0}
+.big{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Gradino e barriera di potenziale: riflessione, trasmissione ed effetto tunnel</h1>
+  <p>Un pacchetto d'onda di energia media $E$ arriva da sinistra contro una barriera alta $V_0$ e larga $2a$ (o contro un gradino). Classicamente passa solo se $E&gt;V_0$; quantisticamente una parte passa sempre (effetto tunnel) e una parte torna indietro anche quando $E&gt;V_0$.</p>
+  <div class="start"><b>Inizia da qui:</b> il pacchetto ha energia minore della barriera, eppure una parte la attraversa. Guarda la percentuale trasmessa $T$ e poi allarga la barriera con il cursore $a$.</div>
+</header>
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>$|\psi(x,t)|^2$ e il potenziale</h2>
+      <canvas id="cx" role="img" aria-label="Pacchetto contro la barriera"></canvas>
+      <div class="row">
+        <button class="pri" id="go" title="Lancia di nuovo il pacchetto">↺ Rilancia</button>
+        <button id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <span class="hint">Linea tratteggiata: energia media $E$ del pacchetto.</span>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Coefficiente di trasmissione $T(E)$</h2>
+      <canvas id="ct" role="img" aria-label="Curva della trasmissione in funzione dell'energia"></canvas>
+      <p class="hint">Curva: $T(E)$ per un'onda piana. Pallino: il risultato del pacchetto, che ha una piccola dispersione in energia.</p>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Ostacolo</h2>
+      <div class="seg" id="kind">
+        <button data-k="bar" class="on" title="Barriera V₀ per |x| ≤ a">Barriera</button>
+        <button data-k="step" title="Gradino V₀ per x ≥ 0">Gradino</button>
+        <button data-k="well" title="Buca finita: V₀ negativo per |x| ≤ a">Buca</button>
+      </div>
+      <div class="ctl" title="Altezza della barriera o del gradino (profondità della buca)">
+        <div class="lab"><span>Altezza $|V_0|$</span><output id="VO"></output></div>
+        <input type="range" id="V" min="2" max="30" step="0.5" value="12">
+      </div>
+      <div class="ctl" title="Metà larghezza della barriera (la barriera va da −a ad a)">
+        <div class="lab"><span>Semilarghezza $a$</span><output id="aO"></output></div>
+        <input type="range" id="a" min="0.1" max="2" step="0.02" value="0.35">
+      </div>
+      <div class="ctl" title="Energia media del pacchetto (cinetica, lontano dall'ostacolo)">
+        <div class="lab"><span>Energia del pacchetto $E$</span><output id="EO"></output></div>
+        <input type="range" id="E" min="1" max="40" step="0.25" value="8">
+      </div>
+      <details class="adv"><summary>Opzioni avanzate</summary>
+        <div class="ctl" title="Larghezza iniziale del pacchetto: più è largo, più la sua energia è precisa e più il risultato si avvicina alla curva T(E)">
+          <div class="lab"><span>Larghezza del pacchetto $\sigma$</span><output id="sO"></output></div>
+          <input type="range" id="s" min="1" max="5" step="0.1" value="3">
+        </div>
+      </details>
+    </section>
+    <section class="card">
+      <h2>Risultato dell'urto</h2>
+      <div class="vals">
+        <div><span>riflesso $R$</span><b class="big" id="vR"></b></div>
+        <div><span>trasmesso $T$</span><b class="big" id="vT"></b></div>
+        <div><span>$T$ atteso</span><b id="vTe"></b></div>
+        <div><span>$R+T$</span><b id="vS"></b></div>
+      </div>
+      <p class="hint" id="cls"></p>
+      <p class="hint">Unità: $\hbar=m=1$. Il pacchetto viene rilanciato da solo dopo ogni urto.</p>
+    </section>
+  </div>
+</div>
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Effetto tunnel.</b> Con $E&lt;V_0$ nella barriera la funzione d'onda decresce come $e^{-\beta x}$, con $\beta=\frac{\sqrt{2m(V_0-E)}}{\hbar}$, ma non si annulla: dall'altra parte resta un'onda trasmessa. $$T=\left[1+\frac{V_0^2\sinh^2(2\beta a)}{4E(V_0-E)}\right]^{-1}\approx e^{-4\beta a}$$ per barriere spesse: raddoppiando $a$ la trasmissione crolla.</li>
+    <li><b>Riflessione sopra la barriera.</b> Porta $E$ sopra $V_0$: classicamente passerebbe tutto, invece una parte si riflette. $T$ vale 1 solo per le risonanze $2k'a=n\pi$, con $k'=\frac{\sqrt{2m(E-V_0)}}{\hbar}$: lì la barriera contiene un numero intero di mezze lunghezze d'onda.</li>
+    <li><b>Il gradino.</b> Per $E&gt;V_0$ si ha $T=\frac{4kk'}{(k+k')^2}$ e $R=\left(\frac{k-k'}{k+k'}\right)^2$: c'è riflessione anche se il pacchetto “scende” di energia cinetica. Per $E&lt;V_0$ tutto torna indietro, ma l'onda penetra un po' nel gradino.</li>
+    <li><b>Anche una buca riflette.</b> Scegli “Buca”: una particella che passa sopra una buca può tornare indietro, tranne alle energie di risonanza. Con le onde classiche non succede.</li>
+    <li><b>Conservazione.</b> Controlla che $R+T=1$: la probabilità non si crea né si distrugge (equazione di continuità).</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 3) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const N = 2048, L = 60, dx = 2 * L / N, DT = 0.0025, X0 = -22;
+const xs = Float64Array.from({ length: N }, (_, i) => -L + dx * i);
+const ks = Float64Array.from({ length: N }, (_, i) => 2 * Math.PI * (i < N / 2 ? i : i - N) / (2 * L));
+function fft(re, im, inv) {
+  for (let i = 1, j = 0; i < N; i++) { let b = N >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+  for (let len = 2; len <= N; len <<= 1) {
+    const a = 2 * Math.PI / len * (inv ? 1 : -1), wr = Math.cos(a), wi = Math.sin(a), h = len >> 1;
+    for (let i = 0; i < N; i += len) { let cr = 1, ci = 0;
+      for (let j = 0; j < h; j++) { const p = i + j, q = p + h, vr = re[q] * cr - im[q] * ci, vi = re[q] * ci + im[q] * cr;
+        re[q] = re[p] - vr; im[q] = im[p] - vi; re[p] += vr; im[p] += vi; const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t; } }
+  }
+  if (inv) for (let i = 0; i < N; i++) { re[i] /= N; im[i] /= N; }
+}
+let kind = "bar", re = new Float64Array(N), im = new Float64Array(N), V = new Float64Array(N), t = 0, playing = true, done = false, doneAt = 0;
+let vR, vI, kR, kI, E0, V0, A, S, result = null;
+// potenziale mediato su ogni cella della griglia: così la larghezza efficace della barriera è esattamente 2a
+const overlap = (lo, hi, a, b) => Math.max(0, Math.min(hi, b) - Math.max(lo, a)) / (hi - lo);
+const pot = x => kind === "step" ? V0 * overlap(x - dx / 2, x + dx / 2, 0, 1e9) : (kind === "well" ? -V0 : V0) * overlap(x - dx / 2, x + dx / 2, -A, A);
+function Tplane(E) {              // trasmissione di un'onda piana di energia E
+  const v = kind === "well" ? -V0 : V0, k = Math.sqrt(2 * E);
+  if (kind === "step") { if (E <= v) return 0; const kp = Math.sqrt(2 * (E - v)); return 4 * k * kp / (k + kp) ** 2; }
+  if (Math.abs(E - v) < 1e-9) return 1 / (1 + v * v * (2 * A) ** 2 * 2 / (4 * E));
+  if (E < v) { const b = Math.sqrt(2 * (v - E)); return 1 / (1 + v * v * Math.sinh(2 * b * A) ** 2 / (4 * E * (v - E))); }
+  const kp = Math.sqrt(2 * (E - v)); return 1 / (1 + v * v * Math.sin(2 * kp * A) ** 2 / (4 * E * (E - v)));
+}
+function launch() {
+  kind = document.querySelector("#kind .on").dataset.k; V0 = +$("V").value; A = +$("a").value; E0 = +$("E").value; S = +$("s").value;
+  const p0 = Math.sqrt(2 * E0); let n = 0;
+  for (let i = 0; i < N; i++) { const env = Math.exp(-((xs[i] - X0) ** 2) / (4 * S * S)); re[i] = env * Math.cos(p0 * xs[i]); im[i] = env * Math.sin(p0 * xs[i]); n += env * env; V[i] = pot(xs[i]); }
+  n = Math.sqrt(n * dx); for (let i = 0; i < N; i++) { re[i] /= n; im[i] /= n; }
+  vR = new Float64Array(N); vI = new Float64Array(N); kR = new Float64Array(N); kI = new Float64Array(N);
+  for (let i = 0; i < N; i++) { const a = -V[i] * DT / 2; vR[i] = Math.cos(a); vI[i] = Math.sin(a); const b = -0.5 * ks[i] ** 2 * DT; kR[i] = Math.cos(b); kI[i] = Math.sin(b); }
+  // trasmissione attesa per questo pacchetto: media di T(E) sulla sua distribuzione di impulsi (Δk = 1/2σ)
+  let w = 0, tt = 0; const dk = 1 / (2 * S);
+  for (let j = -60; j <= 60; j++) { const k = p0 + dk * 4 * j / 60; if (k <= 0) continue; const g = Math.exp(-((k - p0) ** 2) / (2 * dk * dk)); w += g; tt += g * Tplane(k * k / 2); }
+  result = { Texp: tt / w }; t = 0; done = false;
+}
+function mul(aR, aI) { for (let i = 0; i < N; i++) { const r = re[i] * aR[i] - im[i] * aI[i]; im[i] = re[i] * aI[i] + im[i] * aR[i]; re[i] = r; } }
+function step() { mul(vR, vI); fft(re, im, false); mul(kR, kI); fft(re, im, true); mul(vR, vI); t += DT; }
+function split() {
+  const edge = kind === "step" ? 0 : A; let r = 0, tr = 0, out = 0, mid = 0;
+  for (let i = 0; i < N; i++) { const w = (re[i] ** 2 + im[i] ** 2) * dx; if (xs[i] < -edge) r += w; else if (xs[i] > edge) tr += w; else mid += w; if (Math.abs(xs[i]) > 52) out += w; }
+  return { r, tr, mid, out };
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+const XA = -45, XB = 45;
+function drawX() {
+  const { g, W, H } = setup($("cx")); g.clearRect(0, 0, W, H);
+  const B = 24, T = 12, X = v => 12 + (v - XA) / (XB - XA) * (W - 24);
+  const Emax = Math.max(E0, V0) * 1.35, yE = e => H - B - (H - B - T) * (kind === "well" ? (e + V0) / (Emax + V0) : e / Emax);
+  // potenziale
+  g.fillStyle = css("--wall"); const y0 = yE(0);
+  if (kind === "step") g.fillRect(X(0), yE(V0), X(XB) - X(0), y0 - yE(V0));
+  else if (kind === "bar") g.fillRect(X(-A), yE(V0), Math.max(2, X(A) - X(-A)), y0 - yE(V0));
+  else g.fillRect(X(-A), y0, Math.max(2, X(A) - X(-A)), yE(-V0) - y0);
+  g.strokeStyle = css("--mut"); g.beginPath(); g.moveTo(12, y0); g.lineTo(W - 12, y0); g.stroke();
+  g.setLineDash([6, 4]); g.strokeStyle = css("--c2"); g.beginPath(); g.moveTo(12, yE(E0)); g.lineTo(W - 12, yE(E0)); g.stroke(); g.setLineDash([]);
+  g.fillStyle = css("--c2"); g.font = "12px system-ui"; g.textAlign = "left"; g.fillText("E", 16, yE(E0) - 5);
+  g.fillStyle = css("--mut"); g.fillText("V₀", kind === "step" ? X(0) + 6 : X(A) + 6, (kind === "well" ? yE(-V0) : yE(V0)) + (kind === "well" ? -6 : 14));
+  // densità (scala propria), appoggiata sulla linea dell'energia
+  let mx = 1e-9; for (let i = 0; i < N; i++) mx = Math.max(mx, re[i] ** 2 + im[i] ** 2);
+  const top = Math.max(mx, 0.6 / (Math.sqrt(2 * Math.PI) * S)), base = yE(E0), hgt = Math.min(base - T, (H - B - T) * .55);
+  g.beginPath(); let f = true;
+  for (let i = 0; i < N; i++) { if (xs[i] < XA || xs[i] > XB) continue; const yy = base - (re[i] ** 2 + im[i] ** 2) / top * hgt; f ? g.moveTo(X(xs[i]), yy) : g.lineTo(X(xs[i]), yy); f = false; }
+  g.lineTo(X(XB), base); g.lineTo(X(XA), base); g.closePath(); g.fillStyle = css("--c3"); g.globalAlpha = .25; g.fill(); g.globalAlpha = 1; g.strokeStyle = css("--c3"); g.lineWidth = 1.8; g.stroke();
+  g.fillStyle = css("--mut"); g.textAlign = "center"; for (let v = -40; v <= 40; v += 20) g.fillText(String(v).replace("-", "−"), X(v), H - 7);
+}
+function drawT(meas) {
+  const { g, W, H } = setup($("ct")); g.clearRect(0, 0, W, H);
+  const L0 = 36, B = 24, Em = Math.max(40, V0 * 1.6), X = e => L0 + e / Em * (W - L0 - 12), Y = v => 8 + (1 - v) * (H - B - 8);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(L0, H - B); g.lineTo(W - 12, H - B); g.moveTo(L0, 8); g.lineTo(L0, H - B); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "right";
+  for (const v of [0, .5, 1]) g.fillText(num(v, 1), L0 - 5, Y(v) + 4);
+  g.textAlign = "center"; for (let e = 0; e <= Em; e += 10) g.fillText(String(e), X(e), H - 7);
+  g.textAlign = "right"; g.fillText("E", W - 14, H - B - 6);
+  if (kind !== "well") { g.setLineDash([3, 3]); g.strokeStyle = css("--mut"); g.beginPath(); g.moveTo(X(V0), 8); g.lineTo(X(V0), H - B); g.stroke(); g.setLineDash([]); g.textAlign = "left"; g.fillText("E = V₀", X(V0) + 4, 18); }
+  g.beginPath(); for (let i = 1; i <= 400; i++) { const e = Em * i / 400, yy = Y(Tplane(e)); i > 1 ? g.lineTo(X(e), yy) : g.moveTo(X(e), yy); } g.strokeStyle = css("--c1"); g.lineWidth = 2; g.stroke();
+  g.setLineDash([5, 4]); g.strokeStyle = css("--c2"); g.lineWidth = 1; g.beginPath(); g.moveTo(X(E0), 8); g.lineTo(X(E0), H - B); g.stroke(); g.setLineDash([]);
+  if (meas !== null) { g.fillStyle = css("--c3"); g.beginPath(); g.arc(X(E0), Y(meas), 6, 0, 2 * Math.PI); g.fill(); }
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing && !done) { const v = Math.sqrt(2 * E0), n = Math.max(6, Math.min(32, Math.round(dt * 60 * 80 / Math.max(v, 2.5)))); for (let i = 0; i < n; i++) step(); }
+  const s = split();
+  if (!done && s.mid < 1e-4 && t > 1 && (s.out > 1e-4 || t > 60)) { done = true; doneAt = now; }
+  if (done && now - doneAt > 2600 && playing) launch();
+  drawX(); drawT(done ? s.tr : null);
+  $("vR").textContent = num(s.r * 100, 1) + " %"; $("vT").textContent = num(s.tr * 100, 1) + " %";
+  $("vTe").textContent = num(result.Texp * 100, 1) + " %"; $("vS").textContent = num(s.r + s.tr + s.mid, 4);
+  const v = kind === "well" ? -V0 : V0;
+  $("cls").textContent = E0 < v ? "Classicamente: E < V₀, la particella verrebbe riflessa al 100%." : "Classicamente: E > V₀, la particella passerebbe al 100%.";
+  requestAnimationFrame(frame);
+}
+function labels() { $("VO").textContent = num(+$("V").value, 1); $("aO").textContent = num(+$("a").value, 2); $("EO").textContent = num(+$("E").value, 2); $("sO").textContent = num(+$("s").value, 1); }
+["V", "a", "E", "s"].forEach(id => $(id).addEventListener("input", () => { labels(); launch(); }));
+document.querySelectorAll("#kind button").forEach(b => b.onclick = () => { document.querySelectorAll("#kind button").forEach(x => x.classList.toggle("on", x === b)); launch(); });
+$("go").onclick = launch;
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+labels(); launch(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

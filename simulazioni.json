@@ -89,5 +89,12 @@
   "project": "Quantum",
   "section": "Particella carica in campo elettromagnetico",
   "time": 1794960979.3031976
+ },
+ {
+  "path": "quantum/stern-gerlach.html",
+  "title": "Stern–Gerlach in sequenza: misure di spin 12",
+  "project": "Quantum",
+  "section": "Spin",
+  "time": 1794960986.4004807
  }
 ]

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Particelle e gruppi d'onde: velocità di fase e di gruppo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>.katex{font-size:1.05em}.katex-display{overflow-x:auto;overflow-y:hidden;padding:.35em .1em;margin:.6em 0}.katex-display>.katex{white-space:nowrap}</style>
+<script>
+/* kit MILKeX per le formule */
+(function(){var q=[],ready=false,D=[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+M={"\\ket":"\\left|#1\\right\\rangle","\\bra":"\\left\\langle#1\\right|","\\braket":"\\left\\langle#1\\middle|#2\\right\\rangle","\\ave":"\\left\\langle#1\\right\\rangle","\\Tr":"\\operatorname{Tr}","\\Id":"\\mathbb{1}"};
+window.tex=function(el,src,display){el.setAttribute("data-tex",src);if(ready&&window.katex){katex.render(src,el,{throwOnError:false,displayMode:!!display,macros:M});}else{el.textContent=src;q.push([el,src,display]);}};
+window.mathify=function(root){if(ready&&window.renderMathInElement){renderMathInElement(root||document.body,{delimiters:D,throwOnError:false,macros:M});}else{q.push([root||document.body]);}};
+window.addEventListener("load",function(){ready=true;var a=q.splice(0);for(var i=0;i<a.length;i++){if(a[i].length>1)tex(a[i][0],a[i][1],a[i][2]);else mathify(a[i][0]);}mathify(document.body);});})();
+</script>
+<style>
+:root{color-scheme:light dark;--bg:#f6f4fb;--fg:#1d1830;--mut:#625b78;--card:#fff;--bd:#e2dcf2;--soft:#f0ecf9;--ac:#6d3fd0;--c1:#2563eb;--c2:#e8590c;--c3:#7b4fd6;--c4:#0f9d8a;--ok:#15803d;--bad:#b91c1c;--wall:#d6cfe8}
+@media (prefers-color-scheme:dark){:root{--bg:#14111c;--fg:#ece8f6;--mut:#a9a2bd;--card:#1f1a2b;--bd:#352c49;--soft:#2a2339;--ac:#b18cff;--c1:#60a5fa;--c2:#fdba74;--c3:#c4a8ff;--c4:#5eead4;--ok:#4ade80;--bad:#f87171;--wall:#463b5e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:16px}
+header.top h1{font-size:1.4rem;margin:.1rem 0 .2rem;line-height:1.25}
+header.top p{margin:.15rem 0;color:var(--mut)}
+.start{display:inline-block;margin:.5rem 0 .2rem;padding:.45rem .75rem;border-radius:.6rem;background:var(--soft);border:1px solid var(--bd);color:var(--fg)}
+.start b{color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 .5rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+canvas{display:block;width:100%;touch-action:none}
+.hint{font-size:.88rem;color:var(--mut);margin:.3rem 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.5rem 0}
+button{font:inherit;font-size:.92rem;min-height:36px;padding:.35rem .8rem;border-radius:9px;border:1px solid var(--bd);background:var(--soft);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.ctl{margin:.55rem 0}
+.ctl .lab{display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.ctl .lab output{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--ac);min-height:28px}
+.vals{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}
+.vals>div{background:var(--soft);border-radius:9px;padding:.35rem .55rem;display:flex;justify-content:space-between;gap:6px;align-items:baseline;min-width:0}
+.vals b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin-bottom:.3rem}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend i{width:16px;height:4px;border-radius:2px;display:inline-block}
+.legend .off{opacity:.35;text-decoration:line-through}
+details.adv{margin-top:.6rem}details.adv summary{cursor:pointer;color:var(--mut);font-size:.92rem}
+.obs ol{padding-left:1.2rem;margin:.3rem 0}.obs li{margin:.45rem 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px 0 6px}
+</style>
+<style>
+#wave{height:300px}
+#comps{height:190px}
+@media (max-width:600px){#wave{height:240px}}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:.3rem 0}
+.seg button{text-align:left;line-height:1.3}.seg small{display:block;opacity:.85;font-size:.82rem}
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <h1>Particelle e gruppi d'onde: velocità di fase e di gruppo</h1>
+  <p>Un pacchetto è una somma di onde monocromatiche $e^{i(kx-\omega t)}$ con $p=\hbar k$ (de Broglie) ed $E=\hbar\omega$ (Planck). Le creste corrono con la velocità di fase $v_\varphi=\omega/k$, l'inviluppo con la velocità di gruppo $v_g=d\omega/dk$: è lui a muoversi come la particella.</p>
+  <div class="start"><b>Inizia da qui:</b> segui il triangolino arancione (una cresta) e il pallino viola (la particella classica): la cresta va a metà velocità del pacchetto. Poi riduci il numero di onde a 2.</div>
+</header>
+
+<div class="grid">
+  <div class="stack">
+    <section class="card">
+      <h2>Il pacchetto $\psi(x,t)=\sum_n A_n\,e^{i(k_nx-\omega_nt)}$</h2>
+      <div class="legend" id="legend"></div>
+      <canvas id="wave" role="img" aria-label="Pacchetto d'onda che si muove"></canvas>
+      <div class="row">
+        <button class="pri" id="play" title="Ferma o fai ripartire il tempo">⏸ Pausa</button>
+        <button id="t0" title="Riporta il pacchetto alla partenza">↺ Riparti</button>
+        <span class="hint" id="tlab"></span>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Le onde che lo compongono</h2>
+      <canvas id="comps" role="img" aria-label="Alcune onde monocromatiche del pacchetto"></canvas>
+      <p class="hint">Alcune componenti $A_n\cos(k_nx-\omega_nt)$, ognuna con la propria velocità di fase. Dove sono in fase si sommano (il pacchetto), altrove si cancellano.</p>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Che onde sommare</h2>
+      <div class="seg" id="disp">
+        <button data-d="part" class="on" title="Onde di materia: ω = ħk²/2m (dispersive)">Particella<small>$\omega=\frac{\hbar k^2}{2m}$</small></button>
+        <button data-d="luce" title="Luce nel vuoto: ω = ck (non dispersive)">Luce nel vuoto<small>$\omega=ck$</small></button>
+      </div>
+      <div class="ctl" title="Numero d'onda medio: fissa l'impulso medio p = ħk̄ e la lunghezza d'onda λ = 2π/k̄">
+        <div class="lab"><span>Numero d'onda medio $\bar k$</span><output id="kO"></output></div>
+        <input type="range" id="k" min="1" max="8" step="0.1" value="4">
+      </div>
+      <div class="ctl" title="Larghezza dello spettro di numeri d'onda: più è grande, più il pacchetto è stretto">
+        <div class="lab"><span>Larghezza in $k$: $\Delta k$</span><output id="dkO"></output></div>
+        <input type="range" id="dk" min="0.1" max="1.5" step="0.01" value="0.5">
+      </div>
+      <div class="ctl" title="Quante onde monocromatiche si sommano: con poche onde il pacchetto si ripete (battimenti)">
+        <div class="lab"><span>Numero di onde sommate</span><output id="nO"></output></div>
+        <input type="range" id="n" min="2" max="201" step="1" value="201">
+      </div>
+    </section>
+    <section class="card">
+      <h2>Valori</h2>
+      <div class="vals">
+        <div><span>$\lambda=\frac{2\pi}{\bar k}=\frac hp$</span><b id="vl"></b></div>
+        <div><span>$v_\varphi=\frac{\omega}{k}$</span><b id="vf"></b></div>
+        <div><span>$v_g=\frac{d\omega}{dk}$</span><b id="vg"></b></div>
+        <div><span>$v_p=\frac pm$</span><b id="vp"></b></div>
+        <div><span>$\Delta x$</span><b id="vdx"></b></div>
+        <div><span>$\Delta x\,\Delta k$</span><b id="vdd"></b></div>
+      </div>
+      <p class="hint">Unità: $\hbar=m=1$ (e $c=4$ per la luce). Il controllo ✓ verifica $\Delta x\,\Delta k\ge\frac12$.</p>
+    </section>
+  </div>
+</div>
+
+<section class="card obs" style="margin-top:14px">
+  <h2>Cosa osservare</h2>
+  <ol>
+    <li><b>Due velocità diverse.</b> Per un'onda di materia $\omega=\frac{\hbar k^2}{2m}$, quindi $v_\varphi=\frac{\hbar k}{2m}=\frac{v_p}{2}$ mentre $v_g=\frac{\hbar k}{m}=v_p$: le creste (triangolino) scivolano all'indietro dentro il pacchetto, che invece avanza insieme alla particella classica (pallino). È la condizione $v_p=v_g$ degli appunti.</li>
+    <li><b>La luce non si allarga.</b> Scegli “Luce nel vuoto”: con $\omega=ck$ tutte le onde hanno la stessa velocità, $v_\varphi=v_g=c$, e il pacchetto viaggia senza deformarsi. Le onde di materia invece sono dispersive e il pacchetto si allarga ($\Delta x$ cresce).</li>
+    <li><b>Battimenti.</b> Porta il numero di onde a 2: ottieni battimenti periodici, non un pacchetto localizzato. Aumentando le onde le repliche si allontanano: serve un continuo di onde (un integrale) per localizzare davvero la particella.</li>
+    <li><b>Stretto in $x$, largo in $k$.</b> Aumenta $\Delta k$: il pacchetto si stringe. All'istante iniziale $\Delta x\,\Delta k=\frac12$, il minimo possibile, cioè $\Delta x\,\Delta p=\frac\hbar2$ con $p=\hbar k$.</li>
+    <li><b>De Broglie.</b> Raddoppia $\bar k$: la lunghezza d'onda delle creste si dimezza ($\lambda=h/p$) e il pacchetto va due volte più veloce.</li>
+  </ol>
+</section>
+<footer>Simulazione creata con MILKeX</footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const num = (x, d = 2) => { if (Math.abs(x) < 0.5 * 10 ** -d) x = 0; return x.toFixed(d).replace("-", "−").replace(".", ","); };
+const C = 4, X0 = 0, XL = -8, XR = 60, NX = 900;
+let disp = "part", t = 0, playing = true;
+const show = { re: true, env: true, crest: true, cls: true };
+const omega = k => disp === "part" ? 0.5 * k * k : C * k;
+const vphi = k => omega(k) / k, vgroup = k => disp === "part" ? k : C;
+let comps = [];
+function build() {          // componenti A_n con spettro gaussiano centrato in k̄, larghezza Δk
+  const kb = +$("k").value, dk = +$("dk").value, N = +$("n").value;
+  comps = [];
+  for (let i = 0; i < N; i++) {
+    const k = N === 1 ? kb : kb - 3 * dk + 6 * dk * i / (N - 1);
+    comps.push({ k, A: Math.exp(-((k - kb) ** 2) / (4 * dk * dk)) });
+  }
+  const s = comps.reduce((a, c) => a + c.A, 0); comps.forEach(c => c.A /= s);
+}
+const xs = Float64Array.from({ length: NX }, (_, i) => XL + (XR - XL) * i / (NX - 1));
+function field(tt) {
+  const re = new Float64Array(NX), im = new Float64Array(NX);
+  for (const c of comps) {
+    const w = omega(c.k);
+    for (let i = 0; i < NX; i++) { const ph = c.k * (xs[i] - X0) - w * tt; re[i] += c.A * Math.cos(ph); im[i] += c.A * Math.sin(ph); }
+  }
+  return { re, im };
+}
+function setup(cv) {
+  const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
+  const g = cv.getContext("2d"); g.setTransform(d, 0, 0, d, 0, 0); return { g, W: r.width, H: r.height };
+}
+const toX = (x, W) => 12 + (x - XL) / (XR - XL) * (W - 24);
+function drawWave(f, st) {
+  const { g, W, H } = setup($("wave")); g.clearRect(0, 0, W, H);
+  const y0 = H / 2 - 6, sy = (H / 2 - 26);
+  g.strokeStyle = css("--bd"); g.beginPath(); g.moveTo(12, y0); g.lineTo(W - 12, y0); g.stroke();
+  g.fillStyle = css("--mut"); g.font = "12px system-ui"; g.textAlign = "center";
+  for (let x = 0; x <= XR; x += 10) g.fillText(String(x), toX(x, W), H - 8);
+  const path = (fn, col, w, fill) => { g.beginPath(); for (let i = 0; i < NX; i++) { const X = toX(xs[i], W), Y = y0 - fn(i) * sy; i ? g.lineTo(X, Y) : g.moveTo(X, Y); } if (fill) { g.lineTo(toX(XR, W), y0); g.lineTo(toX(XL, W), y0); g.closePath(); g.fillStyle = col; g.globalAlpha = .15; g.fill(); g.globalAlpha = 1; } g.strokeStyle = col; g.lineWidth = w; g.stroke(); };
+  if (show.env) { path(i => Math.hypot(f.re[i], f.im[i]), css("--c3"), 2.2, true); path(i => -Math.hypot(f.re[i], f.im[i]), css("--c3"), 1.2); }
+  if (show.re) path(i => f.re[i], css("--c1"), 1.5);
+  const kb = +$("k").value;
+  if (show.crest) {         // una cresta dell'onda portante: si muove con v_φ
+    const lam = 2 * Math.PI / kb; let xc = X0 + vphi(kb) * t;
+    const xg = X0 + vgroup(kb) * t;
+    xc = xg + ((((xc - xg) % lam) + lam * 1.5) % lam) - lam / 2;     // la cresta più vicina al centro del pacchetto
+    st.crest = xc;
+    const X = toX(xc, W); g.fillStyle = css("--c2");
+    g.beginPath(); g.moveTo(X, 14); g.lineTo(X - 7, 2); g.lineTo(X + 7, 2); g.closePath(); g.fill();
+    g.strokeStyle = css("--c2"); g.setLineDash([3, 3]); g.beginPath(); g.moveTo(X, 14); g.lineTo(X, H - 24); g.stroke(); g.setLineDash([]);
+  }
+  if (show.cls) { const X = toX(X0 + kb * (disp === "part" ? 1 : C / kb) * t, W); g.fillStyle = css("--ac"); g.beginPath(); g.arc(X, y0, 7, 0, 2 * Math.PI); g.fill(); }
+}
+function drawComps() {
+  const { g, W, H } = setup($("comps")); g.clearRect(0, 0, W, H);
+  const pick = [0, Math.floor(comps.length / 4), Math.floor(comps.length / 2), Math.floor(3 * comps.length / 4), comps.length - 1].filter((v, i, a) => a.indexOf(v) === i);
+  const rows = pick.length, h = (H - 8) / rows, Amax = Math.max(...comps.map(c => c.A));
+  const cols = ["--c1", "--c4", "--c3", "--c4", "--c1"];
+  pick.forEach((ci, r) => {
+    const c = comps[ci], y0 = 4 + h * (r + .5), w = omega(c.k);
+    g.beginPath();
+    for (let i = 0; i < W - 24; i += 2) { const x = XL + (XR - XL) * i / (W - 24), Y = y0 - Math.cos(c.k * (x - X0) - w * t) * (h * .42) * Math.max(.15, c.A / Amax); i ? g.lineTo(12 + i, Y) : g.moveTo(12 + i, Y); }
+    g.strokeStyle = css(cols[r % 5]); g.lineWidth = 1.3; g.stroke();
+    g.fillStyle = css("--mut"); g.font = "11px system-ui"; g.textAlign = "left";
+    g.fillText(`k = ${num(c.k)}`, 14, y0 - h * .3);
+  });
+}
+function stats(f) {
+  let n = 0, m = 0, m2 = 0; const dx = xs[1] - xs[0];
+  for (let i = 0; i < NX; i++) { const p = f.re[i] ** 2 + f.im[i] ** 2; n += p; m += p * xs[i]; m2 += p * xs[i] ** 2; }
+  m /= n; return Math.sqrt(Math.max(0, m2 / n - m * m));
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const kb = +$("k").value;
+  if (playing) { t += dt * 0.9 * 4 / Math.max(2, vgroup(kb)); if (X0 + vgroup(kb) * t > XR + 4) t = 0; }
+  const f = field(t), st = {};
+  drawWave(f, st); drawComps();
+  const Dx = stats(f), dk = +$("dk").value, N = +$("n").value;
+  $("vl").textContent = num(2 * Math.PI / kb); $("vf").textContent = num(vphi(kb)); $("vg").textContent = num(vgroup(kb));
+  $("vp").textContent = disp === "part" ? num(kb) : "—";
+  $("vdx").textContent = N > 40 ? num(Dx, 3) : "—";
+  const pr = Dx * dk, ok = pr >= 0.5 - 2e-3;
+  $("vdd").textContent = N > 40 ? num(pr, 3) + (ok ? " ✓" : "") : "—"; $("vdd").className = ok ? "ok" : "";
+  $("tlab").textContent = `t = ${num(t)}`;
+  requestAnimationFrame(frame);
+}
+for (const [k, l, c] of [["env", "|ψ| inviluppo", "--c3"], ["re", "Re ψ", "--c1"], ["crest", "▼ una cresta (v_φ)", "--c2"], ["cls", "● particella classica (v_p)", "--ac"]]) {
+  const s = document.createElement("span"); s.title = "Mostra o nascondi"; s.innerHTML = `<i style="background:var(${c})"></i>${l}`;
+  s.onclick = () => { show[k] = !show[k]; s.classList.toggle("off", !show[k]); }; $("legend").append(s);
+}
+function labels() { $("kO").textContent = num(+$("k").value, 1); $("dkO").textContent = num(+$("dk").value); $("nO").textContent = $("n").value; }
+["k", "dk", "n"].forEach(id => $(id).addEventListener("input", () => { labels(); build(); t = 0; }));
+document.querySelectorAll("#disp button").forEach(b => b.onclick = () => { disp = b.dataset.d; document.querySelectorAll("#disp button").forEach(x => x.classList.toggle("on", x === b)); t = 0; });
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "⏸ Pausa" : "▶ Avvia"; };
+$("t0").onclick = () => { t = 0; };
+labels(); build(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

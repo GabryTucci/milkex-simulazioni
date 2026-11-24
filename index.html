@@ -43,6 +43,32 @@ a.card:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .go{margin-top:.45rem;font-size:.85rem;color:var(--ac);font-weight:600}
 .empty{color:var(--mut);padding:20px 0}
 footer{margin-top:36px;color:var(--mut);font-size:.85rem;text-align:center}
+
+/* ---- Rifinitura grafica (unslop) ---- */
+header.top .logo{background:#4a2f8f}
+h1{font-weight:600}
+section.ch h2{font-weight:600}
+.tag{text-transform:none;letter-spacing:0;font-weight:500}
+a.card{transition:border-color .15s cubic-bezier(.2,.8,.2,1),background-color .15s cubic-bezier(.2,.8,.2,1)}
+a.card:hover{transform:none;box-shadow:none;background:var(--soft)}
+
+/* ---- design "Latte" di MILKeX: panna e inchiostro (chiaro), notte Milky Way (scuro) ---- */
+:root{--bg:#f6f1e8;--fg:#1d1726;--mut:#7a7385;--card:#fffcf6;--bd:rgba(29,23,38,.1);--soft:#efe8dc;--ac:#7a4fd0;--ac2:#db6a2c}
+@media (prefers-color-scheme:dark){:root{--bg:#100c1b;--fg:#efeaf8;--mut:#9a90b2;--card:#1a1529;--bd:rgba(239,234,248,.09);--soft:#221b35;--ac:#a184ec;--ac2:#f2914f}}
+body{background:var(--bg);background-image:linear-gradient(color-mix(in srgb,var(--fg) 5%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--fg) 5%,transparent) 1px,transparent 1px);background-size:24px 24px;background-attachment:fixed}
+h1,section.ch h2{font-family:"Latin Modern Roman","CMU Serif",Georgia,serif;font-weight:400!important}
+h1{font-size:2rem}
+header.top .logo{background:var(--fg);border-radius:16px}
+header.top .logo svg{stroke:var(--ac2)}
+.bar{border-bottom-color:var(--bd)}
+.chip{border-color:var(--bd)}
+.chip.on{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.chip .n,.tag i,section.ch h2 .num{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
+section.ch h2 .num{border-radius:999px;background:var(--fg);color:var(--bg)}
+a.card{border-radius:20px;box-shadow:0 1px 2px rgba(29,23,38,.05),0 4px 14px rgba(29,23,38,.05)}
+a.card:hover{border-color:var(--ac);background:var(--card);box-shadow:0 2px 4px rgba(29,23,38,.05),0 14px 36px rgba(29,23,38,.1)}
+.ico{border-radius:16px}
+.go{color:var(--ac2)}
 </style>
 </head>
 <body>
@@ -98,5 +124,9 @@ function list() {
 if (current && !chapters.some(c => c.key === current)) current = "";
 chips(); list();
 </script>
+<style>/* MILKeX 2.0 */
+.card{box-shadow:none!important;background-image:none!important}
+h1,h2,h3{font-weight:500}
+</style>
 </body>
 </html>
